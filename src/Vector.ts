@@ -1,11 +1,11 @@
 export class Vector
 {
     x : number; y : number; z : number;
-    constructor()
+    constructor(x = 0, y = 0, z = 0)
     {
-        this.x = 0;
-        this.y = 0;
-        this.z = 0;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     set(a : number , b = a, c = a)
@@ -24,4 +24,23 @@ export class Vector
     {
         return [this.x,this.y,this.z]
     }
+}
+
+export class Vector4 extends Vector
+{
+    w : number;
+    constructor(x = 0, y = 0 , z = 0 , w = 0)
+    {
+        super(x,y,z);
+        this.w = w;
+    }
+
+    toFloat32Array(): Float32Array {
+        return new Float32Array([this.x, this.y, this.z, this.w])
+    }
+
+    toArray(): number[] {
+        return [this.x,this.y,this.z,this.w]
+    }
+
 }

@@ -1,6 +1,7 @@
 import * as glmat from "gl-matrix"
 import { GeometryRenderable2D } from "./src/Renderables";
-import { Shader } from "./src/Shader";
+import { FlatShader } from "./src/Shaders/FlatShader";
+import { Shader } from "./src/Shaders/Shader";
 import * as utils from "./src/utilities"
 let rot = 0;
 let then = 0;
@@ -8,6 +9,7 @@ let x= 0;
 
 let square : GeometryRenderable2D;
 let tri : GeometryRenderable2D;
+let colouredShader : FlatShader;
 
 function draw(gl : WebGLRenderingContext ,now)
 {
@@ -28,6 +30,9 @@ function draw(gl : WebGLRenderingContext ,now)
 
     rot += delta;
     x += delta;
+
+    colouredShader.colour.x = 0.5+(Math.sin(x)/2);
+
 
     square.transform.rotation.z = rot;
     square.transform.position.x = Math.sin(x*2)/2;
@@ -63,11 +68,13 @@ function main()
         -1,-1
     ],shader);
 
+    colouredShader = new FlatShader(gl , 1, 0.5, 0.25, 1);
+
     tri = new GeometryRenderable2D(gl, [
         1,1,
         -1,1,
         1,-1
-    ],shader);
+    ],colouredShader);
 
 
     square.transform.position.z = -6;

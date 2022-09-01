@@ -1,5 +1,5 @@
 import { mat4 } from "gl-matrix";
-import { createShaderProgram, fsSource, vsSource } from "./utilities";
+import { createShaderProgram, fsSource, vsSource } from "../utilities";
 
 export class Shader
 {
