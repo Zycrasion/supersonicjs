@@ -1,0 +1,22 @@
+{
+  "name": "flamejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx nodemon -e ts --exec 'tsc && npx browserify -e build/test.js -o ./build/build.js || exit 1'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/gl-matrix": "^3.2.0",
+    "@types/node": "^18.7.14",
+    "nodemon": "^2.0.19",
+    "typescript": "^4.8.2"
+  },
+  "dependencies": {
+    "browserify": "^17.0.0",
+    "gl-matrix": "^3.4.3"
+  }
+}
