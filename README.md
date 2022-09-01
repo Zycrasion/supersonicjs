@@ -11,4 +11,4 @@ TODO:
 - [x] Colour for polygons and geometry
 
 ## Changelog
-- Added FlatShader Usage `new FlatShader(gl, red, green, blue)` then use like any other shader, rgb values are able to be changed on demand
+- Added FlatShader Usage `new FlatShader(gl, red, green, blue, alpha)` then use like any other shader, rgb values are able to be changed on demand
