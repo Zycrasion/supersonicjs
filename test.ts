@@ -4,6 +4,7 @@ import { FlatShader } from "./src/Shaders/FlatShader";
 import { ImageShader } from "./src/Shaders/ImageShader";
 import { Shader } from "./src/Shaders/Shader";
 import * as utils from "./src/utilities"
+import { Vector } from "./src/Vector";
 let rot = 0;
 let then = 0;
 let x= 0;
@@ -12,6 +13,7 @@ let square : GeometryRenderable2D;
 let tri : GeometryRenderable2D;
 let colouredShader : FlatShader;
 let imageShader  : ImageShader;
+let scaleSlider : HTMLInputElement;
 
 function draw(gl : WebGLRenderingContext ,now)
 {
@@ -28,7 +30,8 @@ function draw(gl : WebGLRenderingContext ,now)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);    
     
 
-    let projectionMatrix = utils.ProjectionMatrix.orthographic(gl);
+    let projectionMatrix = utils.ProjectionMatrix.orthographic(gl,parseInt(scaleSlider.value,10));
+
 
     rot += delta;
     x += delta;
@@ -79,6 +82,12 @@ function main()
         1,-1
     ],colouredShader);
 
+    scaleSlider = document.createElement("input") as HTMLInputElement;
+    scaleSlider.type = "range";
+    scaleSlider.min = "1";
+    scaleSlider.max = "100";
+    scaleSlider.value = "1";
+    document.body.appendChild(scaleSlider);
 
     square.transform.position.z = -6;
     tri.transform.position.z = -6;

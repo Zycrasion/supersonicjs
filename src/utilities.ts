@@ -56,7 +56,7 @@ export class ProjectionMatrix
         return projectionMatrix;
     }
 
-    static orthographic(gl : WebGLRenderingContext) : mat4
+    static orthographic(gl : WebGLRenderingContext, scale : number = 1) : mat4
     {
         const distance = 4; // Scale ortho distance 
         const fov = 1;
@@ -64,9 +64,11 @@ export class ProjectionMatrix
         var width = gl.canvas.clientWidth;
         var height = gl.canvas.clientHeight;
         width /= height;
+        width *= scale;
+        height = scale;
         const projectionMatrix = mat4.create();
 
-        mat4.ortho(projectionMatrix, -width/2, width/2, -0.5, 0.5, 0.1, 100);
+        mat4.ortho(projectionMatrix, -width/2, width/2, -height/2, height/2, 0.1, 100);
         return projectionMatrix;
     }
 }
