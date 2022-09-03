@@ -1,4 +1,5 @@
 import * as glmat from "gl-matrix"
+import { InputAxis, InputManager } from "./src/InputManager/Input";
 import { GeometryRenderable2D } from "./src/Renderables";
 import { FlatShader } from "./src/Shaders/FlatShader";
 import { ImageShader } from "./src/Shaders/ImageShader";
@@ -14,6 +15,8 @@ let tri : GeometryRenderable2D;
 let colouredShader : FlatShader;
 let imageShader  : ImageShader;
 let scaleSlider : HTMLInputElement;
+var Input : InputManager;
+let wasd : InputAxis;
 
 function draw(gl : WebGLRenderingContext ,now)
 {
@@ -22,10 +25,7 @@ function draw(gl : WebGLRenderingContext ,now)
     let delta = now - then;
     then = now;
 
-    gl.clearColor(0,0,0,1);
-    gl.clearDepth(1);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
+
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);    
     
@@ -40,12 +40,11 @@ function draw(gl : WebGLRenderingContext ,now)
 
 
     // square.transform.rotation.z = rot;
-    // square.transform.position.x = Math.sin(x*2)/2;
+    square.transform.position.add(wasd.getAxis().div(10));
     square.transform.scale.set(0.5);
     square.draw(gl, projectionMatrix);
 
     tri.transform.rotation.z = -rot;
-    tri.transform.position.x = -square.transform.position.x;
     tri.transform.scale.set(-Math.abs(Math.sin(x)));
     tri.draw(gl, projectionMatrix);
 
@@ -63,6 +62,20 @@ function main()
     }
 
     console.log("SupersonicJS Ready")
+
+    gl.clearColor(0,0,1,1);
+    gl.clearDepth(1);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+
+    Input = new InputManager();
+    wasd = new InputAxis(
+        Input,
+        "d",
+        "a",
+        "w",
+        "s"
+    )
 
     let shader = new Shader(gl);
     imageShader = new ImageShader(gl, "../images/test32.png");

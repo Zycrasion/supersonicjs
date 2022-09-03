@@ -89,9 +89,9 @@ export class UV
 
         const square = [
             1,1,
-            -1,1,
-            1,-1,
-            -1,-1
+            0,1,
+            1,0,
+            0,0
         ]
         gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordinates);
         gl.bufferData(

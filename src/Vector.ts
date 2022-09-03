@@ -15,6 +15,36 @@ export class Vector
         this.z = c;
     }
 
+    div(o : number | Vector)
+    {
+        if (typeof o === "number")
+        {
+            this.x /= o;
+            this.y /= o;
+            this.z /= o;
+            return this;
+        }
+        this.x /= o.x;
+        this.y /= o.y;
+        this.z /= o.z;
+        return this;
+    }
+
+    add(o : number | Vector)
+    {
+        if (typeof o === "number")
+        {
+            this.x += o;
+            this.y += o;
+            this.z += o;
+            return this;
+        }
+        this.x += o.x;
+        this.y += o.y;
+        this.z += o.z;
+        return this;
+    }
+
     toFloat32Array() : Float32Array
     {
         return new Float32Array([this.x,this.y,this.z])
