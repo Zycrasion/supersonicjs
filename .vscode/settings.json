@@ -1,0 +1,10 @@
+{
+    "liveServer.settings.multiRootWorkspaceName": "supersonicjs",
+    "liveServer.settings.ignoreFiles": [
+        ".vscode/**",
+        "**/*.scss",
+        "**/*.sass",
+        "**/*.ts",
+        "tsBuild/**"
+    ]
+}

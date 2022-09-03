@@ -1,10 +1,30 @@
 import { mat4 } from "gl-matrix";
-import { createShaderProgram, fsSource, vsSource } from "../utilities";
+import { createShaderProgram } from "../utilities";
+
+export class ShaderDefaults
+{
+    static defaultFragment : string = `
+    void main() {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+    `
+
+    static defaultVertex : string = `
+    attribute vec4 aVertexPosition;
+
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+    void main() {
+    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+    }
+    `
+}
 
 export class Shader
 {
     ShaderProgram : WebGLProgram;
-    constructor(gl: WebGLRenderingContext, VertexSource = vsSource, FragmentSource = fsSource)
+    constructor(gl: WebGLRenderingContext, VertexSource = ShaderDefaults.defaultVertex, FragmentSource = ShaderDefaults.defaultFragment)
     {
         this.ShaderProgram = createShaderProgram(gl, VertexSource, FragmentSource)
     }
@@ -44,6 +64,14 @@ export class Shader
             false,
             matrix
         )
+    }
+
+    setShaderUniform_1i(gl : WebGLRenderingContext, uniformPositionName : string, x : number)
+    {
+        gl.uniform1i(
+            gl.getUniformLocation(this.ShaderProgram, uniformPositionName),
+            x
+        );
     }
 
 }

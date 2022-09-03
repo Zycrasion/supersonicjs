@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx nodemon -e ts --exec 'tsc && npx browserify -e build/test.js -o ./build/build.js || exit 1'"
+    "test": "echo 'USE DEV1 AND DEV2 IN SEPERATE TERMINAL SESSIONS' && exit 1",
+    "dev1": "npx nodemon -e js -w ./tsBuild/ -i ./build --exec 'npx browserify -e tsBuild/test.js -o ./build/build.js'",
+    "dev2": "tsc --watch"
   },
   "keywords": [],
   "author": "",

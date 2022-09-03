@@ -1,4 +1,4 @@
 build/*.js
 build/src
-
+tsBuild/**
 node_modules

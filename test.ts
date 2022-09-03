@@ -1,6 +1,7 @@
 import * as glmat from "gl-matrix"
 import { GeometryRenderable2D } from "./src/Renderables";
 import { FlatShader } from "./src/Shaders/FlatShader";
+import { ImageShader } from "./src/Shaders/ImageShader";
 import { Shader } from "./src/Shaders/Shader";
 import * as utils from "./src/utilities"
 let rot = 0;
@@ -10,6 +11,7 @@ let x= 0;
 let square : GeometryRenderable2D;
 let tri : GeometryRenderable2D;
 let colouredShader : FlatShader;
+let imageShader  : ImageShader;
 
 function draw(gl : WebGLRenderingContext ,now)
 {
@@ -26,7 +28,7 @@ function draw(gl : WebGLRenderingContext ,now)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);    
     
 
-    let projectionMatrix = utils.generateDefaultProjectionMatrix(gl);
+    let projectionMatrix = utils.ProjectionMatrix.orthographic(gl);
 
     rot += delta;
     x += delta;
@@ -34,9 +36,9 @@ function draw(gl : WebGLRenderingContext ,now)
     colouredShader.colour.x = 0.5+(Math.sin(x)/2);
 
 
-    square.transform.rotation.z = rot;
-    square.transform.position.x = Math.sin(x*2)/2;
-    square.transform.scale.set(Math.abs(Math.sin(x)));
+    // square.transform.rotation.z = rot;
+    // square.transform.position.x = Math.sin(x*2)/2;
+    square.transform.scale.set(0.5);
     square.draw(gl, projectionMatrix);
 
     tri.transform.rotation.z = -rot;
@@ -60,13 +62,14 @@ function main()
     console.log("SupersonicJS Ready")
 
     let shader = new Shader(gl);
+    imageShader = new ImageShader(gl, "../images/test32.png");
 
     square = new GeometryRenderable2D(gl, [
         1,1,
         -1,1,
         1,-1,
         -1,-1
-    ],shader);
+    ],imageShader);
 
     colouredShader = new FlatShader(gl , 1, 0.5, 0.25, 1);
 

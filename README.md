@@ -1,5 +1,5 @@
 # SupersonicJS
-Status: Beta v0.0.2
+Status: Beta v0.0.3
 
 This is going to be a Javascript Game Engine.
 
@@ -7,8 +7,9 @@ This is going to be a Javascript Game Engine.
 TODO:
 - [ ] Basic Keyboard Support
 - [x] Geometry Rendering With Position/Rotation/Scale
-- [ ] Textures
+- [x] Textures
 - [x] Colour for polygons and geometry
 
 ## Changelog
 - Added FlatShader Usage `new FlatShader(gl, red, green, blue)` then use like any other shader, rgb values are able to be changed on demand
+- Added ImageShader, Usage `new ImageShader(gl, imagePath, uvCoordinates?, filtering?)` use like any other shader

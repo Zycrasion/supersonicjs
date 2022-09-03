@@ -1,21 +1,5 @@
 import { mat4 } from "gl-matrix";
 
-export const vsSource = `
-attribute vec4 aVertexPosition;
-
-uniform mat4 uModelViewMatrix;
-uniform mat4 uProjectionMatrix;
-
-void main() {
-  gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-}
-`;
-
-export const fsSource = `
-void main() {
-  gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-}
-`;
 
 export function createShader(gl : WebGLRenderingContext, type : number, source : string)
 {
@@ -58,32 +42,62 @@ export function createShaderProgram(gl: WebGLRenderingContext, vsSource : string
     return program;
 }
 
-export function generateDefaultProjectionMatrix(gl : WebGLRenderingContext) : mat4
+export class ProjectionMatrix
 {
-    const fov = 45 * Math.PI / 180;
-    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    const zNear = 0.1;
-    const zFar = 100.0;
-    const projectionMatrix = mat4.create();
+    static perspectiveDefault(gl : WebGLRenderingContext) : mat4
+    {
+        const fov = 45 * Math.PI / 180;
+        const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+        const zNear = 0.1;
+        const zFar = 100.0;
+        const projectionMatrix = mat4.create();
+    
+        mat4.perspective(projectionMatrix, fov, aspect, zNear, zFar);
+        return projectionMatrix;
+    }
 
-    mat4.perspective(projectionMatrix, fov, aspect, zNear, zFar);
-    return projectionMatrix;
-}
+    static orthographic(gl : WebGLRenderingContext) : mat4
+    {
+        const distance = 4; // Scale ortho distance 
+        const fov = 1;
+        const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+        var width = gl.canvas.clientWidth;
+        var height = gl.canvas.clientHeight;
+        width /= height;
+        const projectionMatrix = mat4.create();
 
-export function initBuffers(gl : WebGLRenderingContext)
-{
-    const posBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-    let positions = [
-        1,1,
-        -1,1,
-        1,-1,
-        -1,-1,
-    ];
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-    return {
-        position : posBuffer
+        mat4.ortho(projectionMatrix, -width/2, width/2, -0.5, 0.5, 0.1, 100);
+        return projectionMatrix;
     }
 }
 
+export class Math2
+{
+    static isPowerOf2(val : number)
+    {
+        return val % 2 == 0;
+    }
+}
 
+export class UV
+{
+    static DefaultSquare(gl : WebGLRenderingContext)
+    {
+        const textureCoordinates = gl.createBuffer();
+
+        const square = [
+            1,1,
+            -1,1,
+            1,-1,
+            -1,-1
+        ]
+        gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordinates);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array(square),
+            gl.STATIC_DRAW
+        );
+
+        return textureCoordinates;
+    }
+}

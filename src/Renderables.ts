@@ -1,7 +1,7 @@
 import { mat4 } from "gl-matrix";
 import { Shader } from "./Shaders/Shader";
 import { Transform } from "./Transform";
-import { generateDefaultProjectionMatrix } from "./utilities";
+import { ProjectionMatrix } from "./utilities";
 
 export class RenderableAbstract
 {
@@ -27,7 +27,7 @@ export class GeometryRenderable2D extends RenderableAbstract
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
     }
 
-    draw(gl: WebGLRenderingContext, projectionMatrix = generateDefaultProjectionMatrix(gl)): void {
+    draw(gl: WebGLRenderingContext, projectionMatrix = ProjectionMatrix.orthographic(gl)): void {
 
         this.shader.use(gl);
 
