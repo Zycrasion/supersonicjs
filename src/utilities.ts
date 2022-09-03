@@ -75,9 +75,9 @@ export class ProjectionMatrix
 
 export class Math2
 {
-    static isPowerOf2(val : number)
+    static isPowerOf2(x : number)
     {
-        return val % 2 == 0;
+        return Math.log2(x) % 1 === 0;
     }
 }
 

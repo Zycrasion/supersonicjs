@@ -5,7 +5,8 @@ import { FlatShader } from "./src/Shaders/FlatShader";
 import { ImageShader } from "./src/Shaders/ImageShader";
 import { Shader } from "./src/Shaders/Shader";
 import * as utils from "./src/utilities"
-import { Vector } from "./src/Vector";
+import { Vector, Vector4 } from "./src/Vector";
+import { SupersonicJS } from "./src/supersonic"
 let rot = 0;
 let then = 0;
 let x= 0;
@@ -54,19 +55,7 @@ function draw(gl : WebGLRenderingContext ,now)
 function main()
 {
     const canvas : HTMLCanvasElement = document.getElementById("glCanvas") as HTMLCanvasElement;
-    const gl = canvas.getContext("webgl");
-    if (gl === null)
-    {
-        alert("WEBGL IS NOT AVAILABLE ON YOUR MACHINE!");
-        return;
-    }
-
-    console.log("SupersonicJS Ready")
-
-    gl.clearColor(0,0,1,1);
-    gl.clearDepth(1);
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
+    let gl = SupersonicJS.init("glCanvas", new Vector4(0,0,0,1));
 
     Input = new InputManager();
     wasd = new InputAxis(
@@ -80,7 +69,7 @@ function main()
     let shader = new Shader(gl);
     imageShader = new ImageShader(gl, "../images/test32.png");
 
-    square = new GeometryRenderable2D(gl, [
+    square = new SupersonicJS.GeometryRenderable2D(gl, [
         1,1,
         -1,1,
         1,-1,

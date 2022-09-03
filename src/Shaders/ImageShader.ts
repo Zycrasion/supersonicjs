@@ -79,7 +79,7 @@ export class ImageShader extends Shader
                 FILTERING
             )
 
-            if (Math2.isPowerOf2(image.width))
+            if (Math2.isPowerOf2(image.width) && Math2.isPowerOf2(image.height))
             {
                 gl.generateMipmap(gl.TEXTURE_2D);
             } else {

@@ -1,12 +1,14 @@
 {
   "name": "supersonicjs",
-  "version": "0.1,0",
+  "version": "0.1,1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo 'USE DEV1 AND DEV2 IN SEPERATE TERMINAL SESSIONS' && exit 1",
-    "dev1": "npx nodemon -e js -w ./tsBuild/ -i ./build --exec 'npx browserify -e tsBuild/test.js -o ./build/build.js'",
-    "dev2": "tsc --watch"
+    "browserify" : "npx browserify -e tsBuild/test.js -o ./build/build.js",
+    "dev1": "npx nodemon -e js -w ./tsBuild/ -i ./build --exec 'npm run browserify'",
+    "dev2": "tsc --watch",
+    "build": "tsc && npm run browserify"
   },
   "keywords": [],
   "author": "",
