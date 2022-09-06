@@ -33,6 +33,7 @@ function main()
         1,-1,
         -1,-1
     ],shader);
+    draw();
 }
 
 function draw()
