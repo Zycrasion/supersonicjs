@@ -76,13 +76,9 @@ TODO: (DONE)
 - [x] Textures
 - [x] Colour for polygons and geometry
 
-## Changelog (VERSOIN 0.1.3)
+## Changelog (VERSOIN 0.1.*)
 - ADDED Loading GLSL from files
-
-## Changelog (VERSION 0.1.2)
 - FIXED Filtering not working
-
-## Changelog (VERSION 0.1.1)
 - FIXED Images sometimes will not load because of isPowerOf2
 - Added SupersonicJS main file
 - Added `SupersonicJS.init()` and `.clear()`
