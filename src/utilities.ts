@@ -1,45 +1,9 @@
 import { mat4 } from "gl-matrix";
 
 
-export function createShader(gl : WebGLRenderingContext, type : number, source : string)
+export interface Dict<Type>
 {
-    const shader = gl.createShader(type);
-
-    gl.shaderSource(shader, source);
-
-    gl.compileShader(shader);
-
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
-    {
-        alert(`An error has occured while compiling a shader.
-        ${gl.getShaderInfoLog(shader)}`);
-        gl.deleteShader(shader);
-        return null;
-    }
-
-    return shader;
-}
-
-
-export function createShaderProgram(gl: WebGLRenderingContext, vsSource : string, fsSource : string)
-{
-    // vertex shader, fragment shader
-    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
-    const fragShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
-
-    const program = gl.createProgram()
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragShader);
-    gl.linkProgram(program);
-
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS))
-    {
-        alert(`An error has occured while linking shader program.
-        ${gl.getProgramInfoLog(program)}`);
-        return null;
-    }
-
-    return program;
+    [key : string] : Type
 }
 
 export class ProjectionMatrix

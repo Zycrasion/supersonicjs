@@ -1,11 +1,12 @@
 import * as utils from "./utilities";
 import {Vector, Vector4} from "./Vector";
 import {Transform} from './Transform';
-import {Shader, ShaderDefaults} from './Shaders/Shader'
+import {Shader, createShader, createShaderProgram} from './Shaders/Shader'
 import { FlatShader } from "./Shaders/FlatShader";
 import { ImageShader } from "./Shaders/ImageShader";
 import { InputAxis, InputManager } from "./InputManager/Input";
 import { RenderableAbstract, GeometryRenderable2D } from "./Renderables";
+import { HTTP_REQUEST } from "./Request/httpRequest";
 
 export class SupersonicJS
 {
@@ -13,11 +14,11 @@ export class SupersonicJS
     static Vector4 = Vector4;
     static utils = utils; 
     static Transform =Transform;
-    static Shaders = {Shader, ImageShader, FlatShader};
-    static ShaderDefaults = ShaderDefaults;
+    static Shaders = {Shader, ImageShader, FlatShader, createShader, createShaderProgram};
     static Input = {InputAxis, InputManager};
     static RenderableAbstract = RenderableAbstract;
     static GeometryRenderable2D = GeometryRenderable2D;
+    static HTTP = { HTTP_REQUEST }
     static init(canvasid : string, clearColour : Vector4) : WebGLRenderingContext
     {
         let gl = (document.getElementById(canvasid) as HTMLCanvasElement).getContext("webgl");

@@ -7,6 +7,7 @@ import { Shader } from "./src/Shaders/Shader";
 import * as utils from "./src/utilities"
 import { Vector, Vector4 } from "./src/Vector";
 import { SupersonicJS } from "./src/supersonic"
+import { HTTP_REQUEST } from "./src/Request/httpRequest";
 let rot = 0;
 let then = 0;
 let x= 0;
@@ -54,7 +55,6 @@ function draw(gl : WebGLRenderingContext ,now)
 
 function main()
 {
-    const canvas : HTMLCanvasElement = document.getElementById("glCanvas") as HTMLCanvasElement;
     let gl = SupersonicJS.init("glCanvas", new Vector4(0,0,0,1));
 
     Input = new InputManager();
@@ -66,8 +66,8 @@ function main()
         "s"
     )
 
-    let shader = new Shader(gl);
-    imageShader = new ImageShader(gl, "../images/test32.png");
+    imageShader = ImageShader.create(gl, "/images/test32.png");
+    
 
     square = new SupersonicJS.GeometryRenderable2D(gl, [
         1,1,
@@ -76,7 +76,8 @@ function main()
         -1,-1
     ],imageShader);
 
-    colouredShader = new FlatShader(gl , 1, 0.5, 0.25, 1);
+    colouredShader = FlatShader.create(gl);
+    colouredShader.colour = new Vector4(1,0.25,0.125,1);
 
     tri = new GeometryRenderable2D(gl, [
         1,1,

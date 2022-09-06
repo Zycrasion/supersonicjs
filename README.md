@@ -1,5 +1,5 @@
 # SupersonicJS
-Status: Beta v0.1.2
+Status: Beta v0.1.3
 
 For the forseeable future i will probably get to Version 0.2.0 then take a break making some games and come back and have a heap of features to implement.
 
@@ -63,7 +63,7 @@ main();
 
 ## Version 0.2.0 Roadmap
 TODO: 
-- [ ] loading GLSL from files
+- [x] loading GLSL from files
 - [ ] parenting
 - [ ] Camera Shake
 - [ ] Scenes
@@ -75,6 +75,9 @@ TODO: (DONE)
 - [x] Geometry Rendering With Position/Rotation/Scale
 - [x] Textures
 - [x] Colour for polygons and geometry
+
+## Changelog (VERSOIN 0.1.3)
+- ADDED Loading GLSL from files
 
 ## Changelog (VERSION 0.1.2)
 - FIXED Filtering not working

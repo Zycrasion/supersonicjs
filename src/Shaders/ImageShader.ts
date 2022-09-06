@@ -5,31 +5,11 @@ export class ImageShader extends Shader
 {
     texture : WebGLTexture;
     textureCoordinates : WebGLBuffer;
+    imageInitialised : boolean;
+
     constructor(gl : WebGLRenderingContext, imageSrc : string, uvcoordinates : WebGLBuffer = UV.DefaultSquare(gl), FILTERING : number = gl.NEAREST)
     {
-        super(gl,`
-            attribute vec4 aVertexPosition;
-            attribute vec2 aTextureCoord;
-        
-            uniform mat4 uModelViewMatrix;
-            uniform mat4 uProjectionMatrix;
-        
-            varying highp vec2 vTextureCoord;
-        
-            void main(void) {
-                gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-                vTextureCoord = aTextureCoord;
-            }
-        `,`
-            varying highp vec2 vTextureCoord;
-
-            uniform sampler2D uSampler;
-        
-            void main(void) {
-            gl_FragColor = texture2D(uSampler, vTextureCoord);
-            }
-        `);
-
+        super(gl);
         this.textureCoordinates = uvcoordinates;
 
         this.texture = gl.createTexture();
@@ -64,6 +44,7 @@ export class ImageShader extends Shader
         image.onload = (ev : Event) =>
         {
             gl.bindTexture(gl.TEXTURE_2D, this.texture);
+            gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
             gl.texImage2D(
                 gl.TEXTURE_2D,
                 level,
@@ -76,6 +57,12 @@ export class ImageShader extends Shader
             gl.texParameteri(
                 gl.TEXTURE_2D,
                 gl.TEXTURE_MIN_FILTER,
+                FILTERING
+            )
+
+            gl.texParameteri(
+                gl.TEXTURE_2D,
+                gl.TEXTURE_MAG_FILTER,
                 FILTERING
             )
 
@@ -100,9 +87,10 @@ export class ImageShader extends Shader
 
         // Start Loading Process
         image.src = imageSrc;
-    }   
-
+    } 
+    
     use(gl: WebGLRenderingContext): void {
+        if (!this.check()) {return;}
         gl.useProgram(this.ShaderProgram);
         this.enableVertexAttrib(
             gl,
@@ -110,9 +98,20 @@ export class ImageShader extends Shader
             "aTextureCoord"
         );
         gl.activeTexture(gl.TEXTURE0);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
         // 0 for gl.TEXTURE0
         this.setShaderUniform_1i(gl, "uSampler", 0);
+    }
+
+    static create(gl: WebGLRenderingContext, imageSrc : string = "", uvcoordinates : WebGLBuffer = UV.DefaultSquare(gl), FILTERING : number = gl.NEAREST): ImageShader 
+    {
+        if (imageSrc=="")
+        {
+            console.error("IMAGE SOURCE WAS NOT PASSED!");
+            return;
+        }
+        let shader = new ImageShader(gl, imageSrc, uvcoordinates, FILTERING);
+        shader.fromFiles(gl, "ImageShader");
+        return shader;
     }
 }

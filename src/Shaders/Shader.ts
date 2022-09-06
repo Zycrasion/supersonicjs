@@ -1,4 +1,6 @@
 import { mat4 } from "gl-matrix";
+import { type } from "os";
+import { HTTP_REQUEST } from "../Request/httpRequest";
 
 export function createShader(gl : WebGLRenderingContext, type : number, source : string)
 {
@@ -41,41 +43,47 @@ export function createShaderProgram(gl: WebGLRenderingContext, vsSource : string
     return program;
 }
 
-export class ShaderDefaults
-{
-    static defaultFragment : string = `
-    void main() {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    }
-    `
 
-    static defaultVertex : string = `
-    attribute vec4 aVertexPosition;
-
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-
-    void main() {
-    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    }
-    `
-}
 
 export class Shader
 {
     ShaderProgram : WebGLProgram;
-    constructor(gl: WebGLRenderingContext, VertexSource = ShaderDefaults.defaultVertex, FragmentSource = ShaderDefaults.defaultFragment)
+    static shaderpath = "/Shaders";
+
+    constructor(gl: WebGLRenderingContext, VertexSource : undefined | string = null, FragmentSource : undefined | string = null)
+    {
+        if (VertexSource == null || FragmentSource == null)
+        {
+           return;
+        } else {
+            this.createProgram(gl, VertexSource, FragmentSource);
+        }
+    }
+
+    createProgram(gl: WebGLRenderingContext, VertexSource : string, FragmentSource : string )
     {
         this.ShaderProgram = createShaderProgram(gl, VertexSource, FragmentSource)
     }
 
+    // Yes i know this can be shortened but i think it looks better like this
+    check()
+    {
+        if (this.ShaderProgram==undefined)
+        {
+            return false;
+        }
+        return true;
+    }
+
     use(gl : WebGLRenderingContext)
     {
+        if (!this.check()) {return;}
         gl.useProgram(this.ShaderProgram);
     }
 
     enableVertexAttrib(gl : WebGLRenderingContext, buffer : WebGLBuffer, vertexPositionName = "aVertexPosition")
     {
+        if (!this.check()) {return;}
         let size = 2;
         let type = gl.FLOAT;
         let normalize = false; // dont normalize (map values to 0-1)
@@ -99,6 +107,7 @@ export class Shader
 
     setShaderUniform_mat4fv(gl : WebGLRenderingContext, uniformPositionName : string, matrix : mat4)
     {
+        if (!this.check()) {return;}
         gl.uniformMatrix4fv(
             gl.getUniformLocation(this.ShaderProgram, uniformPositionName), // Uniform to set
             false,
@@ -108,10 +117,26 @@ export class Shader
 
     setShaderUniform_1i(gl : WebGLRenderingContext, uniformPositionName : string, x : number)
     {
+        if (!this.check()) {return;}
         gl.uniform1i(
             gl.getUniformLocation(this.ShaderProgram, uniformPositionName),
             x
         );
     }
 
+    protected async fromFiles(gl : WebGLRenderingContext,  folderName : string)
+    {
+        let vertexSource = await HTTP_REQUEST(`${Shader.shaderpath}/${folderName}/vertex.vert`);
+        let fragmentSource = await HTTP_REQUEST(`${Shader.shaderpath}/${folderName}/fragment.frag`);
+
+        this.createProgram(gl,vertexSource,fragmentSource);
+    }
+
+    // Preferred Method of Instatiating
+    static create(gl : WebGLRenderingContext) : Shader
+    {
+        let shader = new Shader(gl);
+        shader.fromFiles(gl,"Default")
+        return shader;
+    }
 }
