@@ -2,13 +2,14 @@
   "name": "supersonicjs",
   "version": "0.1.1",
   "description": "",
-  "main": "index.js",
+  "main": "tsBuild/supersonic.js",
   "scripts": {
     "test": "echo 'USE DEV1 AND DEV2 IN SEPERATE TERMINAL SESSIONS' && exit 1",
     "browserify" : "npx browserify -e tsBuild/test.js -o ./build/build.js",
     "dev1": "npx nodemon -e js -w ./tsBuild/ -i ./build --exec 'npm run browserify'",
     "dev2": "tsc --watch",
-    "build": "tsc && npm run browserify"
+    "build": "tsc && npm run browserify",
+    "install" : "tsc"
   },
   "keywords": [],
   "author": "",
@@ -23,5 +24,5 @@
   "dependencies": {
     "gl-matrix": "^3.4.3"
   },
-  "files": ["tsBuild/**"]
+  "files": ["src/**"]
 }
