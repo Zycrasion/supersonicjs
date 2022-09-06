@@ -29,7 +29,7 @@ function draw(gl : WebGLRenderingContext ,now)
 
 
 
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);    
+   SupersonicJS.clear(gl);
     
 
     let projectionMatrix = utils.ProjectionMatrix.orthographic(gl,parseInt(scaleSlider.value,10));

@@ -28,24 +28,22 @@ export class GeometryRenderable2D extends RenderableAbstract
     }
 
     draw(gl: WebGLRenderingContext, projectionMatrix = ProjectionMatrix.orthographic(gl)): void {
-
-        this.shader.use(gl);
-
-        let matrix = this.transform.generateMat4();
-        this.shader.use(gl)
-        this.shader.enableVertexAttrib(gl, this.verticesBuffer);
-        this.shader.setShaderUniform_mat4fv(
-            gl,
-            "uProjectionMatrix",
-            projectionMatrix
-        );
-        
-        this.shader.setShaderUniform_mat4fv(
-            gl,
-            "uModelViewMatrix",
-            matrix
-        );
-
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertexLength);
+        this.shader.use(gl, () => {
+            let matrix = this.transform.generateMat4();
+            this.shader.enableVertexAttrib(gl, this.verticesBuffer);
+            this.shader.setShaderUniform_mat4fv(
+                gl,
+                "uProjectionMatrix",
+                projectionMatrix
+            );
+            
+            this.shader.setShaderUniform_mat4fv(
+                gl,
+                "uModelViewMatrix",
+                matrix
+            );
+    
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertexLength);
+        });   
     }
 }

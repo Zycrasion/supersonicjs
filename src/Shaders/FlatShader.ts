@@ -11,10 +11,11 @@ export class FlatShader extends Shader
         this.colour = new Vector4(r,g,b,a);
     }
 
-    use(gl: WebGLRenderingContext): void {
+    use(gl: WebGLRenderingContext, callback : () => void): void {
         if (!this.check()) {return;}
         gl.useProgram(this.ShaderProgram);
-        gl.uniform4fv(gl.getUniformLocation(this.ShaderProgram, "uColour"), this.colour.toFloat32Array())
+        gl.uniform4fv(gl.getUniformLocation(this.ShaderProgram, "uColour"), this.colour.toFloat32Array());
+        callback();
     }
 
     static create(gl : WebGLRenderingContext) : FlatShader

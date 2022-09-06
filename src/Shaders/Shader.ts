@@ -75,10 +75,11 @@ export class Shader
         return true;
     }
 
-    use(gl : WebGLRenderingContext)
+    use(gl : WebGLRenderingContext, callback : () => void)
     {
         if (!this.check()) {return;}
         gl.useProgram(this.ShaderProgram);
+        callback();
     }
 
     enableVertexAttrib(gl : WebGLRenderingContext, buffer : WebGLBuffer, vertexPositionName = "aVertexPosition")

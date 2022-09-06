@@ -89,7 +89,7 @@ export class ImageShader extends Shader
         image.src = imageSrc;
     } 
     
-    use(gl: WebGLRenderingContext): void {
+    use(gl: WebGLRenderingContext, callback : () => void): void {
         if (!this.check()) {return;}
         gl.useProgram(this.ShaderProgram);
         this.enableVertexAttrib(
@@ -101,6 +101,7 @@ export class ImageShader extends Shader
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
         // 0 for gl.TEXTURE0
         this.setShaderUniform_1i(gl, "uSampler", 0);
+        callback();
     }
 
     static create(gl: WebGLRenderingContext, imageSrc : string = "", uvcoordinates : WebGLBuffer = UV.DefaultSquare(gl), FILTERING : number = gl.NEAREST): ImageShader 

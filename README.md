@@ -1,5 +1,5 @@
 # SupersonicJS
-Status: Beta v0.1.3
+Status: Beta v0.1.4
 
 For the forseeable future i will probably get to Version 0.2.0 then take a break making some games and come back and have a heap of features to implement.
 
@@ -77,6 +77,7 @@ TODO: (DONE)
 - [x] Colour for polygons and geometry
 
 ## Changelog (VERSOIN 0.1.*)
+- FIXED Warnings coming from WEBGL by only drawing if shader has loaded
 - ADDED Loading GLSL from files
 - FIXED Filtering not working
 - FIXED Images sometimes will not load because of isPowerOf2
