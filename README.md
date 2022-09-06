@@ -1,5 +1,5 @@
 # SupersonicJS
-Status: Beta v0.1.1
+Status: Beta v0.1.2
 
 For the forseeable future i will probably get to Version 0.2.0 then take a break making some games and come back and have a heap of features to implement.
 
@@ -75,6 +75,9 @@ TODO: (DONE)
 - [x] Geometry Rendering With Position/Rotation/Scale
 - [x] Textures
 - [x] Colour for polygons and geometry
+
+## Changelog (VERSION 0.1.2)
+- FIXED Filtering not working
 
 ## Changelog (VERSION 0.1.1)
 - FIXED Images sometimes will not load because of isPowerOf2
