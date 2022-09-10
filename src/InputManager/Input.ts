@@ -1,4 +1,4 @@
-import { Vector } from "../Vector";
+import { Vector } from "../Transform/Vector";
 
 type callbackType = "keydown" | "keyup" | "keypress";
 type keyCallback = (type : callbackType) => void;
@@ -87,27 +87,27 @@ export class InputManager
 
     getKey(keyName : string)
     {
-        if (this.listeners[keyName] == null)
+        if (this.listeners[keyName.toUpperCase()] == null)
         {
-            this.listeners[keyName] = new InputKey()
+            this.listeners[keyName.toUpperCase()] = new InputKey()
         }
-        return this.listeners[keyName];
+        return this.listeners[keyName.toUpperCase()];
     }
 
     addKeyListener(keyName : string, callback : keyCallback)
     {
-        if (this.listeners[keyName] == null)
+        if (this.listeners[keyName.toUpperCase()] == null)
         {
-            this.listeners[keyName] = new InputKey()
+            this.listeners[keyName.toUpperCase()] = new InputKey()
         }
-        this.listeners[keyName].addListener(callback);
+        this.listeners[keyName.toUpperCase()].addListener(callback);
     }
 
     private _KeyHandler(event : KeyboardEvent)
     {
-        if (this.listeners[event.key])
+        if (this.listeners[event.key.toUpperCase()])
         {
-            this.listeners[event.key].callback(event.type as callbackType)
+            this.listeners[event.key.toUpperCase()].callback(event.type as callbackType)
         }
     }
 }

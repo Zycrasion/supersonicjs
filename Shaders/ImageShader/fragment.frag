@@ -1,7 +1,11 @@
-varying highp vec2 vTextureCoord;
+#version 300 es
+precision highp float;
+
+in highp vec2 vTextureCoord;
 
 uniform sampler2D uSampler;
+out vec4 col;
 
 void main(void) {
-    gl_FragColor = texture2D(uSampler, vTextureCoord);
+    col = texture(uSampler, vTextureCoord);
 }

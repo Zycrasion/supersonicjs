@@ -2,7 +2,7 @@ import { mat4 } from "gl-matrix";
 import { type } from "os";
 import { HTTP_REQUEST } from "../Request/httpRequest";
 
-export function createShader(gl : WebGLRenderingContext, type : number, source : string)
+export function createShader(gl : WebGL2RenderingContext, type : number, source : string)
 {
     const shader = gl.createShader(type);
 
@@ -22,7 +22,7 @@ export function createShader(gl : WebGLRenderingContext, type : number, source :
 }
 
 
-export function createShaderProgram(gl: WebGLRenderingContext, vsSource : string, fsSource : string)
+export function createShaderProgram(gl: WebGL2RenderingContext, vsSource : string, fsSource : string)
 {
     // vertex shader, fragment shader
     const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
@@ -50,7 +50,7 @@ export class Shader
     ShaderProgram : WebGLProgram;
     static shaderpath = "/Shaders";
 
-    constructor(gl: WebGLRenderingContext, VertexSource : undefined | string = null, FragmentSource : undefined | string = null)
+    constructor(gl: WebGL2RenderingContext, VertexSource : undefined | string = null, FragmentSource : undefined | string = null)
     {
         if (VertexSource == null || FragmentSource == null)
         {
@@ -60,7 +60,7 @@ export class Shader
         }
     }
 
-    createProgram(gl: WebGLRenderingContext, VertexSource : string, FragmentSource : string )
+    createProgram(gl: WebGL2RenderingContext, VertexSource : string, FragmentSource : string )
     {
         this.ShaderProgram = createShaderProgram(gl, VertexSource, FragmentSource)
     }
@@ -75,14 +75,14 @@ export class Shader
         return true;
     }
 
-    use(gl : WebGLRenderingContext, callback : () => void)
+    use(gl : WebGL2RenderingContext, callback : () => void)
     {
         if (!this.check()) {return;}
         gl.useProgram(this.ShaderProgram);
         callback();
     }
 
-    enableVertexAttrib(gl : WebGLRenderingContext, buffer : WebGLBuffer, vertexPositionName = "aVertexPosition")
+    enableVertexAttrib(gl : WebGL2RenderingContext, buffer : WebGLBuffer, vertexPositionName = "aVertexPosition")
     {
         if (!this.check()) {return;}
         let size = 2;
@@ -106,7 +106,7 @@ export class Shader
         gl.enableVertexAttribArray(vertexPositionLoc);
     }
 
-    setShaderUniform_mat4fv(gl : WebGLRenderingContext, uniformPositionName : string, matrix : mat4)
+    setShaderUniform_mat4fv(gl : WebGL2RenderingContext, uniformPositionName : string, matrix : mat4)
     {
         if (!this.check()) {return;}
         gl.uniformMatrix4fv(
@@ -116,7 +116,7 @@ export class Shader
         )
     }
 
-    setShaderUniform_1i(gl : WebGLRenderingContext, uniformPositionName : string, x : number)
+    setShaderUniform_1i(gl : WebGL2RenderingContext, uniformPositionName : string, x : number)
     {
         if (!this.check()) {return;}
         gl.uniform1i(
@@ -125,7 +125,7 @@ export class Shader
         );
     }
 
-    protected async fromFiles(gl : WebGLRenderingContext,  folderName : string)
+    protected async fromFiles(gl : WebGL2RenderingContext,  folderName : string)
     {
         let vertexSource = await HTTP_REQUEST(`${Shader.shaderpath}/${folderName}/vertex.vert`);
         let fragmentSource = await HTTP_REQUEST(`${Shader.shaderpath}/${folderName}/fragment.frag`);
@@ -134,7 +134,7 @@ export class Shader
     }
 
     // Preferred Method of Instatiating
-    static create(gl : WebGLRenderingContext) : Shader
+    static create(gl : WebGL2RenderingContext) : Shader
     {
         let shader = new Shader(gl);
         shader.fromFiles(gl,"Default")

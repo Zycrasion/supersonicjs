@@ -45,9 +45,55 @@ export class Vector
         return this;
     }
 
+    mult(o : number | Vector)
+    {
+        if (typeof o === "number")
+        {
+            this.x *= o;
+            this.y *= o;
+            this.z *= o;
+            return this;
+        }
+        this.x *= o.x;
+        this.y *= o.y;
+        this.z *= o.z;
+        return this;
+    }
+
+    sub(o : number | Vector)
+    {
+        if (typeof o === "number")
+        {
+            this.x -= o;
+            this.y -= o;
+            this.z -= o;
+            return this;
+        }
+        this.x -= o.x;
+        this.y -= o.y;
+        this.z -= o.z;
+        return this;
+    }
+
+    copy() : Vector
+    {
+        return new Vector(this.x,this.y,this.z);
+    }
+
+    // Future Proofing
+    toFloatArray() : Float32Array
+    {
+        return this.toFloat32Array();
+    }
+
     toFloat32Array() : Float32Array
     {
         return new Float32Array([this.x,this.y,this.z])
+    }
+
+    toFloat64Array() : Float64Array
+    {
+        return new Float64Array([this.x,this.y,this.z])
     }
 
     toArray() : Array<number>

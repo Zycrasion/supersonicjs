@@ -7,7 +7,7 @@ export class ImageShader extends Shader
     textureCoordinates : WebGLBuffer;
     imageInitialised : boolean;
 
-    constructor(gl : WebGLRenderingContext, imageSrc : string, uvcoordinates : WebGLBuffer = UV.DefaultSquare(gl), FILTERING : number = gl.NEAREST)
+    constructor(gl : WebGL2RenderingContext, imageSrc : string, uvcoordinates : WebGLBuffer = UV.DefaultSquare(gl), FILTERING : number = gl.NEAREST)
     {
         super(gl);
         this.textureCoordinates = uvcoordinates;
@@ -89,7 +89,7 @@ export class ImageShader extends Shader
         image.src = imageSrc;
     } 
     
-    use(gl: WebGLRenderingContext, callback : () => void): void {
+    use(gl: WebGL2RenderingContext, callback : () => void): void {
         if (!this.check()) {return;}
         gl.useProgram(this.ShaderProgram);
         this.enableVertexAttrib(
@@ -104,7 +104,7 @@ export class ImageShader extends Shader
         callback();
     }
 
-    static create(gl: WebGLRenderingContext, imageSrc : string = "", uvcoordinates : WebGLBuffer = UV.DefaultSquare(gl), FILTERING : number = gl.NEAREST): ImageShader 
+    static create(gl: WebGL2RenderingContext, imageSrc : string = "", uvcoordinates : WebGLBuffer = UV.DefaultSquare(gl), FILTERING : number = gl.NEAREST): ImageShader 
     {
         if (imageSrc=="")
         {

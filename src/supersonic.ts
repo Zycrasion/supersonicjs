@@ -1,11 +1,11 @@
 import * as utils from "./utilities";
-import {Vector, Vector4} from "./Vector";
-import {Transform} from './Transform';
+import {Vector, Vector4} from "./Transform/Vector";
+import {Transform} from './Transform/Transform';
 import {Shader, createShader, createShaderProgram} from './Shaders/Shader'
 import { FlatShader } from "./Shaders/FlatShader";
 import { ImageShader } from "./Shaders/ImageShader";
 import { InputAxis, InputManager } from "./InputManager/Input";
-import { RenderableAbstract, GeometryRenderable2D } from "./Renderables";
+import { RenderableAbstract, GeometryRenderable2D } from "./Renderables/Renderables";
 import { HTTP_REQUEST } from "./Request/httpRequest";
 
 export class SupersonicJS
@@ -19,12 +19,12 @@ export class SupersonicJS
     static RenderableAbstract = RenderableAbstract;
     static GeometryRenderable2D = GeometryRenderable2D;
     static HTTP = { HTTP_REQUEST }
-    static init(canvasid : string, clearColour : Vector4) : WebGLRenderingContext
+    static init(canvasid : string, clearColour : Vector4) : WebGL2RenderingContext
     {
-        let gl = (document.getElementById(canvasid) as HTMLCanvasElement).getContext("webgl");
+        let gl = (document.getElementById(canvasid) as HTMLCanvasElement).getContext("webgl2");
         if (gl === null)
         {
-            alert("Your device does not support WebGL")
+            alert("Your device does not support WebGL2")
             return null;
         }
         gl.clearColor(clearColour.x,clearColour.y,clearColour.z,clearColour.w);
@@ -33,7 +33,7 @@ export class SupersonicJS
         gl.depthFunc(gl.LEQUAL);
         return gl;
     }
-    static clear(gl : WebGLRenderingContext)
+    static clear(gl : WebGL2RenderingContext)
     {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);    
     }

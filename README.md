@@ -1,5 +1,5 @@
 # SupersonicJS
-Status: Beta v0.1.4
+Status: Beta v0.2.0
 
 For the forseeable future i will probably get to Version 0.2.0 then take a break making some games and come back and have a heap of features to implement.
 
@@ -46,28 +46,11 @@ function draw()
 main();
 ```
 
-
-
-## Version 0.5.0 Roadmap
-- [ ] Networking Extension
-
-## Version 0.4.0 Roadmap
-- [ ] Basic Editor For scenes
-- [ ] Adding Objects
-- [ ] Changing Objects Colour / Image
-- [ ] Exporting to .supersonic scenes
-- [ ] importing .supersonic scenes
-
-## Version 0.3.0 Roadmap
-- [ ] Importing 3D Objects from files. (.obj)
-
 ## Version 0.2.0 Roadmap
 TODO: 
 - [x] loading GLSL from files
-- [ ] parenting
-- [ ] Camera Shake
-- [ ] Scenes
-- [ ] Collisions
+- [x] parenting
+- [x] Scenes
 
 ## Version 0.1.0
 TODO: (DONE)
@@ -76,7 +59,25 @@ TODO: (DONE)
 - [x] Textures
 - [x] Colour for polygons and geometry
 
-## Changelog (VERSOIN 0.1.*)
+
+## Changelog
+- ADDED Scenes
+- ADDED Parenting
+- ADDED Enities
+- ADDED Components
+- ADDED Vector.add
+- ADDED Vector.sub
+- ADDED Vector.mult
+- ADDED ToFloatArray
+- ADDED ToFloat64Array
+- CHANGED WebGL Version to WebGL2
+- CHANGED Shaders
+- CHANGED File locations
+- ADDED SquareMesh preset
+- FIXED README.md typo 'VERSOIN' to 'VERSION' 
+- REMOVED ROADMAPS
+
+## Changelog (VERSION 0.1.*)
 - FIXED Warnings coming from WEBGL by only drawing if shader has loaded
 - ADDED Loading GLSL from files
 - FIXED Filtering not working
