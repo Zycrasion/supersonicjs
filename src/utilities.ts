@@ -17,6 +17,7 @@ export class ProjectionMatrix
         const projectionMatrix = mat4.create();
     
         mat4.perspective(projectionMatrix, fov, aspect, zNear, zFar);
+        mat4.translate(projectionMatrix, projectionMatrix, [0,0,-5]);
         return projectionMatrix;
     }
 
@@ -33,6 +34,7 @@ export class ProjectionMatrix
         const projectionMatrix = mat4.create();
 
         mat4.ortho(projectionMatrix, -width/2, width/2, -height/2, height/2, 0.1, 100);
+        mat4.translate(projectionMatrix, projectionMatrix, [0,0,-5]);
         return projectionMatrix;
     }
 }
