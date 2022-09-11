@@ -49,8 +49,8 @@ function draw(gl: WebGL2RenderingContext, now) {
 	
 	light.transform.position.set(0,0,0);
 	light.transform.scale.set(0.5)
-	light.transform.position.y = Math.sin(framecount)*3
-	light.transform.position.x = Math.cos(framecount)*3
+	light.transform.position.z = 5
+	light.transform.position.x = Math.cos(0)*3
 	light.draw_tick(gl,() => {
 		light.shader.setShaderUniform_4fv(gl,"uColour",lightCol)
 	})

@@ -10,9 +10,9 @@ uniform mat4 uProjectionMatrix;
 void main()
 {
     FragPos = vec3(uModelViewMatrix * vec4(aVertexPosition, 1.0));
-    Normal = aNormal;  
+    Normal = mat3(transpose(inverse(uModelViewMatrix))) * aNormal;  
     
-    gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition,1.0f);
+    gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(FragPos,1.0f);
 
     // gl_Position = uModelViewMatrix * uProjectionMatrix * vec4(aVertexPosition, 1.0);
 }
