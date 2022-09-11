@@ -77,15 +77,29 @@ export class GeometryRenderable3D extends RenderableAbstract
     normalBuffer : WebGLBuffer;
     normalLength : number;
 
-    e : WebGLBuffer;
-    eL : number;
+    textureBuffer : WebGLBuffer;
 
     vao : WebGLVertexArrayObject;
 
     projectionMatrix : mat4;
     static Name = "GeometryRenderable3D";
 
-    constructor(gl : WebGL2RenderingContext, vertices : number[], elements : number[], normals : Vector[], normalsIndexed : number[], shader : Shader, projectionMatrix : mat4 = ProjectionMatrix.orthographic(gl))
+
+    enableVertexAttrib(gl : WebGL2RenderingContext ,loc : number, size = 3, type = gl.FLOAT, normalize = false, stride = 0, offset = 0)
+    {
+        gl.vertexAttribPointer(
+            loc,
+            size,
+            type,
+            normalize,
+            stride,
+            offset
+        );
+
+        gl.enableVertexAttribArray(loc);
+    }
+
+    constructor(gl : WebGL2RenderingContext, vertices : number[], elements : number[], normals : Vector[], textures : Vector[], shader : Shader, projectionMatrix : mat4 = ProjectionMatrix.orthographic(gl))
     {
         super(shader, GeometryRenderable3D.Name);
 
@@ -105,27 +119,8 @@ export class GeometryRenderable3D extends RenderableAbstract
         this.elementsBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.elementsBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.elements), gl.STATIC_DRAW);
-
-        { // Scope because we dont need any of the variables outside of this
-            let size = 3;
-            let type = gl.FLOAT;
-            let normalize = false; // dont normalize (map values to 0-1)
-            let stride = 0; // 0 use size and type above
-            let offset = 0; 
-            
-            let vertexPositionLoc = 0
-    
-            gl.vertexAttribPointer(
-                vertexPositionLoc,
-                size,
-                type,
-                normalize,
-                stride,
-                offset
-            );
-
-            gl.enableVertexAttribArray(vertexPositionLoc);
-        }
+        
+        this.enableVertexAttrib(gl, 0);
 
         let normalsUnpacked = [];
         normals.forEach(vector => {
@@ -136,29 +131,18 @@ export class GeometryRenderable3D extends RenderableAbstract
         gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalsUnpacked), gl.STATIC_DRAW);
 
+        this.enableVertexAttrib(gl, 1);
 
-        { // Scope because we dont need any of the variables outside of this
-            let size = 3;
-            let type = gl.FLOAT;
-            let normalize = false; // dont normalize (map values to 0-1)
-            let stride = 0; // 0 use size and type above
-            let offset = 0; 
-            
-            let normalLoc = 1
-            gl.enableVertexAttribArray(normalLoc);
-    
-            gl.vertexAttribPointer(
-                normalLoc,
-                size,
-                type,
-                normalize,
-                stride,
-                offset
-            );
+        let texturesUnpacked = [];
+        textures.forEach(vector => {
+            texturesUnpacked.push(vector.x,vector.y,vector.z);
+        })
 
-        }
+        this.textureBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texturesUnpacked), gl.STATIC_DRAW);
 
-
+        this.enableVertexAttrib(gl, 2)
 
         this.projectionMatrix = projectionMatrix;
     }

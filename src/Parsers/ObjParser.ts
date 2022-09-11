@@ -7,19 +7,22 @@ interface ObjParserResults
     indices : number[];
     normals : Vector[];
     normalIndices : number[];
+    textures : Vector[];
 }
 
 export class ObjParser
 {
     static parse(text : string) : ObjParserResults
     {
-        let results : ObjParserResults = {vertices:[],indices:[],normals:[],normalIndices:[]};
+        let results : ObjParserResults = {vertices:[],indices:[],normals:[],normalIndices:[],textures:[]};
         let lines = text.split("\n");
 
         let vertices : Vector[];
         let normals : Vector[];
+        let textures : Vector[];
         vertices = [];
         normals = [];
+        textures = [];
 
         for (let line of lines)
         {
@@ -42,6 +45,7 @@ export class ObjParser
                     break;
                 
                 case "vt":
+                    textures.push(ObjParser.parseVector(characters))
                     break;
                 
                 // f [index]/[texIndex]/[normalIndex]
@@ -63,11 +67,13 @@ export class ObjParser
                         results.indices.push(
                             results.vertices.push(vertices[vertexIndex])-1
                         )
-                        results.normals.push(normals[normalIndex])
+                        results.normals.push(normals[normalIndex]);
+                        results.textures.push(textures[textureIndex]);
                     }
                     break;
             }
         }
+        console.log(results)
         return results;
     }
 

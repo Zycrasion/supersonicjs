@@ -121,7 +121,7 @@ function draw(gl: WebGL2RenderingContext, now) {
 	for (let i=0;i<transforms.length;i++)
 	{
 		cube.transform = transforms[i];
-		cube.transform.rotation.add(Math.random()*0.1);
+		cube.transform.rotation.add(Math.sin(framecount)/10);
 		
 		cube.draw_tick(gl)
 	}
@@ -129,6 +129,10 @@ function draw(gl: WebGL2RenderingContext, now) {
 	
 	requestAnimationFrame(draw.bind(this, gl));
 }
+
+
+
+
 
 function main() {
 	let gl = SupersonicJS.init("glCanvas", new Vector4(0.1, 0.1, 0.1, 1));
@@ -178,7 +182,7 @@ function main() {
 			vertices,
 			results.indices,
 			results.normals,
-			results.normalIndices,
+			results.textures,
 			CubeShader,
 			utils.ProjectionMatrix.perspectiveDefault(gl)
  
@@ -189,7 +193,7 @@ function main() {
 			vertices,
 			results.indices,
 			results.normals,
-			results.normalIndices,
+			results.textures,
 			FlatShader3D.create(gl),
 			utils.ProjectionMatrix.perspectiveDefault(gl)
 		)
