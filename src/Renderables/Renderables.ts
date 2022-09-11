@@ -126,17 +126,17 @@ export class GeometryRenderable3D extends RenderableAbstract
 
             gl.enableVertexAttribArray(vertexPositionLoc);
         }
-        let fin = [];
-        for (let index of normalsIndexed)
-        {
-            let normal = normals[index];
-            fin.push(normal.x,normal.y,normal.z);
-        }
+
+        let normalsUnpacked = [];
+        normals.forEach(vector => {
+            normalsUnpacked.push(vector.x,vector.y,vector.z);
+        })
+        
         this.normalBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(fin), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normalsUnpacked), gl.STATIC_DRAW);
 
-        
+
         { // Scope because we dont need any of the variables outside of this
             let size = 3;
             let type = gl.FLOAT;

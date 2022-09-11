@@ -23,7 +23,8 @@ let lightCol = new Vector4(1,0.5,1,1);
 
 let cube : GeometryRenderable3D;
 let light : GeometryRenderable3D;
-let ent = new Entity()
+let ent = new Entity();
+let CubeShader : Shaded3D;
 
 let framecount = 0;
 
@@ -39,6 +40,7 @@ function draw(gl: WebGL2RenderingContext, now) {
 	let proj = utils.ProjectionMatrix.perspectiveDefault(gl);
 	let transform = new Transform();
 	transform.rotation.y = framecount;
+	transform.rotation.z = framecount*2;
 	glmat.mat4.multiply(proj,proj,transform.generateMat4());
 
 	cube.projectionMatrix = proj
@@ -57,14 +59,10 @@ function draw(gl: WebGL2RenderingContext, now) {
 	cube.transform.position.set(0,0,0)
 	// cube.transform.rotation.set(Math.cos(framecount*2))
 	// Very hacky i know
-	cube.draw_tick(gl, () => {
-		cube.shader.setShaderUniform_3fv(gl,"uLightPos", light.transform.position)
-		cube.shader.setShaderUniform_3fv(gl,"uColour",new Vector(cubeCol.x,cubeCol.y,cubeCol.z))
-		cube.shader.setShaderUniform_3fv(gl,"uLight", new Vector(lightCol.x,lightCol.y,lightCol.z));
-		let model = glmat.mat4.create();
-		
-		cube.shader.setShaderUniform_mat4fv(gl, "uModel", model)
-	})
+	CubeShader.LightPosition = light.transform.position;
+	CubeShader.Colour = cubeCol.toVector3();
+	CubeShader.LightColour = lightCol.toVector3();
+	cube.draw_tick(gl)
 	
 	requestAnimationFrame(draw.bind(this, gl));
 }
@@ -76,6 +74,7 @@ function main() {
 	HTTP_REQUEST("/Models/example.obj").then(text => {
 		let results = ObjParser.parse(text)
 		let vertices : number[] = [];
+		console.log(results.normals)
 		results.vertices.forEach(v=>{
 			vertices.push(v.x,v.y,v.z);
 		})
@@ -85,8 +84,8 @@ function main() {
 			normals.push(v.x,v.y,v.z);
 		})
 
-		let FlatCol = Shaded3D.create(gl);
-		FlatCol.colour = new Vector4(0.25,0.5,1,1)
+		CubeShader = Shaded3D.create(gl);
+		CubeShader.Colour = new Vector4(0.25,0.5,1,1)
 
 		cube = new GeometryRenderable3D(
 			gl,
@@ -94,7 +93,7 @@ function main() {
 			results.indices,
 			results.normals,
 			results.normalIndices,
-			FlatCol,
+			CubeShader,
 			utils.ProjectionMatrix.perspectiveDefault(gl)
  
 		);

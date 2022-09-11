@@ -15,6 +15,12 @@ export class ObjParser
     {
         let results : ObjParserResults = {vertices:[],indices:[],normals:[],normalIndices:[]};
         let lines = text.split("\n");
+
+        let vertices : Vector[];
+        let normals : Vector[];
+        vertices = [];
+        normals = [];
+
         for (let line of lines)
         {
             // Line starts as
@@ -28,11 +34,11 @@ export class ObjParser
             {
                 case "v":
                     // v 0.89765 1 12312342 [1]
-                    results.vertices.push(ObjParser.parseVector(characters));
+                    vertices.push(ObjParser.parseVector(characters));
                     break;
 
                 case "vn":
-                    results.normals.push(ObjParser.parseVector(characters));
+                    normals.push(ObjParser.parseVector(characters));
                     break;
                 
                 case "vt":
@@ -48,14 +54,17 @@ export class ObjParser
                     )
                     for (let i = 0; i < faceSplit.length; i++) {
                         const face = faceSplit[i];
-                        let index = parseFloat(face[0])-1;
+                        let vertexIndex = parseFloat(face[0])-1;
                         let textureIndex = parseFloat(face[1])-1;
                         let normalIndex = parseFloat(face[2])-1;
 
-                        results.normalIndices.push(normalIndex);
-                        results.indices.push(index);
+                        // results.normalIndices.push(normalIndex);
+                        // results.indices.push(vertexIndex);
+                        results.indices.push(
+                            results.vertices.push(vertices[vertexIndex])-1
+                        )
+                        results.normals.push(normals[normalIndex])
                     }
-                    results.indices.push()
                     break;
             }
         }

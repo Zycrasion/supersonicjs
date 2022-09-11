@@ -119,4 +119,8 @@ export class Vector4 extends Vector
         return [this.x,this.y,this.z,this.w]
     }
 
+    toVector3() : Vector {
+        return new Vector(this.x,this.y,this.z);
+    }
+
 }
