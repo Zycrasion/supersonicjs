@@ -32,6 +32,8 @@ export class Shaded3D extends Shader
     Colour : Vector;
     LightColour : Vector;
     LightPosition : Vector;
+    viewPos : Vector;
+
     constructor(gl : WebGL2RenderingContext, r : number, g : number , b : number, a : number)
     {
         super(gl);
@@ -46,6 +48,7 @@ export class Shaded3D extends Shader
         this.setShaderUniform_3fv(gl, "uColour", this.Colour);
         this.setShaderUniform_3fv(gl, "uLight", this.LightColour);
         this.setShaderUniform_3fv(gl, "uLightPos", this.LightPosition);
+        this.setShaderUniform_3fv(gl, "uCameraPosition", this.viewPos);
         callback();
     }
 

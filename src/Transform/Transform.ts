@@ -54,11 +54,6 @@ export class Transform
     generateMat4() : mat4
     {
         let matrix = mat4.create();
-        mat4.translate(
-            matrix,
-            matrix,
-            this.position.toFloatArray()
-        );
         let axis = this.rotation.toArray();
         for (let i=0;i<3;i++)
         {
@@ -71,6 +66,12 @@ export class Transform
                 new Float32Array(currAxis)
             )
         }
+        
+        mat4.translate(
+            matrix,
+            matrix,
+            this.position.toFloatArray()
+        );
 
         mat4.scale(
             matrix,

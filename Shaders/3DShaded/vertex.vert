@@ -6,13 +6,17 @@ out vec3 FragPos;
 out vec3 Normal;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
+uniform mat4 CameraMatrix;
 
 void main()
 {
+
+    mat4 mvp = uProjectionMatrix  *  CameraMatrix ;
+
     FragPos = vec3(uModelViewMatrix * vec4(aVertexPosition, 1.0));
     Normal = mat3(transpose(inverse(uModelViewMatrix))) * aNormal;  
     
-    gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(FragPos,1.0f);
+    gl_Position =  mvp * vec4(FragPos,1.0f);
 
     // gl_Position = uModelViewMatrix * uProjectionMatrix * vec4(aVertexPosition, 1.0);
 }

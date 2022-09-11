@@ -13,11 +13,11 @@ export class ProjectionMatrix
         const fov = 45 * Math.PI / 180;
         const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
         const zNear = 0.1;
-        const zFar = 100.0;
+        const zFar = 1000.0;
         const projectionMatrix = mat4.create();
     
         mat4.perspective(projectionMatrix, fov, aspect, zNear, zFar);
-        mat4.translate(projectionMatrix, projectionMatrix, [0,0,-5]);
+        mat4.translate(projectionMatrix, projectionMatrix, [0,0, 0]);
         return projectionMatrix;
     }
 
@@ -34,7 +34,7 @@ export class ProjectionMatrix
         const projectionMatrix = mat4.create();
 
         mat4.ortho(projectionMatrix, -width/2, width/2, -height/2, height/2, 0.1, 100);
-        mat4.translate(projectionMatrix, projectionMatrix, [0,0,-5]);
+        mat4.translate(projectionMatrix, projectionMatrix, [0,0,0]);
         return projectionMatrix;
     }
 }
