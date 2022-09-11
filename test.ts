@@ -39,9 +39,9 @@ function draw(gl: WebGL2RenderingContext, now) {
 	
 	let proj = utils.ProjectionMatrix.perspectiveDefault(gl);
 	let transform = new Transform();
-	transform.rotation.y = framecount;
-	transform.rotation.z = framecount*2;
-	glmat.mat4.multiply(proj,proj,transform.generateMat4());
+	// transform.rotation.y = framecount;
+	// transform.rotation.z = framecount*2;
+	// glmat.mat4.multiply(proj,proj,transform.generateMat4());
 
 	cube.projectionMatrix = proj
 
@@ -57,7 +57,7 @@ function draw(gl: WebGL2RenderingContext, now) {
 
 
 	cube.transform.position.set(0,0,0)
-	// cube.transform.rotation.set(Math.cos(framecount*2))
+	cube.transform.rotation.set(Math.cos(framecount*2),0,0)
 	// Very hacky i know
 	CubeShader.LightPosition = light.transform.position;
 	CubeShader.Colour = cubeCol.toVector3();
