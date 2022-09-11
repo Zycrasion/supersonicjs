@@ -3,6 +3,7 @@ import { Component } from "../EntityComponentSystem/Component";
 import { Entity } from "../EntityComponentSystem/Entity";
 import { Shader } from "../Shaders/Shader";
 import { Transform } from "../Transform/Transform";
+import { Vector } from "../Transform/Vector";
 import { ProjectionMatrix } from "../utilities";
 
 export class RenderableAbstract extends Component
@@ -72,12 +73,19 @@ export class GeometryRenderable3D extends RenderableAbstract
     elementsBuffer : WebGLBuffer;
     elementLength : number;
 
+    normals : number[];
+    normalBuffer : WebGLBuffer;
+    normalLength : number;
+
+    e : WebGLBuffer;
+    eL : number;
+
     vao : WebGLVertexArrayObject;
 
     projectionMatrix : mat4;
     static Name = "GeometryRenderable3D";
 
-    constructor(gl : WebGL2RenderingContext, vertices : number[], elements : number[], shader : Shader, projectionMatrix : mat4 = ProjectionMatrix.orthographic(gl))
+    constructor(gl : WebGL2RenderingContext, vertices : number[], elements : number[], normals : Vector[], normalsIndexed : number[], shader : Shader, projectionMatrix : mat4 = ProjectionMatrix.orthographic(gl))
     {
         super(shader, GeometryRenderable3D.Name);
 
@@ -102,7 +110,7 @@ export class GeometryRenderable3D extends RenderableAbstract
             let size = 3;
             let type = gl.FLOAT;
             let normalize = false; // dont normalize (map values to 0-1)
-            let stride = 4*3; // 0 use size and type above
+            let stride = 0; // 0 use size and type above
             let offset = 0; 
             
             let vertexPositionLoc = 0
@@ -118,12 +126,44 @@ export class GeometryRenderable3D extends RenderableAbstract
 
             gl.enableVertexAttribArray(vertexPositionLoc);
         }
+        let fin = [];
+        for (let index of normalsIndexed)
+        {
+            let normal = normals[index];
+            fin.push(normal.x,normal.y,normal.z);
+        }
+        this.normalBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(fin), gl.STATIC_DRAW);
+
+        
+        { // Scope because we dont need any of the variables outside of this
+            let size = 3;
+            let type = gl.FLOAT;
+            let normalize = false; // dont normalize (map values to 0-1)
+            let stride = 0; // 0 use size and type above
+            let offset = 0; 
+            
+            let normalLoc = 1
+            gl.enableVertexAttribArray(normalLoc);
+    
+            gl.vertexAttribPointer(
+                normalLoc,
+                size,
+                type,
+                normalize,
+                stride,
+                offset
+            );
+
+        }
+
 
 
         this.projectionMatrix = projectionMatrix;
     }
 
-    draw_tick(gl: WebGL2RenderingContext): void 
+    draw_tick(gl: WebGL2RenderingContext, shaderParamCallback = () => {}): void 
     {
         this.shader.use(gl, () => {
             let matrix : mat4;
@@ -136,6 +176,7 @@ export class GeometryRenderable3D extends RenderableAbstract
 
             gl.bindVertexArray(this.vao);
 
+
             this.shader.setShaderUniform_mat4fv(
                 gl,
                 "uProjectionMatrix",
@@ -147,8 +188,9 @@ export class GeometryRenderable3D extends RenderableAbstract
                 "uModelViewMatrix",
                 matrix
             );
-
             
+            shaderParamCallback();
+
             gl.drawElements(gl.TRIANGLES , this.elementLength, gl.UNSIGNED_SHORT, 0);
         });   
     }

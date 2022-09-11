@@ -5,13 +5,15 @@ interface ObjParserResults
 {
     vertices : Vector[];
     indices : number[];
+    normals : Vector[];
+    normalIndices : number[];
 }
 
 export class ObjParser
 {
     static parse(text : string) : ObjParserResults
     {
-        let results : ObjParserResults = {vertices:[],indices:[]};
+        let results : ObjParserResults = {vertices:[],indices:[],normals:[],normalIndices:[]};
         let lines = text.split("\n");
         for (let line of lines)
         {
@@ -26,21 +28,11 @@ export class ObjParser
             {
                 case "v":
                     // v 0.89765 1 12312342 [1]
-                    let vert = new Vector();
-
-                    let _ = ParserUtilities.ToNextNumber(characters);
-                    vert.x = _.num;
-
-                    _ = ParserUtilities.ToNextNumber(characters,_.index);
-                    vert.y = _.num;
-
-                    _ = ParserUtilities.ToNextNumber(characters, _.index);
-                    vert.z = _.num;
-
-                    results.vertices.push(vert);
+                    results.vertices.push(ObjParser.parseVector(characters));
                     break;
 
                 case "vn":
+                    results.normals.push(ObjParser.parseVector(characters));
                     break;
                 
                 case "vt":
@@ -57,16 +49,30 @@ export class ObjParser
                     for (let i = 0; i < faceSplit.length; i++) {
                         const face = faceSplit[i];
                         let index = parseFloat(face[0])-1;
-                        let textureIndex = parseFloat(face[1]);
-                        let normalIndex = parseFloat(face[2]);
+                        let textureIndex = parseFloat(face[1])-1;
+                        let normalIndex = parseFloat(face[2])-1;
 
+                        results.normalIndices.push(normalIndex);
                         results.indices.push(index);
                     }
                     results.indices.push()
                     break;
             }
         }
-
         return results;
+    }
+
+    static parseVector(characters : string[]) : Vector
+    {
+        let vert = new Vector();
+        let _ = ParserUtilities.ToNextNumber(characters);
+        vert.x = _.num;
+
+        _ = ParserUtilities.ToNextNumber(characters,_.index);
+        vert.y = _.num;
+
+        _ = ParserUtilities.ToNextNumber(characters, _.index);
+        vert.z = _.num;
+        return vert;
     }
 }

@@ -1,6 +1,8 @@
 import { mat4 } from "gl-matrix";
 import { type } from "os";
 import { HTTP_REQUEST } from "../Request/httpRequest";
+import { Vector, Vector4 } from "../Transform/Vector";
+import { Dict } from "../utilities";
 
 export function createShader(gl : WebGL2RenderingContext, type : number, source : string)
 {
@@ -48,6 +50,8 @@ export function createShaderProgram(gl: WebGL2RenderingContext, vsSource : strin
 export class Shader
 {
     ShaderProgram : WebGLProgram;
+
+
     static shaderpath = "/Shaders";
 
     constructor(gl: WebGL2RenderingContext, VertexSource : undefined | string = null, FragmentSource : undefined | string = null)
@@ -124,6 +128,25 @@ export class Shader
             x
         );
     }
+
+    setShaderUniform_4fv(gl : WebGL2RenderingContext, uniformPositionName : string, x : Vector4)
+    {
+        if (!this.check()) {return;}
+        gl.uniform4fv(
+            gl.getUniformLocation(this.ShaderProgram, uniformPositionName),
+            x.toFloat32Array()
+        );
+    }
+
+    setShaderUniform_3fv(gl : WebGL2RenderingContext, uniformPositionName : string, x : Vector)
+    {
+        if (!this.check()) {return;}
+        gl.uniform3fv(
+            gl.getUniformLocation(this.ShaderProgram, uniformPositionName),
+            x.toFloat32Array()
+        );
+    }
+
 
     protected async fromFiles(gl : WebGL2RenderingContext,  folderName : string)
     {
