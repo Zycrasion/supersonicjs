@@ -29,12 +29,33 @@ let CubeShader : Shaded3D;
 let CameraTransform : Transform;
 let inputman : InputManager;
 let wasd : InputAxis;
-let framecount = 0;
 let mouseX : number = 0;
 let mouseY : number = 0;
 let startX = mouseX, startY = mouseY;
 let down = false;
 let transforms : Transform[];
+
+let avgFps = 0;
+let framerateCalcs = 0;
+let framecount = 0;
+let lastFrameCount = 0;
+let lastDate = Date.now();
+function calculateFramerate()
+{
+	let difference = framecount-lastFrameCount;
+	let fps = difference/(Date.now()-lastDate)*100000;
+
+	avgFps += fps;
+	framerateCalcs += 1;
+	console.log(fps,avgFps/framerateCalcs);
+
+	lastDate = Date.now();
+	lastFrameCount = framecount;
+}
+
+setInterval(calculateFramerate,1000)
+
+
 console.log("just a reminder that if nothing is drawing it is because you forgot to put it infront of the camera.")
 
 document.onmousemove = handleMouseMove;
@@ -140,7 +161,7 @@ function main() {
 	scene = new Scene();
 	transforms = [];
 	let scale = 10;
-	for (let i=0;i<100;i++)
+	for (let i=0;i<1000;i++)
 	{
 		let t = new Transform();
 		t.position.set((Math.random()*scale*2)-scale,(Math.random()*scale*2)-scale,(Math.random()*scale*2)-scale);
