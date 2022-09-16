@@ -1,6 +1,15 @@
 export class Vector
 {
     x : number; y : number; z : number;
+
+    static ZERO = new Vector();
+    static UP = new Vector(0,1,0);
+    static DOWN = new Vector(0,-1,0);
+    static FOWARD = new Vector(0,0,1);
+    static BACKWARD = new Vector(0,0,-1);
+    static RIGHT = new Vector(1,0,0);
+    static LEFT = new Vector(-1,0,0);
+
     constructor(x = 0, y = 0, z = 0)
     {
         this.x = x;

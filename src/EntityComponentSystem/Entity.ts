@@ -30,6 +30,11 @@ export class Entity
         }
     }
 
+    getTransformation()
+    {
+        return this.transform.generateMat4();
+    }
+
     addComponent(component : Component, gl : WebGL2RenderingContext)
     {
         component.attach(this);
