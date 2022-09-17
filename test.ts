@@ -37,7 +37,7 @@ let lastDate = Date.now();
 function calculateFramerate()
 {
 	let difference = framecount-lastFrameCount;
-	let fps = difference/(Date.now()-lastDate)*100000;
+	let fps = difference/(Date.now()-lastDate)*1000;
 
 	avgFps += fps;
 	framerateCalcs += 1;
@@ -52,16 +52,13 @@ setInterval(calculateFramerate,1000)
 let camera = new Camera();
 camera.hook_FreeLook();
 console.log("just a reminder that if nothing is drawing it is because you forgot to put it infront of the camera.")
+camera.setFov(90)
 
 
-function draw(gl: WebGL2RenderingContext, now) {
+function draw(gl: WebGL2RenderingContext) {
 	SupersonicJS.clear(gl);
-	framecount += 0.01;
-
-	camera.freecam(wasd)
-
-	let proj = camera.generateProjection(gl);
-
+	framecount += 1;
+	camera.freecam(wasd);
 
 	
 
@@ -95,7 +92,18 @@ function draw(gl: WebGL2RenderingContext, now) {
 
 
 
+
 function main() {
+
+
+	// tests
+	let a = new Vector(1,1,1);
+	console.log(a.getMagnitude())
+	a.normalize();
+	console.log(a);
+	console.log(a.getMagnitude())
+
+
 	let gl = SupersonicJS.init("glCanvas", new Vector4(0.1, 0.1, 0.1, 1));
 	scene = new Scene();
 	transforms = [];

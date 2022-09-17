@@ -14,6 +14,7 @@ export class Camera extends Entity
     projection : ProjectionType; fov : number;
     near = 0.1;
     far = 100;
+    speed = 0.1;
 
     static Name = "Camera";
 
@@ -98,7 +99,7 @@ export class Camera extends Entity
     freecam(axis : InputAxis)
     {   
         let mat = this.getTransformation();
-        let lookAtVector = new Vector(mat[2],mat[6],mat[10]);
+        let lookAtVector = new Vector(mat[2],mat[6],mat[10]).normalize();
         if (this.mouseDown==true)
         {
             this.transform.rotation.y += (this.mouseStartX-this.mouseX)/500;
@@ -106,7 +107,10 @@ export class Camera extends Entity
             this.transform.rotation.x += (this.mouseStartY-this.mouseY)/500;
             this.mouseStartY = this.mouseY;
         }
-        this.transform.position.add(lookAtVector.mult(axis.getAxis().y));
+        let input = axis.getAxis();
+        let movement = lookAtVector.copy();
+        movement.mult(input.y * this.speed);
+        this.transform.position.add(movement);
     }
 
 }

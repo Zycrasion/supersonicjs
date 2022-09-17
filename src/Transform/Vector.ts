@@ -84,6 +84,18 @@ export class Vector
         return this;
     }
 
+    normalize()
+    {
+        let mag = this.getMagnitude();
+        this.div(mag);
+        return this;
+    }
+
+    getMagnitude()
+    {
+        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    }
+
     compare(o : Vector)
     {
         return o.x == this.x && o.y == this.y && o.z == this.z;
