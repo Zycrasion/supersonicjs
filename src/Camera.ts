@@ -38,9 +38,10 @@ export class Camera extends Entity
         let proj = mat4.create();
         if (this.projection == ProjectionType.ORTHOGRAPHIC)
         {
+            let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
             mat4.ortho(proj,
-                -gl.canvas.clientWidth / 2, gl.canvas.clientWidth / 2,
-                -gl.canvas.clientHeight / 2, gl.canvas.clientHeight / 2,
+                -aspect / 2, aspect / 2,
+                -1 / 2, 1 / 2,
                 this.near, this.far);
         } else
         {

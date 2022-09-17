@@ -1,9 +1,7 @@
 import { mat4 } from "gl-matrix";
-import { type } from "os";
 import { Loader } from "../Loader/Loader";
 import { HTTP_REQUEST } from "../Request/httpRequest";
 import { Vector, Vector4 } from "../Transform/Vector";
-import { Dict } from "../utilities";
 
 export function createShader(gl: WebGL2RenderingContext, type: number, source: string)
 {

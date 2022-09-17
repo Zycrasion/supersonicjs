@@ -15,6 +15,7 @@ export class Loader extends Scene
 {
     // [key] = [url]
     loadElements: Dict<string>;
+    loadFunctions : Array<() => Promise<void>>;
     loaded: Dict<string>;
     percentage = 0;
     loading = true;
@@ -24,6 +25,7 @@ export class Loader extends Scene
     constructor()
     {
         super();
+        this.loadFunctions = [];
         this.loadElements = {}
         this.loaded = {};
         this.MainCamera = new Camera(ProjectionType.ORTHOGRAPHIC);
@@ -32,6 +34,11 @@ export class Loader extends Scene
     addLoadItem(url, id)
     {
         this.loadElements[id] = url;
+    }
+
+    addLoadFunction(func : () => Promise<void>)
+    {
+        this.loadFunctions.push(func);
     }
 
     async beginLoad(gl : WebGL2RenderingContext , callback : () => void)
@@ -44,9 +51,16 @@ export class Loader extends Scene
             let text = await HTTP_REQUEST(url);
             this.loaded[id] = text;
             i++;
-            this.percentage = i/Object.values(this.loadElements).length
+            this.percentage = i/(Object.values(this.loadElements).length + this.loadFunctions.length)
             console.log(`Loaded ID ${id} ${Math.trunc(this.percentage*100)}% `)
         } 
+        for (let func of this.loadFunctions)
+        {
+            await func();
+            i++;
+            this.percentage = i/(Object.values(this.loadElements).length + this.loadFunctions.length)
+            console.log(`Loaded Func ${Math.trunc(this.percentage*100)}%`);
+        }
         setTimeout(()=>
         {
             this.loading = false;       
