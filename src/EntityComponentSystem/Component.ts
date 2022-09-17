@@ -9,7 +9,7 @@ export class Component
     constructor(name: string) { this.name = name; }
     attach(parent: Entity) { this.parent_ptr = parent; }
     start(gl: WebGL2RenderingContext) { }
-    draw_tick(gl: WebGLRenderingContext, Camera: Camera) { }
+    draw_tick(gl: WebGL2RenderingContext, Camera: Camera) { }
     phys_tick() { }
     end(gl: WebGL2RenderingContext) { }
 }

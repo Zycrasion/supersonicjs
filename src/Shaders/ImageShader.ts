@@ -83,7 +83,7 @@ export class ImageShader extends Shader
                     gl.CLAMP_TO_EDGE
                 )
             }
-
+            console.log("img")
         }
 
         // Start Loading Process

@@ -5,7 +5,9 @@ in vec4 aVertexPosition;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
+uniform mat4 uViewMatrix;
 
 void main() {
-    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+    mat4 mvp = uProjectionMatrix * uModelViewMatrix * uViewMatrix;
+    gl_Position =  mvp * aVertexPosition;
 }

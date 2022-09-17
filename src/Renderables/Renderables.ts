@@ -45,10 +45,9 @@ export class GeometryRenderable2D extends RenderableAbstract
     vertices: number[];
     verticesBuffer: WebGLBuffer;
     vertexLength: number;
-    projectionMatrix: mat4;
     static Name = "GeometryRenderable2D";
 
-    constructor(gl: WebGL2RenderingContext, vertices: number[], shader: Shader, projectionMatrix: mat4 = ProjectionMatrix.orthographic(gl))
+    constructor(gl: WebGL2RenderingContext, vertices: number[], shader: Shader)
     {
         super(shader, GeometryRenderable2D.Name);
         this.vertices = vertices;
@@ -56,10 +55,9 @@ export class GeometryRenderable2D extends RenderableAbstract
         this.verticesBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
-        this.projectionMatrix = projectionMatrix;
     }
 
-    draw_tick(gl: WebGL2RenderingContext): void
+    draw_tick(gl: WebGL2RenderingContext, Camera: Camera): void
     {
         this.shader.use(gl, () =>
         {
@@ -75,7 +73,7 @@ export class GeometryRenderable2D extends RenderableAbstract
             this.shader.setShaderUniform_mat4fv(
                 gl,
                 "uProjectionMatrix",
-                this.projectionMatrix
+                Camera.generateProjection(gl)
             );
 
             this.shader.setShaderUniform_mat4fv(
@@ -84,9 +82,16 @@ export class GeometryRenderable2D extends RenderableAbstract
                 matrix
             );
 
+            this.shader.setShaderUniform_mat4fv(
+                gl,
+                "uViewMatrix",
+                Camera.getTransformation()
+            )
+
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertexLength);
         });
     }
+
 }
 
 export class GeometryRenderable3D extends RenderableAbstract
