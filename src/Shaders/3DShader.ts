@@ -1,3 +1,4 @@
+import { Loader } from "../Loader/Loader";
 import { HTTP_REQUEST } from "../Request/httpRequest";
 import { Vector, Vector4 } from "../Transform/Vector";
 import { Shader } from "./Shader";
@@ -17,6 +18,16 @@ export class FlatShader3D extends Shader
         gl.useProgram(this.ShaderProgram);
         gl.uniform4fv(gl.getUniformLocation(this.ShaderProgram, "uColour"), this.colour.toFloat32Array());
         callback();
+    }
+
+    static registerLoad(loader: Loader): void
+    {
+        this.registerLoadItems(loader, "3DFlat");
+    }
+
+    fromLoad(gl: WebGL2RenderingContext, loader: Loader): void
+    {
+        this.fromLoadItems(gl, loader, "3DFlat")
     }
 
     static create(gl: WebGL2RenderingContext): FlatShader3D
@@ -52,6 +63,16 @@ export class Shaded3D extends Shader
         this.setShaderUniform_3fv(gl, "uLightPos", this.LightPosition);
         this.setShaderUniform_3fv(gl, "uCameraPosition", this.viewPos);
         callback();
+    }
+
+    static registerLoad(loader: Loader): void
+    {
+        this.registerLoadItems(loader, "3DShaded");
+    }
+
+    fromLoad(gl: WebGL2RenderingContext, loader: Loader): void
+    {
+        this.fromLoadItems(gl, loader, "3DShaded")
     }
 
     static create(gl: WebGL2RenderingContext): Shaded3D

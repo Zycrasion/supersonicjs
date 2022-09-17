@@ -45,6 +45,42 @@ export class Math2
     }
 }
 
+export class PointerLock
+{
+    static locked = false;
+    private static element : HTMLCanvasElement;
+
+    private static mousedown()
+    {
+        PointerLock.element.requestPointerLock();
+        if (!PointerLock.locked)
+        {
+            document.removeEventListener("mousedown", PointerLock.mousedown)
+        }
+    }
+
+    static Lock(canvas : string | HTMLCanvasElement)
+    {
+        let canvasElement : HTMLCanvasElement;
+        if (typeof canvas == "string")
+        {
+            canvasElement = document.getElementById(canvas) as HTMLCanvasElement;
+        } else {
+            canvasElement = canvas;
+        }
+        canvasElement.requestPointerLock();
+        document.addEventListener("mousedown", PointerLock.mousedown);
+        PointerLock.locked = true;
+        PointerLock.element = canvasElement;
+    }
+
+    static Unlock()
+    {
+        document.removeEventListener("mousedown", PointerLock.mousedown);
+        PointerLock.locked = false;
+    }
+}
+
 export class UV
 {
     static DefaultSquare(gl: WebGLRenderingContext)

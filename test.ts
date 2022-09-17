@@ -94,10 +94,11 @@ function draw(gl: WebGL2RenderingContext)
 
 
 
+let loader = new Loader();
 
 function main()
 {
-	camera.hook_FreeLook();
+	camera.hook_freelook();
 
 
 	// tests
@@ -107,6 +108,7 @@ function main()
 	console.log(a);
 	console.log(a.getMagnitude())
 
+	utils.PointerLock.Lock("glCanvas");
 
 	scene = new Scene();
 	transforms = [];
@@ -139,7 +141,8 @@ function main()
 			normals.push(v.x, v.y, v.z);
 		})
 
-		CubeShader = Shaded3D.create(gl);
+		CubeShader = new Shaded3D(gl, 1,1,1,1);
+		CubeShader.fromLoad(gl, loader);
 		CubeShader.Colour = new Vector4(1, 1, 1, 1)
 
 		cube = new GeometryRenderable3D(
@@ -191,11 +194,9 @@ inputman.addKeyListener("e", () =>
 })
 
 
-let loader = new Loader();
-loader.addLoadItem("/Models/monkey.obj","Monkey");
-loader.addLoadItem("/Shaders/3DFlat/vertex.vert","3DFlatV");
+Shaded3D.registerLoad(loader);
+FlatShader3D.registerLoad(loader);
 loader.beginLoad(gl, ()=>{
 	main();
-	// de-alloc the mem
-	loader = null;
+
 });

@@ -1,5 +1,6 @@
 import { mat4 } from "gl-matrix";
 import { type } from "os";
+import { Loader } from "../Loader/Loader";
 import { HTTP_REQUEST } from "../Request/httpRequest";
 import { Vector, Vector4 } from "../Transform/Vector";
 import { Dict } from "../utilities";
@@ -155,6 +156,27 @@ export class Shader
         let fragmentSource = await HTTP_REQUEST(`${Shader.shaderpath}/${folderName}/fragment.frag`);
 
         this.createProgram(gl, vertexSource, fragmentSource);
+    }
+
+    protected fromLoadItems(gl: WebGL2RenderingContext, loader: Loader, id: string)
+    {
+        this.createProgram(gl, loader.loaded[id + "v"], loader.loaded[id + "f"]);
+    }
+
+    protected static registerLoadItems(loader: Loader, id: string)
+    {
+        loader.addLoadItem(`${Shader.shaderpath}/${id}/vertex.vert`, id + "v");
+        loader.addLoadItem(`${Shader.shaderpath}/${id}/fragment.frag`, id + "f");
+    }
+
+    static registerLoad(loader: Loader)
+    {
+        Shader.registerLoadItems(loader, "Default");
+    }
+
+    fromLoad(gl: WebGL2RenderingContext, loader: Loader)
+    {
+        this.fromLoadItems(gl, loader, "Default")
     }
 
     // Preferred Method of Instatiating
