@@ -3,18 +3,18 @@ import { Shader } from "./Shader";
 
 export class ImageShader extends Shader
 {
-    texture : WebGLTexture;
-    textureCoordinates : WebGLBuffer;
-    imageInitialised : boolean;
+    texture: WebGLTexture;
+    textureCoordinates: WebGLBuffer;
+    imageInitialised: boolean;
 
-    constructor(gl : WebGL2RenderingContext, imageSrc : string, uvcoordinates : WebGLBuffer = UV.DefaultSquare(gl), FILTERING : number = gl.NEAREST)
+    constructor(gl: WebGL2RenderingContext, imageSrc: string, uvcoordinates: WebGLBuffer = UV.DefaultSquare(gl), FILTERING: number = gl.NEAREST)
     {
         super(gl);
         this.textureCoordinates = uvcoordinates;
 
         this.texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
-        
+
 
         // Put a single pixel in the image so we can use it before the image has been downloaded over the internet
         const level = 0;
@@ -25,7 +25,7 @@ export class ImageShader extends Shader
         const srcFormat = gl.RGBA;
         const srcType = gl.UNSIGNED_BYTE;
         const pixel = new Uint8Array([
-            255,0,125,255 // Opaque Pink
+            255, 0, 125, 255 // Opaque Pink
         ]);
         gl.texImage2D(
             gl.TEXTURE_2D,
@@ -41,7 +41,7 @@ export class ImageShader extends Shader
 
         // Load the image
         const image = new Image();
-        image.onload = (ev : Event) =>
+        image.onload = (ev: Event) =>
         {
             gl.bindTexture(gl.TEXTURE_2D, this.texture);
             gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -69,7 +69,8 @@ export class ImageShader extends Shader
             if (Math2.isPowerOf2(image.width) && Math2.isPowerOf2(image.height))
             {
                 gl.generateMipmap(gl.TEXTURE_2D);
-            } else {
+            } else
+            {
                 gl.texParameteri(
                     gl.TEXTURE_2D,
                     gl.TEXTURE_WRAP_S,
@@ -87,10 +88,11 @@ export class ImageShader extends Shader
 
         // Start Loading Process
         image.src = imageSrc;
-    } 
-    
-    use(gl: WebGL2RenderingContext, callback : () => void): void {
-        if (!this.check()) {return;}
+    }
+
+    use(gl: WebGL2RenderingContext, callback: () => void): void
+    {
+        if (!this.check()) { return; }
         gl.useProgram(this.ShaderProgram);
         this.enableVertexAttrib(
             gl,
@@ -104,9 +106,9 @@ export class ImageShader extends Shader
         callback();
     }
 
-    static create(gl: WebGL2RenderingContext, imageSrc : string = "", uvcoordinates : WebGLBuffer = UV.DefaultSquare(gl), FILTERING : number = gl.NEAREST): ImageShader 
+    static create(gl: WebGL2RenderingContext, imageSrc: string = "", uvcoordinates: WebGLBuffer = UV.DefaultSquare(gl), FILTERING: number = gl.NEAREST): ImageShader 
     {
-        if (imageSrc=="")
+        if (imageSrc == "")
         {
             console.error("IMAGE SOURCE WAS NOT PASSED!");
             return;

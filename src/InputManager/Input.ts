@@ -1,29 +1,29 @@
 import { Vector } from "../Transform/Vector";
 
 type callbackType = "keydown" | "keyup" | "keypress";
-type keyCallback = (type : callbackType) => void;
+type keyCallback = (type: callbackType) => void;
 
 interface keyCallbackMap
 {
-    [key : string] : InputKey;
+    [key: string]: InputKey;
 }
 
 class InputKey
 {
-    listeners : Array<keyCallback>;
-    isPressed : boolean;
+    listeners: Array<keyCallback>;
+    isPressed: boolean;
 
     constructor()
     {
         this.listeners = [];
     }
 
-    addListener(callback : keyCallback)
+    addListener(callback: keyCallback)
     {
         this.listeners.push(callback);
     }
 
-    callback(type : callbackType)
+    callback(type: callbackType)
     {
         if (type == "keydown")
         {
@@ -32,7 +32,8 @@ class InputKey
         {
             this.isPressed = false;
         }
-        this.listeners.forEach(v => {
+        this.listeners.forEach(v =>
+        {
             v(type);
         })
     }
@@ -41,18 +42,18 @@ class InputKey
 
 export class InputAxis
 {
-    negativeX : string; // KeyNames
-    positiveX : string; // KeyNames
-    negativeY : string;
-    positiveY : string;
-    manager : InputManager;
+    negativeX: string; // KeyNames
+    positiveX: string; // KeyNames
+    negativeY: string;
+    positiveY: string;
+    manager: InputManager;
 
-    constructor(manager : InputManager, pX : string, nX : string, pY : string  = "", nY : string = "")
+    constructor(manager: InputManager, pX: string, nX: string, pY: string = "", nY: string = "")
     {
         this.manager = manager;
         this.positiveX = pX;
         this.negativeX = nX;
-        
+
         this.positiveY = pY;
         this.negativeY = nY;
     }
@@ -75,7 +76,7 @@ export class InputAxis
 export class InputManager
 {
 
-    listeners : keyCallbackMap;
+    listeners: keyCallbackMap;
 
     constructor()
     {
@@ -85,7 +86,7 @@ export class InputManager
         window.addEventListener("keypress", this._KeyHandler.bind(this));
     }
 
-    getKey(keyName : string)
+    getKey(keyName: string)
     {
         if (this.listeners[keyName.toUpperCase()] == null)
         {
@@ -94,7 +95,7 @@ export class InputManager
         return this.listeners[keyName.toUpperCase()];
     }
 
-    addKeyListener(keyName : string, callback : keyCallback)
+    addKeyListener(keyName: string, callback: keyCallback)
     {
         if (this.listeners[keyName.toUpperCase()] == null)
         {
@@ -103,7 +104,7 @@ export class InputManager
         this.listeners[keyName.toUpperCase()].addListener(callback);
     }
 
-    private _KeyHandler(event : KeyboardEvent)
+    private _KeyHandler(event: KeyboardEvent)
     {
         if (this.listeners[event.key.toUpperCase()])
         {

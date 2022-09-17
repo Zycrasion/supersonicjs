@@ -3,9 +3,9 @@ import { Entity } from "./Entity";
 
 export class Scene
 {
-    Entities : Array<Entity>;
-    physicsIterations : number;
-    MainCamera : Camera;
+    Entities: Array<Entity>;
+    physicsIterations: number;
+    MainCamera: Camera;
 
     constructor()
     {
@@ -17,7 +17,7 @@ export class Scene
 
     }
 
-    draw(gl : WebGL2RenderingContext)
+    draw(gl: WebGL2RenderingContext)
     {
         // TODO: No Physics Engine
         // for (let entPhys of this.Entities)
@@ -27,7 +27,7 @@ export class Scene
         //         entPhys.phys_tick();
         //     }
         // }
-        if (this.MainCamera==null)
+        if (this.MainCamera == null)
         {
             return;
         }
@@ -37,27 +37,29 @@ export class Scene
         }
     }
 
-    setMainCamera(cam : Camera)
+    setMainCamera(cam: Camera)
     {
         this.MainCamera = cam;
     }
 
-    addEntity(entity : Entity)
+    addEntity(entity: Entity)
     {
         this.Entities.push(entity);
     }
 
-    removeEntity(entity : string | Entity)
+    removeEntity(entity: string | Entity)
     {
-        let name : string;
+        let name: string;
         if (typeof entity === "string")
         {
             name = entity;
-        } else {
+        } else
+        {
             name = entity.name;
         }
-        this.Entities.filter(ent => {
-            return ent.name!=name;
+        this.Entities.filter(ent =>
+        {
+            return ent.name != name;
         })
     }
 }

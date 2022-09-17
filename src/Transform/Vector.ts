@@ -1,14 +1,14 @@
 export class Vector
 {
-    x : number; y : number; z : number;
+    x: number; y: number; z: number;
 
     static ZERO = new Vector();
-    static UP = new Vector(0,1,0);
-    static DOWN = new Vector(0,-1,0);
-    static FOWARD = new Vector(0,0,1);
-    static BACKWARD = new Vector(0,0,-1);
-    static RIGHT = new Vector(1,0,0);
-    static LEFT = new Vector(-1,0,0);
+    static UP = new Vector(0, 1, 0);
+    static DOWN = new Vector(0, -1, 0);
+    static FOWARD = new Vector(0, 0, 1);
+    static BACKWARD = new Vector(0, 0, -1);
+    static RIGHT = new Vector(1, 0, 0);
+    static LEFT = new Vector(-1, 0, 0);
 
     constructor(x = 0, y = 0, z = 0)
     {
@@ -17,14 +17,14 @@ export class Vector
         this.z = z;
     }
 
-    set(a : number , b = a, c = a)
+    set(a: number, b = a, c = a)
     {
         this.x = a;
         this.y = b;
         this.z = c;
     }
 
-    div(o : number | Vector)
+    div(o: number | Vector)
     {
         if (typeof o === "number")
         {
@@ -39,7 +39,7 @@ export class Vector
         return this;
     }
 
-    add(o : number | Vector)
+    add(o: number | Vector)
     {
         if (typeof o === "number")
         {
@@ -54,7 +54,7 @@ export class Vector
         return this;
     }
 
-    mult(o : number | Vector)
+    mult(o: number | Vector)
     {
         if (typeof o === "number")
         {
@@ -69,7 +69,7 @@ export class Vector
         return this;
     }
 
-    sub(o : number | Vector)
+    sub(o: number | Vector)
     {
         if (typeof o === "number")
         {
@@ -96,63 +96,66 @@ export class Vector
         return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
     }
 
-    compare(o : Vector)
+    compare(o: Vector)
     {
         return o.x == this.x && o.y == this.y && o.z == this.z;
     }
 
-    copy() : Vector
+    copy(): Vector
     {
-        return new Vector(this.x,this.y,this.z);
+        return new Vector(this.x, this.y, this.z);
     }
 
     // Future Proofing
-    toFloatArray() : Float32Array
+    toFloatArray(): Float32Array
     {
         return this.toFloat32Array();
     }
 
-    toFloat32Array() : Float32Array
+    toFloat32Array(): Float32Array
     {
-        return new Float32Array([this.x,this.y,this.z])
+        return new Float32Array([this.x, this.y, this.z])
     }
 
-    toFloat64Array() : Float64Array
+    toFloat64Array(): Float64Array
     {
-        return new Float64Array([this.x,this.y,this.z])
+        return new Float64Array([this.x, this.y, this.z])
     }
 
-    toArray() : Array<number>
+    toArray(): Array<number>
     {
-        return [this.x,this.y,this.z]
+        return [this.x, this.y, this.z]
     }
 
-    static unpackVertices(array : Array<Vector>) : Array<number>
+    static unpackVertices(array: Array<Vector>): Array<number>
     {
-        let unpacked = array.flatMap(v => [v.x,v.y,v.z]);
+        let unpacked = array.flatMap(v => [v.x, v.y, v.z]);
         return unpacked;
     }
 }
 
 export class Vector4 extends Vector
 {
-    w : number;
-    constructor(x = 0, y = 0 , z = 0 , w = 0)
+    w: number;
+    constructor(x = 0, y = 0, z = 0, w = 0)
     {
-        super(x,y,z);
+        super(x, y, z);
         this.w = w;
     }
 
-    toFloat32Array(): Float32Array {
+    toFloat32Array(): Float32Array
+    {
         return new Float32Array([this.x, this.y, this.z, this.w])
     }
 
-    toArray(): number[] {
-        return [this.x,this.y,this.z,this.w]
+    toArray(): number[]
+    {
+        return [this.x, this.y, this.z, this.w]
     }
 
-    toVector3() : Vector {
-        return new Vector(this.x,this.y,this.z);
+    toVector3(): Vector
+    {
+        return new Vector(this.x, this.y, this.z);
     }
 
 }

@@ -1,4 +1,4 @@
-export function SquareMesh() : Array<number>
+export function SquareMesh(): Array<number>
 {
-    return 	[1, 1, -1, 1, 1, -1, -1, -1];
+    return [1, 1, -1, 1, 1, -1, -1, -1];
 }

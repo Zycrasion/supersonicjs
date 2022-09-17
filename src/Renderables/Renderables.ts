@@ -9,14 +9,15 @@ import { ProjectionMatrix } from "../utilities";
 
 export class RenderableAbstract extends Component
 {
-    transform : Transform;
-    shader : Shader;
-    constructor(shader : Shader, name? : string) {super(name); this.parent_ptr = null; this.transform = new Transform(); this.shader = shader};
-    attach(parent: Entity): void {
+    transform: Transform;
+    shader: Shader;
+    constructor(shader: Shader, name?: string) { super(name); this.parent_ptr = null; this.transform = new Transform(); this.shader = shader };
+    attach(parent: Entity): void
+    {
         this.parent_ptr = parent;
     }
 
-    enableVertexAttrib(gl : WebGL2RenderingContext ,loc : number, size = 3, type = gl.FLOAT, normalize = false, stride = 0, offset = 0)
+    enableVertexAttrib(gl: WebGL2RenderingContext, loc: number, size = 3, type = gl.FLOAT, normalize = false, stride = 0, offset = 0)
     {
         gl.vertexAttribPointer(
             loc,
@@ -30,10 +31,10 @@ export class RenderableAbstract extends Component
         gl.enableVertexAttribArray(loc);
     }
 
-    createBuffer(gl : WebGL2RenderingContext, data : Float32Array | Uint16Array, type = gl.ARRAY_BUFFER, usage = gl.STATIC_DRAW)
+    createBuffer(gl: WebGL2RenderingContext, data: Float32Array | Uint16Array, type = gl.ARRAY_BUFFER, usage = gl.STATIC_DRAW)
     {
         let buffer = gl.createBuffer();
-        gl.bindBuffer(type,  buffer);
+        gl.bindBuffer(type, buffer);
         gl.bufferData(type, data, usage);
         return buffer;
     }
@@ -41,31 +42,33 @@ export class RenderableAbstract extends Component
 
 export class GeometryRenderable2D extends RenderableAbstract
 {
-    vertices : number[];
-    verticesBuffer : WebGLBuffer;
-    vertexLength : number;
-    projectionMatrix : mat4;
+    vertices: number[];
+    verticesBuffer: WebGLBuffer;
+    vertexLength: number;
+    projectionMatrix: mat4;
     static Name = "GeometryRenderable2D";
 
-    constructor(gl : WebGL2RenderingContext, vertices : number[], shader : Shader, projectionMatrix : mat4 = ProjectionMatrix.orthographic(gl))
+    constructor(gl: WebGL2RenderingContext, vertices: number[], shader: Shader, projectionMatrix: mat4 = ProjectionMatrix.orthographic(gl))
     {
         super(shader, GeometryRenderable2D.Name);
         this.vertices = vertices;
-        this.vertexLength = vertices.length/2;
+        this.vertexLength = vertices.length / 2;
         this.verticesBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
         this.projectionMatrix = projectionMatrix;
     }
 
-    draw_tick(gl: WebGL2RenderingContext): void 
+    draw_tick(gl: WebGL2RenderingContext): void
     {
-        this.shader.use(gl, () => {
-            let matrix : mat4;
-            if (this.parent_ptr!=null)
+        this.shader.use(gl, () =>
+        {
+            let matrix: mat4;
+            if (this.parent_ptr != null)
             {
-                matrix = Transform.Combine(this.parent_ptr.transform,this.transform)
-            } else {
+                matrix = Transform.Combine(this.parent_ptr.transform, this.transform)
+            } else
+            {
                 matrix = this.transform.generateMat4();
             }
             this.shader.enableVertexAttrib(gl, this.verticesBuffer);
@@ -74,39 +77,39 @@ export class GeometryRenderable2D extends RenderableAbstract
                 "uProjectionMatrix",
                 this.projectionMatrix
             );
-            
+
             this.shader.setShaderUniform_mat4fv(
                 gl,
                 "uModelViewMatrix",
                 matrix
             );
-    
+
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertexLength);
-        });   
+        });
     }
 }
 
 export class GeometryRenderable3D extends RenderableAbstract
 {
-    vertices : number[];
-    verticesBuffer : WebGLBuffer;
-    vertexLength : number;
+    vertices: number[];
+    verticesBuffer: WebGLBuffer;
+    vertexLength: number;
 
-    elements : number[];
-    elementsBuffer : WebGLBuffer;
-    elementLength : number;
+    elements: number[];
+    elementsBuffer: WebGLBuffer;
+    elementLength: number;
 
-    normals : number[];
-    normalBuffer : WebGLBuffer;
-    normalLength : number;
+    normals: number[];
+    normalBuffer: WebGLBuffer;
+    normalLength: number;
 
-    textureBuffer : WebGLBuffer;
+    textureBuffer: WebGLBuffer;
 
-    vao : WebGLVertexArrayObject;
+    vao: WebGLVertexArrayObject;
 
     static Name = "GeometryRenderable3D";
 
-    constructor(gl : WebGL2RenderingContext, vertices : number[], elements : number[], normals : Vector[], textures : Vector[], shader : Shader, projectionMatrix : mat4 = ProjectionMatrix.orthographic(gl))
+    constructor(gl: WebGL2RenderingContext, vertices: number[], elements: number[], normals: Vector[], textures: Vector[], shader: Shader, projectionMatrix: mat4 = ProjectionMatrix.orthographic(gl))
     {
         super(shader, GeometryRenderable3D.Name);
 
@@ -114,7 +117,7 @@ export class GeometryRenderable3D extends RenderableAbstract
         gl.bindVertexArray(this.vao);
 
         this.vertices = vertices;
-        this.vertexLength = vertices.length/3;
+        this.vertexLength = vertices.length / 3;
         this.verticesBuffer = this.createBuffer(gl, new Float32Array(this.vertices));
 
         this.elements = elements;
@@ -131,14 +134,16 @@ export class GeometryRenderable3D extends RenderableAbstract
         this.enableVertexAttrib(gl, 2)
     }
 
-    draw_tick(gl: WebGL2RenderingContext, Camera : Camera,  shaderParamCallback = () => {}): void 
+    draw_tick(gl: WebGL2RenderingContext, Camera: Camera, shaderParamCallback = () => { }): void
     {
-        this.shader.use(gl, () => {
-            let matrix : mat4;
-            if (this.parent_ptr!=null)
+        this.shader.use(gl, () =>
+        {
+            let matrix: mat4;
+            if (this.parent_ptr != null)
             {
-                matrix = Transform.Combine(this.parent_ptr.transform,this.transform)
-            } else {
+                matrix = Transform.Combine(this.parent_ptr.transform, this.transform)
+            } else
+            {
                 matrix = this.transform.generateMat4();
             }
 
@@ -150,16 +155,16 @@ export class GeometryRenderable3D extends RenderableAbstract
                 "uProjectionMatrix",
                 Camera.generateProjection(gl)
             );
-            
+
             this.shader.setShaderUniform_mat4fv(
                 gl,
                 "uModelViewMatrix",
                 matrix
             );
-            
+
             shaderParamCallback();
 
-            gl.drawElements(gl.TRIANGLES , this.elementLength, gl.UNSIGNED_SHORT, 0);
-        });   
+            gl.drawElements(gl.TRIANGLES, this.elementLength, gl.UNSIGNED_SHORT, 0);
+        });
     }
 }

@@ -5,14 +5,14 @@ import { Component } from "./Component";
 
 export class Entity
 {
-    components : Component[];
-    transform : Transform;
-    name : string;
-    private lastTransform : Transform;
-    private transformMatrix : mat4;
-    static Name : string;
+    components: Component[];
+    transform: Transform;
+    name: string;
+    private lastTransform: Transform;
+    private transformMatrix: mat4;
+    static Name: string;
 
-    constructor(name : string = (Math.random() * 2000).toString())
+    constructor(name: string = (Math.random() * 2000).toString())
     {
         this.transform = new Transform();
         this.components = new Array<Component>();
@@ -21,7 +21,7 @@ export class Entity
         this.name = name;
     }
 
-    draw_tick(gl : WebGL2RenderingContext, Camera : Camera)
+    draw_tick(gl: WebGL2RenderingContext, Camera: Camera)
     {
         for (let component of this.components)
         {
@@ -48,18 +48,19 @@ export class Entity
         return this.transformMatrix;
     }
 
-    addComponent(component : Component, gl : WebGL2RenderingContext)
+    addComponent(component: Component, gl: WebGL2RenderingContext)
     {
         component.attach(this);
         this.components.push(component);
         component.start(gl);
     }
 
-    removeComponent(name : string, gl : WebGL2RenderingContext)
+    removeComponent(name: string, gl: WebGL2RenderingContext)
     {
 
-        this.components.filter((v)=>{
-            if (v.name==name)
+        this.components.filter((v) =>
+        {
+            if (v.name == name)
             {
                 v.end(gl);
                 return false;
@@ -68,14 +69,14 @@ export class Entity
         return true;
     }
 
-    getComponent(name : string)
+    getComponent(name: string)
     {
         for (let component of this.components)
         {
-            if (component.name==name)
-            {   
+            if (component.name == name)
+            {
                 return component;
-            }   
+            }
         }
         return null;
     }

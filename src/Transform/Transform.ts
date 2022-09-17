@@ -3,9 +3,9 @@ import { Vector } from "./Vector";
 
 export class Transform
 {
-    position : Vector;
-    rotation : Vector;
-    scale : Vector;
+    position: Vector;
+    rotation: Vector;
+    scale: Vector;
 
     constructor()
     {
@@ -15,14 +15,14 @@ export class Transform
         this.scale.set(1);
     }
 
-    static Combine(parent : Transform, child : Transform) : mat4
+    static Combine(parent: Transform, child: Transform): mat4
     {
         let matrix = mat4.create();
-        mat4.translate(matrix,matrix,parent.position.toFloat32Array());
+        mat4.translate(matrix, matrix, parent.position.toFloat32Array());
         let axis = parent.rotation.toArray();
-        for (let i=0;i<3;i++)
+        for (let i = 0; i < 3; i++)
         {
-            let currAxis = [0,0,0];
+            let currAxis = [0, 0, 0];
             currAxis[i] = 1;
             mat4.rotate(
                 matrix,
@@ -31,13 +31,13 @@ export class Transform
                 new Float32Array(currAxis)
             )
         }
-        mat4.scale(matrix,matrix,parent.scale.toFloat32Array());
+        mat4.scale(matrix, matrix, parent.scale.toFloat32Array());
 
-        mat4.translate(matrix,matrix,child.position.toFloat32Array());
+        mat4.translate(matrix, matrix, child.position.toFloat32Array());
         axis = child.rotation.toArray();
-        for (let i=0;i<3;i++)
+        for (let i = 0; i < 3; i++)
         {
-            let currAxis = [0,0,0];
+            let currAxis = [0, 0, 0];
             currAxis[i] = 1;
             mat4.rotate(
                 matrix,
@@ -46,7 +46,7 @@ export class Transform
                 new Float32Array(currAxis)
             )
         }
-        mat4.scale(matrix,matrix,child.scale.toFloat32Array());
+        mat4.scale(matrix, matrix, child.scale.toFloat32Array());
 
         return matrix
     }
@@ -60,18 +60,18 @@ export class Transform
         return t;
     }
 
-    compare(transform : Transform)
+    compare(transform: Transform)
     {
         return transform.position.compare(this.position) && transform.rotation.compare(this.rotation) && transform.scale.compare(this.scale);
     }
 
-    generateMat4() : mat4
+    generateMat4(): mat4
     {
         let matrix = mat4.create();
         let axis = this.rotation.toArray();
-        for (let i=0;i<3;i++)
+        for (let i = 0; i < 3; i++)
         {
-            let currAxis = [0,0,0];
+            let currAxis = [0, 0, 0];
             currAxis[i] = 1;
             mat4.rotate(
                 matrix,
@@ -80,7 +80,7 @@ export class Transform
                 new Float32Array(currAxis)
             )
         }
-        
+
         mat4.translate(
             matrix,
             matrix,
