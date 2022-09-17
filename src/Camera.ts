@@ -15,11 +15,13 @@ export class Camera extends Entity
     near = 0.1;
     far = 100;
 
+    static Name = "Camera";
+
     mouseDown : boolean; mouseX : number; mouseY : number; mouseStartX : number; mouseStartY : number;
 
     constructor(projection=ProjectionType.PERSPECTIVE, fov = 45, position=Vector.ZERO)
     {
-        super("MainCamera");
+        super(Camera.Name);
         this.projection = projection;
         this.fov = fov * Math.PI / 180;
         this.transform.position = position.copy();

@@ -1,4 +1,5 @@
 import { mat4 } from "gl-matrix";
+import { Camera } from "../Camera";
 import { Transform } from "../Transform/Transform";
 import { Component } from "./Component";
 
@@ -9,6 +10,7 @@ export class Entity
     name : string;
     private lastTransform : Transform;
     private transformMatrix : mat4;
+    static Name : string;
 
     constructor(name : string = (Math.random() * 2000).toString())
     {
@@ -19,11 +21,11 @@ export class Entity
         this.name = name;
     }
 
-    draw_tick(gl : WebGL2RenderingContext)
+    draw_tick(gl : WebGL2RenderingContext, Camera : Camera)
     {
         for (let component of this.components)
         {
-            component.draw_tick(gl);
+            component.draw_tick(gl, Camera);
         }
     }
 

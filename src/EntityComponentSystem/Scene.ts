@@ -1,9 +1,11 @@
+import { Camera } from "../Camera";
 import { Entity } from "./Entity";
 
 export class Scene
 {
     Entities : Array<Entity>;
     physicsIterations : number;
+    MainCamera : Camera;
 
     constructor()
     {
@@ -25,10 +27,19 @@ export class Scene
         //         entPhys.phys_tick();
         //     }
         // }
+        if (this.MainCamera==null)
+        {
+            return;
+        }
         for (let ent of this.Entities)
         {
-            ent.draw_tick(gl);
+            ent.draw_tick(gl, this.MainCamera);
         }
+    }
+
+    setMainCamera(cam : Camera)
+    {
+        this.MainCamera = cam;
     }
 
     addEntity(entity : Entity)
