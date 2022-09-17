@@ -62,13 +62,11 @@ function draw(gl: WebGL2RenderingContext, now) {
 
 	let proj = camera.generateProjection(gl);
 
-	cube.projectionMatrix = proj
-	
-	light.projectionMatrix = proj
+
 	
 
 
-	light.draw_tick(gl,() => {
+	light.draw_tick(gl, camera ,() => {
 		light.shader.setShaderUniform_4fv(gl,"uColour", lightCol)
 		light.shader.setShaderUniform_mat4fv(gl,"CameraMatrix", camera.getTransformation())
 	})
@@ -86,7 +84,7 @@ function draw(gl: WebGL2RenderingContext, now) {
 		cube.transform = transforms[i];
 		// cube.transform.rotation.add(Math.sin(framecount)/10);
 		
-		cube.draw_tick(gl)
+		cube.draw_tick(gl, camera)
 	}
 
 	

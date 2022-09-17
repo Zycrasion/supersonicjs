@@ -114,6 +114,12 @@ export class Vector
     {
         return [this.x,this.y,this.z]
     }
+
+    static unpackVertices(array : Array<Vector>) : Array<number>
+    {
+        let unpacked = array.flatMap(v => [v.x,v.y,v.z]);
+        return unpacked;
+    }
 }
 
 export class Vector4 extends Vector
