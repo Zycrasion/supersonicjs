@@ -1,4 +1,4 @@
-import { mat3, mat4 } from "gl-matrix";
+import { glMatrix, mat3, mat4 } from "gl-matrix";
 import { Entity } from "./EntityComponentSystem/Entity";
 import { InputAxis } from "./InputManager/Input";
 import { Vector } from "./Transform/Vector";
@@ -48,42 +48,46 @@ export class Camera extends Entity
         return proj;
     }
 
-    hookfreecam()
+    hook_FreeLook()
     {
-        document.onmousemove = handleMouseMove.bind(this);
-        function handleMouseMove(event) {
+        document.onmousemove = (event) => {
             var eventDoc, doc, body;
-
+            var pageX, pageY;
             event = event || window.event as MouseEvent; // IE-ism
 
             // If pageX/Y aren't available and clientX/Y are,
             // calculate pageX/Y - logic taken from jQuery.
             // (This is to support old IE)
             if (event.pageX == null && event.clientX != null) {
-                eventDoc = (event.target && event.target.ownerDocument) || document;
+                eventDoc = (event.target && event.target["ownerDocument"]) || document;
                 doc = eventDoc.documentElement;
                 body = eventDoc.body;
 
-                event.pageX = event.clientX +
+                pageX = event.clientX +
                 (doc && doc.scrollLeft || body && body.scrollLeft || 0 ) -
                 (doc && doc.clientLeft || body && body.clientLeft || 0 );
-                event.pageY = event.clientY +
+                pageY = event.clientY +
                 (doc && doc.scrollTop  || body && body.scrollTop  || 0 ) -
                 (doc && doc.clientTop  || body && body.clientTop  || 0 );
+            } else {
+                pageX = event.pageX;
+                pageY = event.pageY;
             }
 
             this.mouseX = event.pageX + 500;
             this.mouseY = event.pageY + 500;
         }
-        document.onmousedown = mouseDown.bind(this); 
-        function mouseDown(event : MouseEvent)
+
+
+        document.onmousedown = (event : MouseEvent) =>
         {
             this.mouseStartX = this.mouseX;
             this.mouseStartY = this.mouseY;
             this.mouseDown = true;
         }
-        document.onmouseup = mouseUp.bind(this);
-        function mouseUp(event : MouseEvent)
+
+
+        document.onmouseup = (event : MouseEvent) =>
         {
             this.mouseDown = false;
         }
@@ -91,6 +95,8 @@ export class Camera extends Entity
 
     freecam(axis : InputAxis)
     {   
+        let mat = this.getTransformation();
+        let lookAtVector = new Vector(mat[2],mat[6],mat[10]);
         if (this.mouseDown==true)
         {
             this.transform.rotation.y += (this.mouseStartX-this.mouseX)/500;
@@ -98,10 +104,7 @@ export class Camera extends Entity
             this.transform.rotation.x += (this.mouseStartY-this.mouseY)/500;
             this.mouseStartY = this.mouseY;
         }
-        let dir = new Vector();
-        dir.z = -Math.cos( this.transform.rotation.y - (Math.PI)) * axis.getAxis().y;
-        dir.x = Math.sin( this.transform.rotation.y - (Math.PI)) * axis.getAxis().y;
-        this.transform.position.add(dir);
+        this.transform.position.add(lookAtVector.mult(axis.getAxis().y));
     }
 
 }

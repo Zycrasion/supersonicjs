@@ -84,6 +84,11 @@ export class Vector
         return this;
     }
 
+    compare(o : Vector)
+    {
+        return o.x == this.x && o.y == this.y && o.z == this.z;
+    }
+
     copy() : Vector
     {
         return new Vector(this.x,this.y,this.z);

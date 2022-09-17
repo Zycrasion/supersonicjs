@@ -51,6 +51,20 @@ export class Transform
         return matrix
     }
 
+    copy()
+    {
+        let t = new Transform();
+        t.position = this.position.copy();
+        t.rotation = this.rotation.copy();
+        t.scale = this.scale.copy();
+        return t;
+    }
+
+    compare(transform : Transform)
+    {
+        return transform.position.compare(this.position) && transform.rotation.compare(this.rotation) && transform.scale.compare(this.scale);
+    }
+
     generateMat4() : mat4
     {
         let matrix = mat4.create();

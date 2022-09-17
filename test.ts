@@ -50,7 +50,7 @@ function calculateFramerate()
 setInterval(calculateFramerate,1000)
 
 let camera = new Camera();
-camera.hookfreecam();
+camera.hook_FreeLook();
 console.log("just a reminder that if nothing is drawing it is because you forgot to put it infront of the camera.")
 
 
@@ -84,7 +84,7 @@ function draw(gl: WebGL2RenderingContext, now) {
 	for (let i=0;i<transforms.length;i++)
 	{
 		cube.transform = transforms[i];
-		cube.transform.rotation.add(Math.sin(framecount)/10);
+		// cube.transform.rotation.add(Math.sin(framecount)/10);
 		
 		cube.draw_tick(gl)
 	}
@@ -102,7 +102,7 @@ function main() {
 	scene = new Scene();
 	transforms = [];
 	let scale = 10;
-	for (let i=0;i<1000;i++)
+	for (let i=0;i<100;i++)
 	{
 		let t = new Transform();
 		t.position.set((Math.random()*scale*2)-scale,(Math.random()*scale*2)-scale,(Math.random()*scale*2)-scale);

@@ -1,3 +1,4 @@
+import { mat4 } from "gl-matrix";
 import { Transform } from "../Transform/Transform";
 import { Component } from "./Component";
 
@@ -6,11 +7,15 @@ export class Entity
     components : Component[];
     transform : Transform;
     name : string;
+    private lastTransform : Transform;
+    private transformMatrix : mat4;
 
     constructor(name : string = (Math.random() * 2000).toString())
     {
         this.transform = new Transform();
         this.components = new Array<Component>();
+        this.lastTransform = this.transform.copy();
+        this.transformMatrix = this.transform.generateMat4();
         this.name = name;
     }
 
@@ -32,7 +37,13 @@ export class Entity
 
     getTransformation()
     {
-        return this.transform.generateMat4();
+        if (!this.lastTransform.compare(this.transform))
+        {
+            this.transformMatrix = this.transform.generateMat4();
+            this.lastTransform = this.transform.copy();
+        }
+
+        return this.transformMatrix;
     }
 
     addComponent(component : Component, gl : WebGL2RenderingContext)
