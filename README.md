@@ -1,5 +1,5 @@
 # SupersonicJS
-Status: Beta v0.2.0
+Status: Beta v0.3.0
 
 For the forseeable future i will probably get to Version 0.2.0 then take a break making some games and come back and have a heap of features to implement.
 
