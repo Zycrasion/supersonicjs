@@ -59,6 +59,9 @@ TODO: (DONE)
 - [x] Textures
 - [x] Colour for polygons and geometry
 
+## Known Bugs
+- Sometimes the light wont draw due to only supplying 4 vertices?
+
 
 ## Changelog
 - ADDED Scenes
