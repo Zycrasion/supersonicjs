@@ -1,3 +1,5 @@
+import { mat4 } from "gl-matrix";
+import { threadId } from "worker_threads";
 import { Loader } from "../Loader/Loader";
 import { HTTP_REQUEST } from "../Request/httpRequest";
 import { Vector, Vector4 } from "../Transform/Vector";
@@ -6,6 +8,8 @@ import { Shader } from "./Shader";
 export class FlatShader3D extends Shader
 {
     colour: Vector4;
+    cameraMatrix: mat4;
+
     constructor(gl: WebGL2RenderingContext, r: number, g: number, b: number, a: number)
     {
         super(gl);
@@ -16,7 +20,8 @@ export class FlatShader3D extends Shader
     {
         if (!this.check()) { return; }
         gl.useProgram(this.ShaderProgram);
-        gl.uniform4fv(gl.getUniformLocation(this.ShaderProgram, "uColour"), this.colour.toFloat32Array());
+        this.setShaderUniform_4fv(gl, "uColour", this.colour);
+        this.setShaderUniform_mat4fv(gl, "CameraMatrix", this.cameraMatrix);
         callback();
     }
 
@@ -45,6 +50,7 @@ export class Shaded3D extends Shader
     LightColour: Vector;
     LightPosition: Vector;
     viewPos: Vector;
+    cameraMatrix: mat4;
 
     constructor(gl: WebGL2RenderingContext, r: number, g: number, b: number, a: number)
     {
@@ -54,7 +60,7 @@ export class Shaded3D extends Shader
         this.LightPosition = new Vector(1, 1, 1);
     }
 
-    use(gl: WebGL2RenderingContext, callback: () => void): void
+    use(gl: WebGL2RenderingContext, callback: () => void = () => {}): void
     {
         if (!this.check()) { return; }
         gl.useProgram(this.ShaderProgram);
@@ -62,6 +68,7 @@ export class Shaded3D extends Shader
         this.setShaderUniform_3fv(gl, "uLight", this.LightColour);
         this.setShaderUniform_3fv(gl, "uLightPos", this.LightPosition);
         this.setShaderUniform_3fv(gl, "uCameraPosition", this.viewPos);
+        this.setShaderUniform_mat4fv(gl, "CameraMatrix", this.cameraMatrix)
         callback();
     }
 

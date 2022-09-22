@@ -62,13 +62,9 @@ function draw(gl: WebGL2RenderingContext)
 	camera.freecam(wasd);
 
 
-
-
-	light.draw_tick(gl, camera, () =>
-	{
-		light.shader.setShaderUniform_4fv(gl, "uColour", lightCol)
-		light.shader.setShaderUniform_mat4fv(gl, "CameraMatrix", camera.getTransformation())
-	})
+	light.shader["colour"] = lightCol;
+	light.shader["cameraMatrix"] = camera.getTransformation();
+	light.draw_tick(gl, camera)
 
 
 	cube.transform.position.set(0, 0, 0)
@@ -76,8 +72,9 @@ function draw(gl: WebGL2RenderingContext)
 	CubeShader.Colour = cubeCol.toVector3();
 	CubeShader.LightColour = lightCol.toVector3();
 	CubeShader.viewPos = camera.transform.position;
+	CubeShader.cameraMatrix = camera.getTransformation();
 
-	CubeShader.use(gl, () => { CubeShader.setShaderUniform_mat4fv(gl, "CameraMatrix", camera.getTransformation()) });
+	CubeShader.use(gl);
 	for (let i = 0; i < transforms.length; i++)
 	{
 		cube.transform = transforms[i];

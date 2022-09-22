@@ -58,7 +58,6 @@ export class Camera extends Entity
     {
         this.mouseX = event.movementX;
         this.mouseY = event.movementY;
-        console.log(this.mouseX)
     }
 
     unhook_freelook()
@@ -71,50 +70,6 @@ export class Camera extends Entity
     {
         this.freelook_binded_mousemove = this.freelook_mousemove.bind(this);
         document.addEventListener("mousemove", this.freelook_binded_mousemove, false)
-        // document.onmousemove = (event) =>
-        // {
-        //     var eventDoc, doc, body;
-        //     var pageX, pageY;
-        //     event = event || window.event as MouseEvent; // IE-ism
-
-        //     // If pageX/Y aren't available and clientX/Y are,
-        //     // calculate pageX/Y - logic taken from jQuery.
-        //     // (This is to support old IE)
-        //     if (event.pageX == null && event.clientX != null)
-        //     {
-        //         eventDoc = (event.target && event.target["ownerDocument"]) || document;
-        //         doc = eventDoc.documentElement;
-        //         body = eventDoc.body;
-
-        //         pageX = event.clientX +
-        //             (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
-        //             (doc && doc.clientLeft || body && body.clientLeft || 0);
-        //         pageY = event.clientY +
-        //             (doc && doc.scrollTop || body && body.scrollTop || 0) -
-        //             (doc && doc.clientTop || body && body.clientTop || 0);
-        //     } else
-        //     {
-        //         pageX = event.pageX;
-        //         pageY = event.pageY;
-        //     }
-
-        //     this.mouseX = event.pageX + 500;
-        //     this.mouseY = event.pageY + 500;
-        // }
-
-
-        // document.onmousedown = (event: MouseEvent) =>
-        // {
-        //     this.mouseStartX = this.mouseX;
-        //     this.mouseStartY = this.mouseY;
-        //     this.mouseDown = true;
-        // }
-
-
-        // document.onmouseup = (event: MouseEvent) =>
-        // {
-        //     this.mouseDown = false;
-        // }
     }
 
     freecam(axis: InputAxis)

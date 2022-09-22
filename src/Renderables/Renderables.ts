@@ -1,4 +1,6 @@
 import { mat4 } from "gl-matrix";
+import { BufferSonic } from "../Abstraction/Buffer";
+import { VertexArray } from "../Abstraction/VAO";
 import { Camera } from "../Camera";
 import { Component } from "../EntityComponentSystem/Component";
 import { Entity } from "../EntityComponentSystem/Entity";
@@ -15,28 +17,6 @@ export class RenderableAbstract extends Component
     attach(parent: Entity): void
     {
         this.parent_ptr = parent;
-    }
-
-    enableVertexAttrib(gl: WebGL2RenderingContext, loc: number, size = 3, type = gl.FLOAT, normalize = false, stride = 0, offset = 0)
-    {
-        gl.vertexAttribPointer(
-            loc,
-            size,
-            type,
-            normalize,
-            stride,
-            offset
-        );
-
-        gl.enableVertexAttribArray(loc);
-    }
-
-    createBuffer(gl: WebGL2RenderingContext, data: Float32Array | Uint16Array, type = gl.ARRAY_BUFFER, usage = gl.STATIC_DRAW)
-    {
-        let buffer = gl.createBuffer();
-        gl.bindBuffer(type, buffer);
-        gl.bufferData(type, data, usage);
-        return buffer;
     }
 }
 
@@ -96,21 +76,15 @@ export class GeometryRenderable2D extends RenderableAbstract
 
 export class GeometryRenderable3D extends RenderableAbstract
 {
-    vertices: number[];
-    verticesBuffer: WebGLBuffer;
-    vertexLength: number;
+    vertices: BufferSonic;
 
-    elements: number[];
-    elementsBuffer: WebGLBuffer;
-    elementLength: number;
+    elements: BufferSonic;
 
-    normals: number[];
-    normalBuffer: WebGLBuffer;
-    normalLength: number;
+    normals: BufferSonic;
 
-    textureBuffer: WebGLBuffer;
+    textureBuffer: BufferSonic;
 
-    vao: WebGLVertexArrayObject;
+    vao: VertexArray;
 
     static Name = "GeometryRenderable3D";
 
@@ -118,25 +92,20 @@ export class GeometryRenderable3D extends RenderableAbstract
     {
         super(shader, GeometryRenderable3D.Name);
 
-        this.vao = gl.createVertexArray();
-        gl.bindVertexArray(this.vao);
+        this.vao = new VertexArray(gl);
 
-        this.vertices = vertices;
-        this.vertexLength = vertices.length / 3;
-        this.verticesBuffer = this.createBuffer(gl, new Float32Array(this.vertices));
+        this.vertices = new BufferSonic(gl, new Float32Array(vertices), vertices.length / 3);
 
-        this.elements = elements;
-        this.elementLength = elements.length;
-        this.elementsBuffer = this.createBuffer(gl, new Uint16Array(elements), gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW)
-        this.enableVertexAttrib(gl, 0);
+        this.elements = new BufferSonic(gl, new Uint16Array(elements), elements.length, gl.ELEMENT_ARRAY_BUFFER);
+        this.vao.enableVertexAttrib(gl, 0);
 
         let normalsUnpacked = Vector.unpackVertices(normals);
-        this.normalBuffer = this.createBuffer(gl, new Float32Array(normalsUnpacked));
-        this.enableVertexAttrib(gl, 1);
+        this.normals = new BufferSonic(gl, new Float32Array(normalsUnpacked), normalsUnpacked.length / 3);
+        this.vao.enableVertexAttrib(gl, 1);
 
         let texturesUnpacked = Vector.unpackVertices(textures);
-        this.textureBuffer = this.createBuffer(gl, new Float32Array(texturesUnpacked));
-        this.enableVertexAttrib(gl, 2)
+        this.textureBuffer = new BufferSonic(gl, new Float32Array(texturesUnpacked), texturesUnpacked.length/3)
+        this.vao.enableVertexAttrib(gl, 2)
     }
 
     draw_tick(gl: WebGL2RenderingContext, Camera: Camera, shaderParamCallback = () => { }): void
@@ -152,7 +121,7 @@ export class GeometryRenderable3D extends RenderableAbstract
                 matrix = this.transform.generateMat4();
             }
 
-            gl.bindVertexArray(this.vao);
+            this.vao.bind(gl);
 
 
             this.shader.setShaderUniform_mat4fv(
@@ -169,7 +138,7 @@ export class GeometryRenderable3D extends RenderableAbstract
 
             shaderParamCallback();
 
-            gl.drawElements(gl.TRIANGLES, this.elementLength, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(gl.TRIANGLES, this.elements.length, gl.UNSIGNED_SHORT, 0);
         });
     }
 }

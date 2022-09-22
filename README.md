@@ -1,5 +1,6 @@
 # SupersonicJS
-Status: Beta v0.3.0
+Status: Beta v0.3.1
+Polishing Code
 
 For the forseeable future i will probably get to Version 0.2.0 then take a break making some games and come back and have a heap of features to implement.
 
@@ -46,24 +47,15 @@ function draw()
 main();
 ```
 
-## Version 0.2.0 Roadmap
-TODO: 
-- [x] loading GLSL from files
-- [x] parenting
-- [x] Scenes
-
-## Version 0.1.0
-TODO: (DONE)
-- [x] Basic Keyboard Support
-- [x] Geometry Rendering With Position/Rotation/Scale
-- [x] Textures
-- [x] Colour for polygons and geometry
-
 ## Known Bugs
 - Sometimes the light wont draw due to only supplying 4 vertices?
 
 
 ## Changelog
+- ADDED SonicBuffer
+- ADDED VertexArray
+- FIXED Shaders not supplying enough data
+- FIXED Camera console.log
 - ADDED Scenes
 - ADDED Parenting
 - ADDED Enities
