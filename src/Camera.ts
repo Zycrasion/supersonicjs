@@ -24,13 +24,13 @@ export class Camera extends Entity
     {
         super(Camera.Name);
         this.projection = projection;
-        this.fov = fov * Math.PI / 180;
+        this.fov = fov;
         this.transform.position = position.copy();
     }
 
     setFov(fov: number)
     {
-        this.fov = fov * Math.PI / 180;
+        this.fov = fov;
     }
 
     generateProjection(gl: WebGL2RenderingContext)
@@ -46,7 +46,7 @@ export class Camera extends Entity
         } else
         {
             mat4.perspective(proj,
-                this.fov,
+                this.fov * Math.PI / 180,
                 gl.canvas.clientWidth / gl.canvas.clientHeight,
                 this.near, this.far)
         }

@@ -75,7 +75,6 @@ export class ObjParser
                     break;
             }
         }
-        console.log(results)
         return results;
     }
 

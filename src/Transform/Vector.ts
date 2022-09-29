@@ -1,3 +1,12 @@
+export function vec(x = 0, y = 0, z = 0)
+{
+    return new Vector(x,y,z);
+}
+
+export function vec4(x = 0, y = 0, z = 0, w = 0)
+{
+    return new Vector4(x,y,z,w);
+}
 export class Vector
 {
     x: number; y: number; z: number;
@@ -146,7 +155,7 @@ export class Vector4 extends Vector
     copy(): Vector4
     {
         let v = super.copy();
-        return new Vector4(v.x,v.y,v.z,this.w);
+        return new Vector4(v.x, v.y, v.z, this.w);
     }
 
     toFloat32Array(): Float32Array

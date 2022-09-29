@@ -91,13 +91,14 @@ export class GeometryRenderable3D extends RenderableAbstract
 
     static Name = "GeometryRenderable3D";
 
-    constructor(gl: WebGL2RenderingContext, vertices: number[], elements: number[], normals: Vector[], textures: Vector[], shader: Shader)
+    constructor(gl: WebGL2RenderingContext, vertices: Vector[], elements: number[], normals: Vector[], textures: Vector[], shader: Shader)
     {
         super(shader, GeometryRenderable3D.Name);
 
         this.vao = new VertexArray(gl);
 
-        this.vertices = new BufferSonic(gl, new Float32Array(vertices), vertices.length / 3);
+        let verticesUnpacked = Vector.unpackVertices(vertices)
+        this.vertices = new BufferSonic(gl, new Float32Array(verticesUnpacked), vertices.length / 3);
 
         this.elements = new BufferSonic(gl, new Uint16Array(elements), elements.length, gl.ELEMENT_ARRAY_BUFFER);
         this.vao.enableVertexAttrib(gl, 0);

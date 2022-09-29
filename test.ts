@@ -122,25 +122,13 @@ function main()
 	HTTP_REQUEST("/Models/example.obj").then(text =>
 	{
 		let results = ObjParser.parse(text)
-		let vertices: number[] = [];
-		console.log(results.normals)
-		results.vertices.forEach(v =>
-		{
-			vertices.push(v.x, v.y, v.z);
-		})
-
-		let normals: number[] = [];
-		results.normals.forEach(v =>
-		{
-			normals.push(v.x, v.y, v.z);
-		})
 
 		CubeShader = Shaded3D.create(gl);
 		CubeShader.setColour(new Vector4(1,1,1,1))
 
 		cube = new GeometryRenderable3D(
 			gl,
-			vertices,
+			results.vertices,
 			results.indices,
 			results.normals,
 			results.textures,
@@ -149,7 +137,7 @@ function main()
 
 		light = new GeometryRenderable3D(
 			gl,
-			vertices,
+			results.vertices,
 			results.indices,
 			results.normals,
 			results.textures,
