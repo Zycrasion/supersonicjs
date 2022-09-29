@@ -4,14 +4,15 @@ layout (location = 1) in vec3 aNormal;
 
 out vec3 FragPos;
 out vec3 Normal;
+
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
-uniform mat4 CameraMatrix;
+uniform mat4 uCameraMatrix;
 
 void main()
 {
 
-    mat4 mvp = uProjectionMatrix  *  CameraMatrix ;
+    mat4 mvp = uProjectionMatrix  *  uCameraMatrix ;
 
     FragPos = vec3(uModelViewMatrix * vec4(aVertexPosition, 1.0));
     Normal = mat3(transpose(inverse(uModelViewMatrix))) * aNormal;  

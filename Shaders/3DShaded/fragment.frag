@@ -4,9 +4,10 @@ out vec4 FragColor;
 
 in vec3 Normal;  
 in vec3 FragPos;  
+
+uniform vec4 uColour;
   
 uniform vec3 uLightPos; 
-uniform vec3 uColour;
 uniform vec3 uLight;
 uniform vec3 uCameraPosition;
 
@@ -30,6 +31,6 @@ void main()
     vec3 specular = specularStrength * spec * uLight; 
      
 
-    vec3 result = (ambient + diffuse + specular) * uColour;
+    vec3 result = (ambient + diffuse + specular) * uColour.xyz;
     FragColor = vec4(result, 1.0);
 } 

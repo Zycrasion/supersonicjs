@@ -4,6 +4,7 @@ import { VertexArray } from "../Abstraction/VAO";
 import { Camera } from "../Camera";
 import { Component } from "../EntityComponentSystem/Component";
 import { Entity } from "../EntityComponentSystem/Entity";
+import { Shader3D } from "../Shaders/3DShader";
 import { Shader } from "../Shaders/Shader";
 import { Transform } from "../Transform/Transform";
 import { Vector } from "../Transform/Vector";
@@ -86,9 +87,11 @@ export class GeometryRenderable3D extends RenderableAbstract
 
     vao: VertexArray;
 
+    shader: Shader3D;
+
     static Name = "GeometryRenderable3D";
 
-    constructor(gl: WebGL2RenderingContext, vertices: number[], elements: number[], normals: Vector[], textures: Vector[], shader: Shader, projectionMatrix: mat4 = ProjectionMatrix.orthographic(gl))
+    constructor(gl: WebGL2RenderingContext, vertices: number[], elements: number[], normals: Vector[], textures: Vector[], shader: Shader)
     {
         super(shader, GeometryRenderable3D.Name);
 
@@ -104,37 +107,27 @@ export class GeometryRenderable3D extends RenderableAbstract
         this.vao.enableVertexAttrib(gl, 1);
 
         let texturesUnpacked = Vector.unpackVertices(textures);
-        this.textureBuffer = new BufferSonic(gl, new Float32Array(texturesUnpacked), texturesUnpacked.length/3)
+        this.textureBuffer = new BufferSonic(gl, new Float32Array(texturesUnpacked), texturesUnpacked.length / 3)
         this.vao.enableVertexAttrib(gl, 2)
     }
 
     draw_tick(gl: WebGL2RenderingContext, Camera: Camera, shaderParamCallback = () => { }): void
     {
+        this.shader.setViewMatrix(Camera.getTransformation());
+        this.shader.setProjectionMatrix(Camera.generateProjection(gl))
+        let matrix: mat4;
+        if (this.parent_ptr != null)
+        {
+            matrix = Transform.Combine(this.parent_ptr.transform, this.transform)
+        } else
+        {
+            matrix = this.transform.generateMat4();
+        }
+        this.shader.setModelViewMatrix(matrix);
+
         this.shader.use(gl, () =>
         {
-            let matrix: mat4;
-            if (this.parent_ptr != null)
-            {
-                matrix = Transform.Combine(this.parent_ptr.transform, this.transform)
-            } else
-            {
-                matrix = this.transform.generateMat4();
-            }
-
             this.vao.bind(gl);
-
-
-            this.shader.setShaderUniform_mat4fv(
-                gl,
-                "uProjectionMatrix",
-                Camera.generateProjection(gl)
-            );
-
-            this.shader.setShaderUniform_mat4fv(
-                gl,
-                "uModelViewMatrix",
-                matrix
-            );
 
             shaderParamCallback();
 

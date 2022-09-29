@@ -143,6 +143,12 @@ export class Vector4 extends Vector
         this.w = w;
     }
 
+    copy(): Vector4
+    {
+        let v = super.copy();
+        return new Vector4(v.x,v.y,v.z,this.w);
+    }
+
     toFloat32Array(): Float32Array
     {
         return new Float32Array([this.x, this.y, this.z, this.w])

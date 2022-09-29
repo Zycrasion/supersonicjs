@@ -12,7 +12,7 @@ import { Entity } from "./src/EntityComponentSystem/Entity";
 import { SquareMesh } from "./src/Renderables/DefaultMeshes/square";
 import { Scene } from "./src/EntityComponentSystem/Scene";
 import { ObjParser } from "./src/Parsers/ObjParser";
-import { FlatShader3D, Shaded3D } from "./src/Shaders/3DShader";
+import { Shader3D, Shaded3D, Flat3D } from "./src/Shaders/3DShader";
 import { Transform } from "./src/Transform/Transform";
 import { off } from "process";
 import { Camera } from "./src/Camera";
@@ -62,19 +62,16 @@ function draw(gl: WebGL2RenderingContext)
 	camera.freecam(wasd);
 
 
-	light.shader["colour"] = lightCol;
-	light.shader["cameraMatrix"] = camera.getTransformation();
+	light.shader.setColour(lightCol);
 	light.draw_tick(gl, camera)
 
 
 	cube.transform.position.set(0, 0, 0)
 	CubeShader.LightPosition = light.transform.position;
-	CubeShader.Colour = cubeCol.toVector3();
+	CubeShader.setColour(cubeCol);
 	CubeShader.LightColour = lightCol.toVector3();
 	CubeShader.viewPos = camera.transform.position;
-	CubeShader.cameraMatrix = camera.getTransformation();
-
-	CubeShader.use(gl);
+	cube.shader = CubeShader;
 	for (let i = 0; i < transforms.length; i++)
 	{
 		cube.transform = transforms[i];
@@ -138,9 +135,8 @@ function main()
 			normals.push(v.x, v.y, v.z);
 		})
 
-		CubeShader = new Shaded3D(gl, 1,1,1,1);
-		CubeShader.fromLoad(gl, loader);
-		CubeShader.Colour = new Vector4(1, 1, 1, 1)
+		CubeShader = Shaded3D.create(gl);
+		CubeShader.setColour(new Vector4(1,1,1,1))
 
 		cube = new GeometryRenderable3D(
 			gl,
@@ -148,9 +144,7 @@ function main()
 			results.indices,
 			results.normals,
 			results.textures,
-			CubeShader,
-			utils.ProjectionMatrix.perspectiveDefault(gl)
-
+			CubeShader
 		);
 
 		light = new GeometryRenderable3D(
@@ -159,8 +153,7 @@ function main()
 			results.indices,
 			results.normals,
 			results.textures,
-			FlatShader3D.create(gl),
-			utils.ProjectionMatrix.perspectiveDefault(gl)
+			Flat3D.create(gl)
 		)
 
 		ent.addComponent(
@@ -192,7 +185,7 @@ inputman.addKeyListener("e", () =>
 
 
 Shaded3D.registerLoad(loader);
-FlatShader3D.registerLoad(loader);
+Flat3D.registerLoad(loader);
 loader.beginLoad(gl, ()=>{
 	main();
 

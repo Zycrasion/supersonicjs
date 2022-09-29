@@ -7,10 +7,10 @@ layout (location = 1) in vec4 aNormal;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
-uniform mat4 CameraMatrix;
+uniform mat4 uCameraMatrix;
 
 void main() {
-    mat4 mvp = uProjectionMatrix  *  CameraMatrix ;
+    mat4 mvp = uProjectionMatrix  *  uCameraMatrix ;
 
     gl_Position =  mvp *  uModelViewMatrix * aVertexPosition;
 }
