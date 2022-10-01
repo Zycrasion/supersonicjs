@@ -53,8 +53,8 @@ export class Camera extends Entity
         return proj;
     }
 
-    freelook_binded_mousemove : () => void;
-    freelook_mousemove(event : MouseEvent)
+    freelook_binded_mousemove: () => void;
+    freelook_mousemove(event: MouseEvent)
     {
         this.mouseX = event.movementX;
         this.mouseY = event.movementY;

@@ -4,7 +4,7 @@ import { Shader } from "./Shader";
 
 export class Light extends Material
 {
-    position : Vector;
+    position: Vector;
     constructor()
     {
         super();

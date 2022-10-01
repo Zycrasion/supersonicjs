@@ -9,7 +9,7 @@ export class FlatShader extends Shader2D
     {
         super(gl);
     }
-    
+
     use(gl: WebGL2RenderingContext, callback: () => void): void
     {
         if (!this.defaults(gl)) { return; }

@@ -11,6 +11,6 @@ export class Component
     start(gl: WebGL2RenderingContext) { }
     draw_tick(gl: WebGL2RenderingContext, Camera: Camera) { }
     phys_tick() { }
-    copy(params = {}) : Component {return new Component(this.name.concat(" - Copy"))}
+    copy(params = {}): Component { return new Component(this.name.concat(" - Copy")) }
     end(gl: WebGL2RenderingContext) { }
 }

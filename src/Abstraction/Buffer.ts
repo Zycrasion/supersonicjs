@@ -4,7 +4,7 @@ export class BufferSonic
     data: BufferSource;
     length: number;
     buffer: WebGLBuffer;
-    type : number;
+    type: number;
 
     constructor(gl: WebGL2RenderingContext, data: BufferSource, length: number, type = gl.ARRAY_BUFFER, usage = gl.STATIC_DRAW)   
     {
@@ -17,7 +17,7 @@ export class BufferSonic
         gl.bufferData(this.type, data, usage);
     }
 
-    bind(gl : WebGL2RenderingContext)
+    bind(gl: WebGL2RenderingContext)
     {
         gl.bindBuffer(this.type, this.buffer);
     }

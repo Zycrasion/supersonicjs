@@ -12,7 +12,7 @@ export class Scene
         this.Entities = new Array<Entity>();
     }
 
-    init(gl : WebGL2RenderingContext)
+    init(gl: WebGL2RenderingContext)
     {
 
     }

@@ -48,7 +48,7 @@ export class Math2
 export class PointerLock
 {
     static locked = false;
-    private static element : HTMLCanvasElement;
+    private static element: HTMLCanvasElement;
 
     private static mousedown()
     {
@@ -59,13 +59,14 @@ export class PointerLock
         }
     }
 
-    static Lock(canvas : string | HTMLCanvasElement)
+    static Lock(canvas: string | HTMLCanvasElement)
     {
-        let canvasElement : HTMLCanvasElement;
+        let canvasElement: HTMLCanvasElement;
         if (typeof canvas == "string")
         {
             canvasElement = document.getElementById(canvas) as HTMLCanvasElement;
-        } else {
+        } else
+        {
             canvasElement = canvas;
         }
         canvasElement.requestPointerLock();

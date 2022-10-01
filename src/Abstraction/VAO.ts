@@ -1,14 +1,14 @@
 export class VertexArray
 {
-    vao : WebGLVertexArrayObject;
+    vao: WebGLVertexArrayObject;
 
-    constructor(gl : WebGL2RenderingContext)
+    constructor(gl: WebGL2RenderingContext)
     {
         this.vao = gl.createVertexArray();
         this.bind(gl);
     }
 
-    bind(gl : WebGL2RenderingContext)
+    bind(gl: WebGL2RenderingContext)
     {
         gl.bindVertexArray(this.vao);
     }

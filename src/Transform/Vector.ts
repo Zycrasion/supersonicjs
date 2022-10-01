@@ -1,11 +1,11 @@
 export function vec(x = 0, y = 0, z = 0)
 {
-    return new Vector(x,y,z);
+    return new Vector(x, y, z);
 }
 
 export function vec4(x = 0, y = 0, z = 0, w = 0)
 {
-    return new Vector4(x,y,z,w);
+    return new Vector4(x, y, z, w);
 }
 export class Vector
 {

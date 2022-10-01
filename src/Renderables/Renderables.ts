@@ -90,7 +90,7 @@ export class GeometryRenderable3D extends RenderableAbstract
     shader: Shader3D;
 
     static Name = "GeometryRenderable3D";
-    
+
     constructor(gl: WebGL2RenderingContext, vertices: Vector[], elements: number[], normals: Vector[], textures: Vector[], shader: Shader)
     {
         super(shader, GeometryRenderable3D.Name);

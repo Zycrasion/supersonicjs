@@ -15,11 +15,11 @@ export class Loader extends Scene
 {
     // [key] = [url]
     loadElements: Dict<string>;
-    loadFunctions : Array<() => Promise<void>>;
+    loadFunctions: Array<() => Promise<void>>;
     loaded: Dict<string>;
     percentage = 0;
     loading = true;
-    splashImage : GeometryRenderable2D;
+    splashImage: GeometryRenderable2D;
     splashScreenTime = 1000
 
     constructor()
@@ -36,39 +36,39 @@ export class Loader extends Scene
         this.loadElements[id] = url;
     }
 
-    addLoadFunction(func : () => Promise<void>)
+    addLoadFunction(func: () => Promise<void>)
     {
         this.loadFunctions.push(func);
     }
 
-    async beginLoad(gl : WebGL2RenderingContext , callback : () => void)
+    async beginLoad(gl: WebGL2RenderingContext, callback: () => void)
     {
         this.init(gl);
         console.log("Beginning Loading Process")
-        let i =0;
+        let i = 0;
         for (let [id, url] of Object.entries(this.loadElements))
         {
             let text = await HTTP_REQUEST(url);
             this.loaded[id] = text;
             i++;
-            this.percentage = i/(Object.values(this.loadElements).length + this.loadFunctions.length)
-            console.log(`Loaded ID ${id} ${Math.trunc(this.percentage*100)}% `)
-        } 
+            this.percentage = i / (Object.values(this.loadElements).length + this.loadFunctions.length)
+            console.log(`Loaded ID ${id} ${Math.trunc(this.percentage * 100)}% `)
+        }
         for (let func of this.loadFunctions)
         {
             await func();
             i++;
-            this.percentage = i/(Object.values(this.loadElements).length + this.loadFunctions.length)
-            console.log(`Loaded Func ${Math.trunc(this.percentage*100)}%`);
+            this.percentage = i / (Object.values(this.loadElements).length + this.loadFunctions.length)
+            console.log(`Loaded Func ${Math.trunc(this.percentage * 100)}%`);
         }
-        setTimeout(()=>
+        setTimeout(() =>
         {
-            this.loading = false;       
-            callback();    
+            this.loading = false;
+            callback();
         }, this.splashScreenTime)
     }
 
-    init(gl : WebGL2RenderingContext): void
+    init(gl: WebGL2RenderingContext): void
     {
         let imageShader = ImageShader.create(gl, "/images/logo.png", UV.DefaultSquare(gl), gl.LINEAR)
         // let imageShader= FlatShader.create(gl)
@@ -80,7 +80,7 @@ export class Loader extends Scene
         );
         this.splashImage.transform.position.z = -1;
         this.splashImage.transform.scale.set(200)
-        gl.clearColor(0,0,0,1);
+        gl.clearColor(0, 0, 0, 1);
         this.draw(gl);
     }
 
@@ -92,7 +92,7 @@ export class Loader extends Scene
         this.splashImage.draw_tick(gl, this.MainCamera);
         if (this.loading)
         {
-            requestAnimationFrame(this.draw.bind(this,gl))
+            requestAnimationFrame(this.draw.bind(this, gl))
         }
     }
 }

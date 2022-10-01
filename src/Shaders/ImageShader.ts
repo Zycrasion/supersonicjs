@@ -11,18 +11,19 @@ export class ImageShader extends Shader
     constructor(gl: WebGL2RenderingContext)
     {
         super(gl);
-        
+
     }
 
-    loadImage(gl : WebGL2RenderingContext, imageSrc: string, uvcoordinates: WebGLBuffer = UV.DefaultSquare(gl), FILTERING: number = gl.NEAREST) : Promise<void>
+    loadImage(gl: WebGL2RenderingContext, imageSrc: string, uvcoordinates: WebGLBuffer = UV.DefaultSquare(gl), FILTERING: number = gl.NEAREST): Promise<void>
     {
-        return new Promise<void>(resolve => {
+        return new Promise<void>(resolve =>
+        {
             this.textureCoordinates = uvcoordinates;
 
             this.texture = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, this.texture);
-    
-    
+
+
             // Put a single pixel in the image so we can use it before the image has been downloaded over the internet
             const level = 0;
             const imageFormat = gl.RGBA;
@@ -45,7 +46,7 @@ export class ImageShader extends Shader
                 srcType,
                 pixel
             );
-    
+
             // Load the image
             const image = new Image();
             image.onload = (ev: Event) =>
@@ -61,19 +62,19 @@ export class ImageShader extends Shader
                     srcType,
                     image
                 );
-    
+
                 gl.texParameteri(
                     gl.TEXTURE_2D,
                     gl.TEXTURE_MIN_FILTER,
                     FILTERING
                 )
-    
+
                 gl.texParameteri(
                     gl.TEXTURE_2D,
                     gl.TEXTURE_MAG_FILTER,
                     FILTERING
                 )
-    
+
                 if (Math2.isPowerOf2(image.width) && Math2.isPowerOf2(image.height))
                 {
                     gl.generateMipmap(gl.TEXTURE_2D);
@@ -84,7 +85,7 @@ export class ImageShader extends Shader
                         gl.TEXTURE_WRAP_S,
                         gl.CLAMP_TO_EDGE
                     )
-    
+
                     gl.texParameteri(
                         gl.TEXTURE_2D,
                         gl.TEXTURE_WRAP_T,
@@ -93,11 +94,11 @@ export class ImageShader extends Shader
                 }
                 resolve();
             }
-    
+
             // Start Loading Process
             image.src = imageSrc;
         })
-        
+
     }
 
     use(gl: WebGL2RenderingContext, callback: () => void): void

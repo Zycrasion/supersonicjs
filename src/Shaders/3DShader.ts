@@ -16,7 +16,7 @@ export class Shader3D extends Shader
 
     setViewMatrix(matrix: mat4) { this.ViewMatrix = matrix }
 
-    getViewMatrix() {return mat4.clone(this.ViewMatrix)}
+    getViewMatrix() { return mat4.clone(this.ViewMatrix) }
 
     setProjectionMatrix(matrix: mat4) { this.ProjectionMatrix = matrix }
 
@@ -102,8 +102,8 @@ export class Shaded3D extends Shader3D
 {
     viewPos: Vector;
 
-    material : Material;
-    light : Light;
+    material: Material;
+    light: Light;
 
     constructor(gl: WebGL2RenderingContext)
     {
