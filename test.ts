@@ -17,6 +17,7 @@ import { Transform } from "./src/Transform/Transform";
 import { off } from "process";
 import { Camera, ProjectionType } from "./src/Camera";
 import { Loader } from "./src/Loader/Loader";
+import { Light } from "./src/Shaders/LightSource";
 
 let avgFps = 0;
 let framerateCalcs = 0;
@@ -89,11 +90,8 @@ function setup()
 
 		// Setup Shader
 		cubeShader = Shaded3D.create(gl);
-		cubeShader.material.Ambient = vec(0.25,0.25,0.25);
-        cubeShader.material.Diffuse = vec(0.25,0.25,0.25);
-        cubeShader.material.Specular = vec(0.25,0.25,0.25);
-        cubeShader.material.Shiny = 32;
-		cubeShader.LightColour = vec(0.25, 1, 0.56);
+		cubeShader.material.setColour(vec(1,0,1));
+        cubeShader.material.shiny = 32;
 		cubeShader.viewPos = camera.transform.position;
 
 		// Add Renderable to Entity
@@ -126,9 +124,14 @@ function setup()
 			),
 			gl
 		);
+
+		cubeShader.material.setColour(vec(1,0.25,1))
 		
-		cubeShader.LightColour = ((light.components[0] as GeometryRenderable3D).shader as Flat3D).getColour();
-		cubeShader.LightPosition = light.transform.position; // Javascript will make this a pointer
+		cubeShader.light = new Light();
+		cubeShader.light.setColour(vec().set(0.25));
+
+
+		cubeShader.light.position = light.transform.position;
 		cubeShader.viewPos = camera.transform.position;
 
 		// Call draw on frame update

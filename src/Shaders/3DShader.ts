@@ -3,6 +3,7 @@ import { threadId } from "worker_threads";
 import { Loader } from "../Loader/Loader";
 import { HTTP_REQUEST } from "../Request/httpRequest";
 import { Vector, Vector4 } from "../Transform/Vector";
+import { Light } from "./LightSource";
 import { Material } from "./Material";
 import { Shader } from "./Shader";
 
@@ -99,17 +100,15 @@ export class Flat3D extends Shader3D
 
 export class Shaded3D extends Shader3D
 {
-    LightColour: Vector;
-    LightPosition: Vector;
     viewPos: Vector;
 
     material : Material;
+    light : Light;
 
     constructor(gl: WebGL2RenderingContext)
     {
         super(gl);
-        this.LightColour = new Vector(1, 1, 1);
-        this.LightPosition = new Vector(1, 1, 1);
+        this.light = new Light();
         this.material = new Material();
     }
 
@@ -117,10 +116,8 @@ export class Shaded3D extends Shader3D
     {
         if (!this.defaults(gl)) { return; }
 
-        this.material.set(gl, this);
-
-        this.setShaderUniform_3fv(gl, "uLight", this.LightColour);
-        this.setShaderUniform_3fv(gl, "uLightPos", this.LightPosition);
+        this.material.setUniforms(gl, this);
+        this.light.setUniforms(gl, this);
         this.setShaderUniform_3fv(gl, "uCameraPosition", this.viewPos);
         callback();
     }

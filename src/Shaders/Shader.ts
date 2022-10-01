@@ -167,7 +167,9 @@ export class Shader
         if (!this.hasLoaded()) { return; }
         gl.uniform3fv(
             gl.getUniformLocation(this.ShaderProgram, uniformPositionName),
-            x.toFloat32Array()
+            x.toFloat32Array(),
+            0,
+            3
         );
     }
 

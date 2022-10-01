@@ -3,21 +3,31 @@ import { Shader } from "./Shader";
 
 export class Material
 {
-    Ambient : Vector = vec();
-    Specular : Vector = vec();
-    Diffuse : Vector = vec();
-    Shiny : number = 32;
+    ambient : Vector;
+    specular : Vector;
+    diffuse : Vector;
+    shiny : number;
 
     constructor()
     {
-        console.log(this);
+        this.ambient = vec();
+        this.specular = vec();
+        this.diffuse = vec();
+        this.shiny = 32;
     }
 
-    set(gl : WebGL2RenderingContext, shader : Shader, name = "material")
+    setColour(col : Vector)
     {
-        shader.setShaderUniform_3fv(gl,name + ".ambient", this.Ambient);
-        shader.setShaderUniform_3fv(gl,name + ".specular", this.Specular);
-        shader.setShaderUniform_3fv(gl,name + ".diffuse", this.Diffuse);
-        shader.setShaderUniform_1f (gl,name + ".shiny", this.Shiny)
+        this.ambient = col.copy();
+        this.diffuse = col.copy();
+        this.specular = col.copy();
     }
-}   
+
+    setUniforms(gl : WebGL2RenderingContext, shader : Shader, name = "material")
+    {
+        shader.setShaderUniform_3fv(gl,name + ".ambient", this.ambient);
+        shader.setShaderUniform_3fv(gl,name + ".specular", this.specular);
+        shader.setShaderUniform_3fv(gl,name + ".diffuse", this.diffuse);
+        shader.setShaderUniform_1f (gl,name + ".shiny", this.shiny)
+    }
+}

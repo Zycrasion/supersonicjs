@@ -31,6 +31,7 @@ export class Vector
         this.x = a;
         this.y = b;
         this.z = c;
+        return this;
     }
 
     div(o: number | Vector)

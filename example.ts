@@ -49,12 +49,12 @@ function setup()
 
         // Setup Shader
         cubeShader = Shaded3D.create(gl);
-        cubeShader.material.Ambient = vec(0.25,0.25,0.25);
-        cubeShader.material.Diffuse = vec(0.25,0.25,0.25);
-        cubeShader.material.Specular = vec(0.25,0.25,0.25);
-        cubeShader.material.Shiny = 32;
-        cubeShader.LightColour = vec(0.25, 1, 0.56);
-        cubeShader.LightPosition = cube.transform.position.copy().add(vec(0, 0, 1));
+        cubeShader.material.ambient = vec(0.25,0.25,0.25);
+        cubeShader.material.diffuse = vec(0.25,0.25,0.25);
+        cubeShader.material.specular = vec(0.25,0.25,0.25);
+        cubeShader.material.shiny = 32;
+        cubeShader.light.setColour(vec(0.25, 1, 0.56));
+        cubeShader.light.position = cube.transform.position.copy().add(vec(0, 0, 1));
         cubeShader.viewPos = camera.transform.position;
 
         // Add Renderable to Entity
