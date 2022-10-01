@@ -115,43 +115,8 @@ function draw()
 setup();
 ```
 
+## Debugging Resources
+- [https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Constants]
+
 ## Known Bugs
 - Sometimes the light wont draw due to only supplying 4 vertices?
-
-
-## Changelog
-- ADDED SonicBuffer
-- ADDED VertexArray
-- FIXED Shaders not supplying enough data
-- FIXED Camera console.log
-- ADDED Scenes
-- ADDED Parenting
-- ADDED Enities
-- ADDED Components
-- ADDED Vector.add
-- ADDED Vector.sub
-- ADDED Vector.mult
-- ADDED ToFloatArray
-- ADDED ToFloat64Array
-- CHANGED WebGL Version to WebGL2
-- CHANGED Shaders
-- CHANGED File locations
-- ADDED SquareMesh preset
-- FIXED README.md typo 'VERSOIN' to 'VERSION' 
-- REMOVED ROADMAPS
-
-## Changelog (VERSION 0.1.*)
-- FIXED Warnings coming from WEBGL by only drawing if shader has loaded
-- ADDED Loading GLSL from files
-- FIXED Filtering not working
-- FIXED Images sometimes will not load because of isPowerOf2
-- Added SupersonicJS main file
-- Added `SupersonicJS.init()` and `.clear()`
-
-## Changelog (VERSION 0.1.0)
-- Added FlatShader Usage `new FlatShader(gl, red, green, blue, alpha)` then use like any other shader, rgb values are able to be changed on demand
-- Added ImageShader, Usage `new ImageShader(gl, imagePath, uvCoordinates?, filtering?)` use like any other shader
-- Added Scale Paremeter to `ProjectionMatrix.orthographic(gl, scale)`
-- Added InputAxis for making easy vector addition for movement
-- Added InputManager for using Input
-- FIXED Images repeating when they aren't supposed to
