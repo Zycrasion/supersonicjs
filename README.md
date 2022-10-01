@@ -1,5 +1,5 @@
 # SupersonicJS
-Status: Beta v0.3.3
+Status: Beta v0.3.4
 
 Polishing Code/Refactoring
 
