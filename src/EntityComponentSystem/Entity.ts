@@ -37,6 +37,18 @@ export class Entity
         }
     }
 
+    copy()
+    {
+        let copy = new Entity();
+        copy.name = this.name.concat(" - Copy");
+        copy.transform = this.transform.copy();
+        copy.components = this.components.map(v =>
+        {
+            return v.copy();
+        });
+        return copy;
+    }
+
     getTransformation()
     {
         if (!this.lastTransform.compare(this.transform))

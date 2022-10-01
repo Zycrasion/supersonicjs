@@ -5,7 +5,7 @@ import { FlatShader } from "./src/Shaders/FlatShader";
 import { ImageShader } from "./src/Shaders/ImageShader";
 import { Shader } from "./src/Shaders/Shader";
 import * as utils from "./src/utilities";
-import { Vector, Vector4 } from "./src/Transform/Vector";
+import { Vector, Vector4, vec, vec4 } from "./src/Transform/Vector";
 import { SupersonicJS } from "./src/supersonic";
 import { HTTP_REQUEST } from "./src/Request/httpRequest";
 import { Entity } from "./src/EntityComponentSystem/Entity";
@@ -15,26 +15,22 @@ import { ObjParser } from "./src/Parsers/ObjParser";
 import { Shader3D, Shaded3D, Flat3D } from "./src/Shaders/3DShader";
 import { Transform } from "./src/Transform/Transform";
 import { off } from "process";
-import { Camera } from "./src/Camera";
+import { Camera, ProjectionType } from "./src/Camera";
 import { Loader } from "./src/Loader/Loader";
-
-let scene: Scene;
-let cubeCol = new Vector4(0.5, 0, 0.25, 1);
-let lightCol = new Vector4(1, 0.5, 1, 1);
-
-let cube: GeometryRenderable3D;
-let light: GeometryRenderable3D;
-let ent = new Entity();
-let CubeShader: Shaded3D;
-let inputman: InputManager;
-let wasd: InputAxis;
-let transforms: Transform[];
 
 let avgFps = 0;
 let framerateCalcs = 0;
 let framecount = 0;
 let lastFrameCount = 0;
 let lastDate = Date.now();
+
+window["resetFrameCount"] = () => {
+	framecount = 0;
+	lastFrameCount = 0;
+	avgFps = 0;
+	framerateCalcs = 0;
+}
+
 function calculateFramerate()
 {
 	let difference = framecount - lastFrameCount;
@@ -42,7 +38,7 @@ function calculateFramerate()
 
 	avgFps += fps;
 	framerateCalcs += 1;
-	console.log("FPS:", avgFps / framerateCalcs);
+	console.log("AVG FPS:", avgFps / framerateCalcs, " FPS:", fps);
 
 	lastDate = Date.now();
 	lastFrameCount = framecount;
@@ -50,131 +46,117 @@ function calculateFramerate()
 
 setInterval(calculateFramerate, 1000)
 
-let camera = new Camera();
-console.log("just a reminder that if nothing is drawing it is because you forgot to put it infront of the camera.")
-camera.setFov(90)
+let cube: Entity;
+let cubeShader: Shaded3D;
 
+let light: Entity;
+let lightShader: Flat3D;
 
-function draw(gl: WebGL2RenderingContext)
+let camera: Camera;
+let cameraMovementInput: InputAxis;
+
+let inputManager: InputManager;
+
+let gl: WebGL2RenderingContext;
+
+function setup()
 {
-	SupersonicJS.clear(gl);
-	framecount += 1;
-	camera.freecam(wasd);
+	// vec and vec4 are shorthand for new Vector and new Vector4
+	gl = SupersonicJS.init("glCanvas", vec4(0.1, 0.1, 0.1, 1));
 
-
-	light.shader.setColour(lightCol);
-	light.draw_tick(gl, camera)
-
-
-	cube.transform.position.set(0, 0, 0)
-	CubeShader.LightPosition = light.transform.position;
-	CubeShader.setColour(cubeCol);
-	CubeShader.LightColour = lightCol.toVector3();
-	CubeShader.viewPos = camera.transform.position;
-	cube.shader = CubeShader;
-	for (let i = 0; i < transforms.length; i++)
-	{
-		cube.transform = transforms[i];
-		// cube.transform.rotation.add(Math.sin(framecount)/10);
-
-		cube.draw_tick(gl, camera)
-	}
-
-
-	requestAnimationFrame(draw.bind(this, gl));
-}
-
-
-
-
-
-let loader = new Loader();
-
-function main()
-{
-	camera.hook_freelook();
-
-
-	// tests
-	let a = new Vector(1, 1, 1);
-	console.log(a.getMagnitude())
-	a.normalize();
-	console.log(a);
-	console.log(a.getMagnitude())
-
+	// Lock cursor to canvas
 	utils.PointerLock.Lock("glCanvas");
 
-	scene = new Scene();
-	transforms = [];
-	let scale = 10;
-	for (let i = 0; i < 100; i++)
-	{
-		let t = new Transform();
-		t.position.set((Math.random() * scale * 2) - scale, (Math.random() * scale * 2) - scale, (Math.random() * scale * 2) - scale);
-		t.rotation.set(Math.random() * 10, Math.random() * 10, Math.random() * 10);
-		t.scale.set(Math.random())
-		transforms.push(t);
-	}
-
-
-
-
+	// Request Object Mesh
 	HTTP_REQUEST("/Models/example.obj").then(text =>
 	{
-		let results = ObjParser.parse(text)
+		// Parse raw text to get MeshData
+		let MeshData = ObjParser.parse(text);
 
-		CubeShader = Shaded3D.create(gl);
-		CubeShader.setColour(new Vector4(1,1,1,1))
+		// Prepare Camera
+		camera = new Camera(ProjectionType.PERSPECTIVE, 90, vec(-2, -2, -2));
 
-		cube = new GeometryRenderable3D(
-			gl,
-			results.vertices,
-			results.indices,
-			results.normals,
-			results.textures,
-			CubeShader
-		);
+		// Create Input Events
+		inputManager = new InputManager()
+		// Create input "axis" for camera
+		cameraMovementInput = new InputAxis(inputManager, "d", "a", "w", "s");
+		// Hook Mouse move events to camera
+		camera.hook_freelook();
+		// camera.unhook_freelook(); To stop monitoring mouse movement
 
-		light = new GeometryRenderable3D(
-			gl,
-			results.vertices,
-			results.indices,
-			results.normals,
-			results.textures,
-			Flat3D.create(gl)
-		)
+		// Create an Entity with the name "Cube"
+		cube = new Entity("Cube");
 
-		ent.addComponent(
-			cube
-			, gl
-		);
+		// Setup Shader
+		cubeShader = Shaded3D.create(gl);
+		cubeShader.material.Ambient = vec(0.25,0.25,0.25);
+        cubeShader.material.Diffuse = vec(0.25,0.25,0.25);
+        cubeShader.material.Specular = vec(0.25,0.25,0.25);
+        cubeShader.material.Shiny = 32;
+		cubeShader.LightColour = vec(0.25, 1, 0.56);
+		cubeShader.viewPos = camera.transform.position;
 
-		ent.addComponent(
-			light,
+		// Add Renderable to Entity
+		cube.addComponent(
+			new GeometryRenderable3D(
+				gl,
+				MeshData.vertices,
+				MeshData.indices,
+				MeshData.normals,
+				MeshData.textures,
+				cubeShader
+			),
 			gl
 		)
 
-		scene.addEntity(ent);
+		lightShader = Flat3D.create(gl);
+		lightShader.setColour(vec4(1, 1, 1, 1));
+		light = new Entity("Light");
+		light.transform.position = vec(0,0,2);
+		light.transform.scale.set(0.5);
 
-		requestAnimationFrame(draw.bind(this, gl));
+		light.addComponent(
+			new GeometryRenderable3D(
+				gl,
+				MeshData.vertices,
+				MeshData.indices,
+				MeshData.normals,
+				MeshData.textures,
+				lightShader
+			),
+			gl
+		);
+		
+		cubeShader.LightColour = ((light.components[0] as GeometryRenderable3D).shader as Flat3D).getColour();
+		cubeShader.LightPosition = light.transform.position; // Javascript will make this a pointer
+		cubeShader.viewPos = camera.transform.position;
+
+		// Call draw on frame update
+		requestAnimationFrame(draw.bind(this))
 	})
 }
-let gl = SupersonicJS.init("glCanvas", new Vector4(0.1, 0.1, 0.1, 1));
-inputman = new InputManager();
-wasd = new InputAxis(inputman, "d", "a", "w", "s");
-inputman.addKeyListener("q", () =>
+
+function draw()
 {
-	camera.transform.position.y += 0.1;
-})
-inputman.addKeyListener("e", () =>
-{
-	camera.transform.position.y -= 0.1;
-})
 
+	// Do stuff that isnt  drawing
+	light.transform.position.set(Math.sin(framecount / 60)*4,0,Math.cos(framecount / 60)*4);
 
-Shaded3D.registerLoad(loader);
-Flat3D.registerLoad(loader);
-loader.beginLoad(gl, ()=>{
-	main();
+	framecount++;
+	// Clear background
+	SupersonicJS.clear(gl);
 
-});
+	// Move Camera
+	camera.freecam(cameraMovementInput);
+
+	// Draw cube
+	cube.draw_tick(gl, camera);
+
+	// Draw light
+	light.draw_tick(gl, camera);
+
+	// Call draw again
+	requestAnimationFrame(draw.bind(this))
+}
+
+setup();

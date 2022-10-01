@@ -3,20 +3,15 @@ import { threadId } from "worker_threads";
 import { Loader } from "../Loader/Loader";
 import { HTTP_REQUEST } from "../Request/httpRequest";
 import { Vector, Vector4 } from "../Transform/Vector";
+import { Material } from "./Material";
 import { Shader } from "./Shader";
 
 
 export class Shader3D extends Shader
 {
-     ViewMatrix: mat4;
-     ProjectionMatrix: mat4;
-     ModelViewMatrix: mat4;
-
-    protected Colour: Vector4;
-
-    setColour(colour: Vector4) { this.Colour = colour; }
-
-    getColour() { return this.Colour.copy() }
+    protected ViewMatrix: mat4;
+    protected ProjectionMatrix: mat4;
+    protected ModelViewMatrix: mat4;
 
     setViewMatrix(matrix: mat4) { this.ViewMatrix = matrix }
 
@@ -32,14 +27,9 @@ export class Shader3D extends Shader
 
     protected defaults(gl: WebGL2RenderingContext): boolean
     {
-        if (!this.check()) { return false }
+        if (!this.hasLoaded()) { return false }
 
         gl.useProgram(this.ShaderProgram);
-        this.setShaderUniform_4fv(
-            gl,
-            "uColour",
-            this.Colour
-        );
 
         this.setShaderUniform_mat4fv(
             gl,
@@ -65,14 +55,26 @@ export class Shader3D extends Shader
 export class Flat3D extends Shader3D
 {
 
+    protected Colour: Vector4;
+
     constructor(gl: WebGL2RenderingContext)
     {
         super(gl);
     }
 
+    setColour(colour: Vector4) { this.Colour = colour; }
+
+    getColour() { return this.Colour.copy() }
+
+
     use(gl: WebGL2RenderingContext, callback: () => void): void
     {
         if (!this.defaults(gl)) { return; }
+        this.setShaderUniform_4fv(
+            gl,
+            "uColour",
+            this.Colour
+        );
         callback();
     }
 
@@ -101,17 +103,22 @@ export class Shaded3D extends Shader3D
     LightPosition: Vector;
     viewPos: Vector;
 
+    material : Material;
+
     constructor(gl: WebGL2RenderingContext)
     {
         super(gl);
-        this.Colour = new Vector4();
         this.LightColour = new Vector(1, 1, 1);
         this.LightPosition = new Vector(1, 1, 1);
+        this.material = new Material();
     }
 
     use(gl: WebGL2RenderingContext, callback: () => void = () => { }): void
     {
         if (!this.defaults(gl)) { return; }
+
+        this.material.set(gl, this);
+
         this.setShaderUniform_3fv(gl, "uLight", this.LightColour);
         this.setShaderUniform_3fv(gl, "uLightPos", this.LightPosition);
         this.setShaderUniform_3fv(gl, "uCameraPosition", this.viewPos);

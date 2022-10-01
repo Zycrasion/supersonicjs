@@ -102,7 +102,7 @@ export class ImageShader extends Shader
 
     use(gl: WebGL2RenderingContext, callback: () => void): void
     {
-        if (!this.check()) { return; }
+        if (!this.hasLoaded()) { return; }
         gl.useProgram(this.ShaderProgram);
         this.enableVertexAttrib(
             gl,
