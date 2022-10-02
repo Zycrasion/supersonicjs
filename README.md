@@ -157,7 +157,7 @@ setup();
 ```
 
 ## Debugging Resources
-- [https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Constants]
+- https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Constants
 
 ## Known Bugs
 - Sometimes the light wont draw due to only supplying 4 vertices?
