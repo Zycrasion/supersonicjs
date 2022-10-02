@@ -1,4 +1,5 @@
 import { mat4 } from "gl-matrix";
+import { BufferSonic } from "./Abstraction/Buffer";
 
 
 export interface Dict<Type>
@@ -84,23 +85,40 @@ export class PointerLock
 
 export class UV
 {
-    static DefaultSquare(gl: WebGLRenderingContext)
+    static legacy = {
+        DefaultSquare : (gl: WebGL2RenderingContext) =>
+        {
+            const textureCoordinates = gl.createBuffer();
+    
+            const square = [
+                1, 1,
+                0, 1,
+                1, 0,
+                0, 0
+            ]
+            gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordinates);
+            gl.bufferData(
+                gl.ARRAY_BUFFER,
+                new Float32Array(square),
+                gl.STATIC_DRAW
+            );
+    
+            return textureCoordinates;
+        }
+    }
+    
+    static DefaultSquare(gl : WebGL2RenderingContext) : BufferSonic
     {
-        const textureCoordinates = gl.createBuffer();
-
+    
         const square = [
             1, 1,
             0, 1,
             1, 0,
             0, 0
         ]
-        gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordinates);
-        gl.bufferData(
-            gl.ARRAY_BUFFER,
-            new Float32Array(square),
-            gl.STATIC_DRAW
-        );
-
+    
+        const textureCoordinates = new BufferSonic(gl, new Float32Array(square), square.length);
+        
         return textureCoordinates;
     }
 }

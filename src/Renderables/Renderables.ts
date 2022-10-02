@@ -108,8 +108,11 @@ export class GeometryRenderable3D extends RenderableAbstract
         this.vao.enableVertexAttrib(gl, 1);
 
         let texturesUnpacked = Vector.unpackVertices(textures);
-        this.textureBuffer = new BufferSonic(gl, new Float32Array(texturesUnpacked), texturesUnpacked.length / 3)
-        this.vao.enableVertexAttrib(gl, 2)
+        this.textureBuffer = new BufferSonic(gl, new Float32Array(texturesUnpacked), texturesUnpacked.length / 3);
+        this.textureBuffer.bind(gl);
+        this.vao.enableVertexAttrib(gl, 2, 3);
+
+        console.log(this.textureBuffer.length, this.elements.length)
     }
 
     draw_tick(gl: WebGL2RenderingContext, Camera: Camera, shaderParamCallback = () => { }): void

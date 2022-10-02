@@ -18,6 +18,9 @@ import { off } from "process";
 import { Camera, ProjectionType } from "./src/Camera";
 import { Loader } from "./src/Loader/Loader";
 import { Light } from "./src/Shaders/LightSource";
+import { PBRShader } from "./src/Shaders/PBR";
+import { Texture } from "./src/Renderables/Texture";
+import { BufferSonic } from "./src/Abstraction/Buffer";
 
 let avgFps = 0;
 let framerateCalcs = 0;
@@ -48,7 +51,6 @@ function calculateFramerate()
 setInterval(calculateFramerate, 1000)
 
 let cube: Entity;
-let cubeShader: Shaded3D;
 
 let light: Entity;
 let lightShader: Flat3D;
@@ -89,10 +91,7 @@ function setup()
 		cube = new Entity("Cube");
 
 		// Setup Shader
-		cubeShader = Shaded3D.create(gl);
-		cubeShader.material.setColour(vec(1,0,1));
-        cubeShader.material.shiny = 32;
-		cubeShader.viewPos = camera.transform.position;
+		let cubeShader = PBRShader.create(gl);
 
 		// Add Renderable to Entity
 		cube.addComponent(
@@ -112,7 +111,7 @@ function setup()
 		light = new Entity("Light");
 		light.transform.position = vec(0,0,2);
 		light.transform.scale.set(0.5);
-
+		console.log(MeshData.textures)
 		light.addComponent(
 			new GeometryRenderable3D(
 				gl,
@@ -125,17 +124,27 @@ function setup()
 			gl
 		);
 
-		cubeShader.material.setColour(vec(1,0.25,1))
+		cubeShader.material.specular = vec(1,0.25,1);
+		// cubeShader.material.setColour(vec(1,1,1).div(10))
+        cubeShader.material.shininess = 32;
 		
-		cubeShader.light = new Light();
-		cubeShader.light.setColour(vec().set(0.25));
+		
+		cubeShader.light.ambient.set(0.2);
+		cubeShader.light.diffuse.set(0.5);
+		cubeShader.light.specular.set(0.6);
 
 
 		cubeShader.light.position = light.transform.position;
-		cubeShader.viewPos = camera.transform.position;
+		// cubeShader.viewPos = camera.transform.position;
+		cubeShader.cameraPosition = camera.transform.position;
 
 		// Call draw on frame update
-		requestAnimationFrame(draw.bind(this))
+		Texture.load(gl, "/images/test.png", new BufferSonic(gl, new Float32Array(Vector.unpackVertices(MeshData.textures)), MeshData.textures.length)).then(texture =>
+		{
+			cubeShader.material.diffuse = texture;
+			console.log(texture)
+			requestAnimationFrame(draw.bind(this))
+		})
 	})
 }
 

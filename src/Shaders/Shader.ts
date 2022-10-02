@@ -3,7 +3,7 @@ import { Loader } from "../Loader/Loader";
 import { HTTP_REQUEST } from "../Request/httpRequest";
 import { Vector, Vector4 } from "../Transform/Vector";
 
-export function createShader(gl: WebGL2RenderingContext, type: number, source: string)
+export function createShader(gl: WebGL2RenderingContext, type: number, source: string, name = "a shader")
 {
     const shader = gl.createShader(type);
 
@@ -13,8 +13,12 @@ export function createShader(gl: WebGL2RenderingContext, type: number, source: s
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS))
     {
-        alert(`An error has occured while compiling a shader.
+        alert(`An error has occured while compiling ${name}.
         ${gl.getShaderInfoLog(shader)}`);
+        console.log(`An error has occured while compiling ${name}.
+        ${gl.getShaderInfoLog(shader)} ${source}`);
+        gl.deleteShader(shader)
+        gl.deleteShader(shader)
         gl.deleteShader(shader);
         return null;
     }
@@ -26,8 +30,8 @@ export function createShader(gl: WebGL2RenderingContext, type: number, source: s
 export function createShaderProgram(gl: WebGL2RenderingContext, vsSource: string, fsSource: string)
 {
     // vertex shader, fragment shader
-    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
-    const fragShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource, "vertex shader");
+    const fragShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource, "fragment shader");
 
     const program = gl.createProgram()
     gl.attachShader(program, vertexShader);

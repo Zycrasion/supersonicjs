@@ -1,7 +1,15 @@
 import { vec, Vector, Vector4 } from "../Transform/Vector";
 import { Shader } from "./Shader";
 
-export class Material
+export class BaseMaterial
+{
+    setUniforms(gl : WebGL2RenderingContext, shader : Shader, name = "material")
+    {
+        
+    }
+}
+
+export class Material extends BaseMaterial
 {
     ambient: Vector;
     specular: Vector;
@@ -10,6 +18,7 @@ export class Material
 
     constructor()
     {
+        super();
         this.ambient = vec();
         this.specular = vec();
         this.diffuse = vec();

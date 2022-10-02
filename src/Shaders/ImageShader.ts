@@ -14,7 +14,7 @@ export class ImageShader extends Shader
 
     }
 
-    loadImage(gl: WebGL2RenderingContext, imageSrc: string, uvcoordinates: WebGLBuffer = UV.DefaultSquare(gl), FILTERING: number = gl.NEAREST): Promise<void>
+    loadImage(gl: WebGL2RenderingContext, imageSrc: string, uvcoordinates: WebGLBuffer = UV.legacy.DefaultSquare(gl), FILTERING: number = gl.NEAREST): Promise<void>
     {
         return new Promise<void>(resolve =>
         {
@@ -127,7 +127,7 @@ export class ImageShader extends Shader
         this.fromLoadItems(gl, loader, "ImageShader")
     }
 
-    static create(gl: WebGL2RenderingContext, imageSrc: string = "", uvcoordinates: WebGLBuffer = UV.DefaultSquare(gl), FILTERING: number = gl.NEAREST): ImageShader 
+    static create(gl: WebGL2RenderingContext, imageSrc: string = "", uvcoordinates: WebGLBuffer = UV.legacy.DefaultSquare(gl), FILTERING: number = gl.NEAREST): ImageShader 
     {
         if (imageSrc == "")
         {
