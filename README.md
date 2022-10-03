@@ -1,10 +1,6 @@
 # SupersonicJS
 Status: Beta v0.3.7
 
-Polishing Code/Refactoring
-
-For the forseeable future i will probably get to Version 0.2.0 then take a break making some games and come back and have a heap of features to implement.
-
 ## Getting Started (NOTE: You should have an understanding of javascript/typescript before trying the engine. its currently more like an abstraction layer on top of WebGL.)
 clone the repo 
 `git clone https://github.com/Zycrasion/supersonicjs.git`
