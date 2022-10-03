@@ -1,5 +1,5 @@
 # SupersonicJS
-Status: Beta v0.3.7
+Status: Beta v0.3.8
 
 ## Getting Started (NOTE: You should have an understanding of javascript/typescript before trying the engine. its currently more like an abstraction layer on top of WebGL.)
 clone the repo 

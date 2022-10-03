@@ -1,7 +1,5 @@
 import { mat4 } from "gl-matrix";
-import { threadId } from "worker_threads";
 import { Loader } from "../Loader/Loader";
-import { HTTP_REQUEST } from "../Request/httpRequest";
 import { Vector, Vector4 } from "../Transform/Vector";
 import { Light } from "./LightSource";
 import { Material } from "./Material";
@@ -79,14 +77,9 @@ export class Flat3D extends Shader3D
         callback();
     }
 
-    static registerLoad(loader: Loader): void
+    static Register(): void
     {
-        this.registerLoadItems(loader, "3DFlat");
-    }
-
-    fromLoad(gl: WebGL2RenderingContext, loader: Loader): void
-    {
-        this.fromLoadItems(gl, loader, "3DFlat")
+        this.Register_Abstract("3DFlat");
     }
 
     static create(gl: WebGL2RenderingContext): Flat3D
@@ -122,14 +115,9 @@ export class Shaded3D extends Shader3D
         callback();
     }
 
-    static registerLoad(loader: Loader): void
+    static Register(): void
     {
-        this.registerLoadItems(loader, "3DShaded");
-    }
-
-    fromLoad(gl: WebGL2RenderingContext, loader: Loader): void
-    {
-        this.fromLoadItems(gl, loader, "3DShaded")
+        this.Register_Abstract("3DShaded");
     }
 
     static create(gl: WebGL2RenderingContext): Shaded3D

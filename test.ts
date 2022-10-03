@@ -11,6 +11,7 @@ import { Camera, ProjectionType } from "./src/Camera";
 import { PBRShader } from "./src/Shaders/PBR";
 import { Texture } from "./src/Renderables/Texture";
 import { BufferSonic } from "./src/Abstraction/Buffer";
+import { Loader } from "./src/Loader/Loader";
 
 let avgFps = 0;
 let framerateCalcs = 0;
@@ -59,7 +60,6 @@ function setup()
 
 	// Lock cursor to canvas
 	utils.PointerLock.Lock("glCanvas");
-
 	// Request Object Mesh
 	HTTP_REQUEST("/Models/example.obj").then(text =>
 	{
@@ -159,4 +159,8 @@ function draw()
 	requestAnimationFrame(draw.bind(this))
 }
 
-setup();
+Loader.CacheImage("/images/test.png");
+PBRShader.Register();
+Flat3D.Register();
+Loader.CacheHTTP("/Models/example.obj");
+Loader.LoadAll().then(setup);

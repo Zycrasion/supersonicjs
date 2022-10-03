@@ -1,3 +1,4 @@
+import { Loader } from "../Loader/Loader";
 import { Texture } from "../Renderables/Texture";
 import { vec, Vector } from "../Transform/Vector";
 import { Shader3D } from "./3DShader";
@@ -53,6 +54,10 @@ export class PBRShader extends Shader3D
         callback();
     }
 
+    static Register(): void
+    {
+        this.Register_Abstract("PBR");
+    }
 
     static create(gl: WebGL2RenderingContext): PBRShader
     {

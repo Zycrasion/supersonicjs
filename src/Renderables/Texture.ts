@@ -1,5 +1,6 @@
 import { resolve } from "path";
 import { BufferSonic } from "../Abstraction/Buffer";
+import { Loader } from "../Loader/Loader";
 import { Math2, UV } from "../utilities";
 
 export class Texture 
@@ -43,6 +44,54 @@ export class Texture
         );
 
         
+        // Check if image is cached
+        let response = Loader.LoadImage(imageSrc);
+        if (typeof response != "string")
+        {
+            // Image is cached
+            const image : HTMLImageElement = response;
+            return new Promise<Texture>(resolve => {
+                gl.bindTexture(gl.TEXTURE_2D, texture.texture);
+                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+                gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true)
+                gl.texImage2D(
+                    gl.TEXTURE_2D,
+                    level,
+                    imageFormat,
+                    srcFormat,
+                    srcType,
+                    image
+                );
+    
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_MIN_FILTER,
+                    FILTERING
+                )
+    
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_MAG_FILTER,
+                    FILTERING
+                )
+
+                gl.generateMipmap(gl.TEXTURE_2D);
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_WRAP_S,
+                    gl.CLAMP_TO_EDGE
+                )
+
+                gl.texParameteri(
+                    gl.TEXTURE_2D,
+                    gl.TEXTURE_WRAP_T,
+                    gl.CLAMP_TO_EDGE
+                )
+
+                resolve(texture);
+            })
+        }
+
         // Load the image
         const image = new Image();
         return new Promise<Texture>(resolve => {

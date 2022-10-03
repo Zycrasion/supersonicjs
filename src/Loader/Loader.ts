@@ -1,98 +1,83 @@
-import { throws } from "assert";
-import { Camera, ProjectionType } from "../Camera";
-import { Scene } from "../EntityComponentSystem/Scene";
-import { SquareMesh } from "../Renderables/DefaultMeshes/square";
-import { GeometryRenderable2D } from "../Renderables/Renderables";
 import { HTTP_REQUEST } from "../Request/httpRequest";
-import { FlatShader } from "../Shaders/FlatShader";
-import { ImageShader } from "../Shaders/ImageShader";
-import { SupersonicJS } from "../supersonic";
-import { Vector4 } from "../Transform/Vector";
-import { Dict, UV } from "../utilities";
+import { Dict } from "../utilities";
 
 
-export class Loader extends Scene
+export class Loader
 {
-    // [key] = [url]
-    loadElements: Dict<string>;
-    loadFunctions: Array<() => Promise<void>>;
-    loaded: Dict<string>;
-    percentage = 0;
-    loading = true;
-    splashImage: GeometryRenderable2D;
-    splashScreenTime = 1000
 
-    constructor()
-    {
-        super();
-        this.loadFunctions = [];
-        this.loadElements = {}
-        this.loaded = {};
-        this.MainCamera = new Camera(ProjectionType.ORTHOGRAPHIC);
-    }
+    static imageCache: Dict<HTMLImageElement> = {};
+    static imagePending: Array<string> = [];
 
-    addLoadItem(url, id)
-    {
-        this.loadElements[id] = url;
-    }
+    static httpRequests: Dict<string> = {};
+    static httpPending: Array<string> = [];
 
-    addLoadFunction(func: () => Promise<void>)
-    {
-        this.loadFunctions.push(func);
-    }
 
-    async beginLoad(gl: WebGL2RenderingContext, callback: () => void)
+    static LoadImage(url: string): HTMLImageElement | string
     {
-        this.init(gl);
-        console.log("Beginning Loading Process")
-        let i = 0;
-        for (let [id, url] of Object.entries(this.loadElements))
+        if (url in this.imageCache)
         {
-            let text = await HTTP_REQUEST(url);
-            this.loaded[id] = text;
-            i++;
-            this.percentage = i / (Object.values(this.loadElements).length + this.loadFunctions.length)
-            console.log(`Loaded ID ${id} ${Math.trunc(this.percentage * 100)}% `)
+            return this.imageCache[url];
+        } else
+        {
+            return "404";
         }
-        for (let func of this.loadFunctions)
-        {
-            await func();
-            i++;
-            this.percentage = i / (Object.values(this.loadElements).length + this.loadFunctions.length)
-            console.log(`Loaded Func ${Math.trunc(this.percentage * 100)}%`);
-        }
-        setTimeout(() =>
-        {
-            this.loading = false;
-            callback();
-        }, this.splashScreenTime)
+
     }
 
-    init(gl: WebGL2RenderingContext): void
+    static CacheImage(url: string)
     {
-        let imageShader = ImageShader.create(gl, "/images/logo.png", UV.DefaultSquare(gl), gl.LINEAR)
-        // let imageShader= FlatShader.create(gl)
-        // imageShader.colour = new Vector4(1,1,1,1)
-        this.splashImage = new GeometryRenderable2D(
-            gl,
-            SquareMesh(),
-            imageShader
-        );
-        this.splashImage.transform.position.z = -1;
-        this.splashImage.transform.scale.set(200)
-        gl.clearColor(0, 0, 0, 1);
-        this.draw(gl);
+        this.imagePending.push(url);
     }
 
-
-
-    draw(gl: WebGL2RenderingContext): void
+    static LoadHTTP(url: string)
     {
-        SupersonicJS.clear(gl);
-        this.splashImage.draw_tick(gl, this.MainCamera);
-        if (this.loading)
+        if (url in this.httpRequests)
         {
-            requestAnimationFrame(this.draw.bind(this, gl))
+            return this.httpRequests[url];
+        } else
+        {
+            return "404";
         }
+    }
+
+    static CacheHTTP(url: string)
+    {
+        this.httpPending.push(url);
+    }
+
+    static async LoadAll()
+    {
+        this.httpPending.forEach(async url =>
+        {
+            this.httpRequests[url] = await HTTP_REQUEST(url);
+        })
+        this.httpPending = [];
+
+        this.imagePending.forEach(async url =>
+        {
+            await (() =>
+            {
+                return new Promise<void>(resolve =>
+                {
+                    this.imageCache[url] = new Image();
+                    this.imageCache[url].onload = (ev: Event) =>
+                    {
+                        resolve();
+                    }
+                    this.imageCache[url].src = url;
+                })
+
+            })()
+
+        })
+        this.imagePending = [];
+    }
+
+    static Free()
+    {
+        delete this.httpRequests;
+        this.httpRequests = {};
+        delete this.imageCache;
+        this.imageCache = {};
     }
 }

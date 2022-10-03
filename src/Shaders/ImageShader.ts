@@ -117,14 +117,9 @@ export class ImageShader extends Shader
         callback();
     }
 
-    static registerLoad(loader: Loader): void
+    static Register(): void
     {
-        this.registerLoadItems(loader, "ImageShader");
-    }
-
-    fromLoad(gl: WebGL2RenderingContext, loader: Loader): void
-    {
-        this.fromLoadItems(gl, loader, "ImageShader")
+        this.Register_Abstract("ImageShader");
     }
 
     static create(gl: WebGL2RenderingContext, imageSrc: string = "", uvcoordinates: WebGLBuffer = UV.legacy.DefaultSquare(gl), FILTERING: number = gl.NEAREST): ImageShader 

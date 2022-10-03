@@ -187,25 +187,15 @@ export class Shader
         this.createProgram(gl, vertexSource, fragmentSource);
     }
 
-    protected fromLoadItems(gl: WebGL2RenderingContext, loader: Loader, id: string)
+    protected static Register_Abstract(id: string)
     {
-        this.createProgram(gl, loader.loaded[id + "v"], loader.loaded[id + "f"]);
+        Loader.CacheHTTP(`${Shader.shaderpath}/${id}/vertex.vert`);
+        Loader.CacheHTTP(`${Shader.shaderpath}/${id}/fragment.frag`);
     }
 
-    protected static registerLoadItems(loader: Loader, id: string)
+    static Register()
     {
-        loader.addLoadItem(`${Shader.shaderpath}/${id}/vertex.vert`, id + "v");
-        loader.addLoadItem(`${Shader.shaderpath}/${id}/fragment.frag`, id + "f");
-    }
-
-    static registerLoad(loader: Loader)
-    {
-        Shader.registerLoadItems(loader, "Default");
-    }
-
-    fromLoad(gl: WebGL2RenderingContext, loader: Loader)
-    {
-        this.fromLoadItems(gl, loader, "Default")
+        Shader.Register_Abstract("Default");
     }
 
     // Preferred Method of Instatiating
