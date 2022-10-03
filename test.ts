@@ -1,23 +1,13 @@
-import * as glmat from "gl-matrix";
 import { InputAxis, InputManager } from "./src/InputManager/Input";
-import { GeometryRenderable2D, GeometryRenderable3D } from "./src/Renderables/Renderables";
-import { FlatShader } from "./src/Shaders/FlatShader";
-import { ImageShader } from "./src/Shaders/ImageShader";
-import { Shader } from "./src/Shaders/Shader";
+import { GeometryRenderable3D } from "./src/Renderables/Renderables";
 import * as utils from "./src/utilities";
-import { Vector, Vector4, vec, vec4 } from "./src/Transform/Vector";
+import { Vector, vec, vec4 } from "./src/Transform/Vector";
 import { SupersonicJS } from "./src/supersonic";
 import { HTTP_REQUEST } from "./src/Request/httpRequest";
 import { Entity } from "./src/EntityComponentSystem/Entity";
-import { SquareMesh } from "./src/Renderables/DefaultMeshes/square";
-import { Scene } from "./src/EntityComponentSystem/Scene";
 import { ObjParser } from "./src/Parsers/ObjParser";
-import { Shader3D, Shaded3D, Flat3D } from "./src/Shaders/3DShader";
-import { Transform } from "./src/Transform/Transform";
-import { off } from "process";
+import { Flat3D } from "./src/Shaders/3DShader";
 import { Camera, ProjectionType } from "./src/Camera";
-import { Loader } from "./src/Loader/Loader";
-import { Light } from "./src/Shaders/LightSource";
 import { PBRShader } from "./src/Shaders/PBR";
 import { Texture } from "./src/Renderables/Texture";
 import { BufferSonic } from "./src/Abstraction/Buffer";
@@ -106,6 +96,7 @@ function setup()
 			gl
 		)
 
+
 		lightShader = Flat3D.create(gl);
 		lightShader.setColour(vec4(1, 1, 1, 1));
 		light = new Entity("Light");
@@ -124,8 +115,7 @@ function setup()
 			gl
 		);
 
-		cubeShader.material.specular = vec(1,0.25,1);
-		// cubeShader.material.setColour(vec(1,1,1).div(10))
+		cubeShader.material.specular.set(1);
         cubeShader.material.shininess = 32;
 		
 		
@@ -135,7 +125,6 @@ function setup()
 
 
 		cubeShader.light.position = light.transform.position;
-		// cubeShader.viewPos = camera.transform.position;
 		cubeShader.cameraPosition = camera.transform.position;
 
 		// Call draw on frame update
@@ -147,7 +136,6 @@ function setup()
 		})
 	})
 }
-
 function draw()
 {
 

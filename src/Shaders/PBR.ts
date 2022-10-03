@@ -23,7 +23,7 @@ export class PBRMaterial implements BaseMaterial
         this.diffuse.bind(gl);
         shader.setShaderUniform_1i(gl, name + ".diffuse", 0);
         shader.setShaderUniform_3fv(gl, name + ".specular", this.specular);
-        shader.setShaderUniform_1f(gl, name + ".shiny", this.shininess);
+        shader.setShaderUniform_1f(gl, name + ".shininess", this.shininess);
     }
 }
 

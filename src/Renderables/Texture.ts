@@ -5,7 +5,6 @@ import { Math2, UV } from "../utilities";
 export class Texture 
 {
     texture: WebGLTexture;
-    textureCoordinates: BufferSonic;
 
     bind(gl : WebGL2RenderingContext)
     {
@@ -16,7 +15,6 @@ export class Texture
     static load(gl: WebGL2RenderingContext, imageSrc: string, uvcoordinates: BufferSonic = UV.DefaultSquare(gl), FILTERING: number = gl.NEAREST)
     {
         let texture = new Texture();
-        texture.textureCoordinates = uvcoordinates;
         texture.texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture.texture);
 
