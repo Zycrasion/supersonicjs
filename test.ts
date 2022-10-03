@@ -128,7 +128,7 @@ function setup()
 		cubeShader.cameraPosition = camera.transform.position;
 
 		// Call draw on frame update
-		Texture.load(gl, "/images/test.png", new BufferSonic(gl, new Float32Array(Vector.unpackVertices(MeshData.textures)), MeshData.textures.length)).then(texture =>
+		Texture.load(gl, "/images/test.png").then(texture =>
 		{
 			cubeShader.material.diffuse = texture;
 			console.log(texture)

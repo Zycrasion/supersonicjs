@@ -13,7 +13,48 @@ export class Texture
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
     }
 
-    static load(gl: WebGL2RenderingContext, imageSrc: string, uvcoordinates: BufferSonic = UV.DefaultSquare(gl), FILTERING: number = gl.NEAREST)
+    protected init(gl: WebGL2RenderingContext, image : HTMLImageElement, FILTERING = gl.NEAREST, level=0, imageFormat = gl.RGBA, srcFormat = gl.RGBA, srcType=gl.UNSIGNED_BYTE)
+    {
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true)
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            level,
+            imageFormat,
+            srcFormat,
+            srcType,
+            image
+        );
+
+        gl.texParameteri(
+            gl.TEXTURE_2D,
+            gl.TEXTURE_MIN_FILTER,
+            FILTERING
+        )
+
+        gl.texParameteri(
+            gl.TEXTURE_2D,
+            gl.TEXTURE_MAG_FILTER,
+            FILTERING
+        )
+
+        gl.generateMipmap(gl.TEXTURE_2D);
+        gl.texParameteri(
+            gl.TEXTURE_2D,
+            gl.TEXTURE_WRAP_S,
+            gl.CLAMP_TO_EDGE
+        )
+
+        gl.texParameteri(
+            gl.TEXTURE_2D,
+            gl.TEXTURE_WRAP_T,
+            gl.CLAMP_TO_EDGE
+        )
+
+    }
+
+    static load(gl: WebGL2RenderingContext, imageSrc: string, FILTERING: number = gl.NEAREST)
     {
         let texture = new Texture();
         texture.texture = gl.createTexture();
@@ -51,43 +92,7 @@ export class Texture
             // Image is cached
             const image : HTMLImageElement = response;
             return new Promise<Texture>(resolve => {
-                gl.bindTexture(gl.TEXTURE_2D, texture.texture);
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-                gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true)
-                gl.texImage2D(
-                    gl.TEXTURE_2D,
-                    level,
-                    imageFormat,
-                    srcFormat,
-                    srcType,
-                    image
-                );
-    
-                gl.texParameteri(
-                    gl.TEXTURE_2D,
-                    gl.TEXTURE_MIN_FILTER,
-                    FILTERING
-                )
-    
-                gl.texParameteri(
-                    gl.TEXTURE_2D,
-                    gl.TEXTURE_MAG_FILTER,
-                    FILTERING
-                )
-
-                gl.generateMipmap(gl.TEXTURE_2D);
-                gl.texParameteri(
-                    gl.TEXTURE_2D,
-                    gl.TEXTURE_WRAP_S,
-                    gl.CLAMP_TO_EDGE
-                )
-
-                gl.texParameteri(
-                    gl.TEXTURE_2D,
-                    gl.TEXTURE_WRAP_T,
-                    gl.CLAMP_TO_EDGE
-                )
-
+                texture.init(gl,image,FILTERING,level,imageFormat,srcFormat,srcType);
                 resolve(texture);
             })
         }
@@ -97,43 +102,7 @@ export class Texture
         return new Promise<Texture>(resolve => {
             image.onload = (ev: Event) =>
             {
-                gl.bindTexture(gl.TEXTURE_2D, texture.texture);
-                gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-                gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true)
-                gl.texImage2D(
-                    gl.TEXTURE_2D,
-                    level,
-                    imageFormat,
-                    srcFormat,
-                    srcType,
-                    image
-                );
-    
-                gl.texParameteri(
-                    gl.TEXTURE_2D,
-                    gl.TEXTURE_MIN_FILTER,
-                    FILTERING
-                )
-    
-                gl.texParameteri(
-                    gl.TEXTURE_2D,
-                    gl.TEXTURE_MAG_FILTER,
-                    FILTERING
-                )
-
-                gl.generateMipmap(gl.TEXTURE_2D);
-                gl.texParameteri(
-                    gl.TEXTURE_2D,
-                    gl.TEXTURE_WRAP_S,
-                    gl.CLAMP_TO_EDGE
-                )
-
-                gl.texParameteri(
-                    gl.TEXTURE_2D,
-                    gl.TEXTURE_WRAP_T,
-                    gl.CLAMP_TO_EDGE
-                )
-
+                texture.init(gl,image,FILTERING,level,imageFormat,srcFormat,srcType);
                 resolve(texture);
             }
     
