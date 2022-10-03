@@ -45,6 +45,22 @@ export class Loader
         this.httpPending.push(url);
     }
 
+    protected static CheckFinishedLoadingImages()
+    {
+        return new Promise<void>((resolve) => {
+            let interval = setInterval(check, 100);
+            function check()
+            {
+                if (Loader.imagePending.length == 0)
+                {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }
+
+        })
+    }
+
     static async LoadAll()
     {
         this.httpPending.forEach(async url =>
@@ -55,22 +71,17 @@ export class Loader
 
         this.imagePending.forEach(async url =>
         {
-            await (() =>
+            this.imageCache[url] = new Image();
+            this.imageCache[url].onload = (ev: Event) =>
             {
-                return new Promise<void>(resolve =>
-                {
-                    this.imageCache[url] = new Image();
-                    this.imageCache[url].onload = (ev: Event) =>
-                    {
-                        resolve();
-                    }
-                    this.imageCache[url].src = url;
-                })
-
-            })()
+                this.imagePending = this.imagePending.filter(v => {
+                    return v != url;
+                });
+            }
+            this.imageCache[url].src = url;
 
         })
-        this.imagePending = [];
+        await this.CheckFinishedLoadingImages();
     }
 
     static Free()
