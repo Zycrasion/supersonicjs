@@ -2,14 +2,13 @@ import { resolve } from "path";
 import { BufferSonic } from "../Abstraction/Buffer";
 import { Loader } from "../Loader/Loader";
 import { Math2, UV } from "../utilities";
-
 export class Texture 
 {
     texture: WebGLTexture;
 
-    bind(gl : WebGL2RenderingContext)
+    bind(gl : WebGL2RenderingContext, SLOT = gl.TEXTURE0)
     {
-        gl.activeTexture(gl.TEXTURE0);
+        gl.activeTexture(SLOT);
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
     }
 

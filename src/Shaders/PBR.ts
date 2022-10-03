@@ -10,20 +10,20 @@ export class PBRMaterial implements BaseMaterial
 {
 
     diffuse: Texture;
-    specular: Vector;
+    specular: Texture;
     shininess: number;
 
     constructor()
     {
-        this.specular = vec();
         this.shininess = 32;
     }
 
     setUniforms(gl: WebGL2RenderingContext, shader: Shader, name = "material"): void
     {
-        this.diffuse.bind(gl);
+        this.diffuse.bind(gl, gl.TEXTURE0);
+        this.specular.bind(gl, gl.TEXTURE1);
         shader.setShaderUniform_1i(gl, name + ".diffuse", 0);
-        shader.setShaderUniform_3fv(gl, name + ".specular", this.specular);
+        shader.setShaderUniform_1i(gl, name + ".specular", 1);
         shader.setShaderUniform_1f(gl, name + ".shininess", this.shininess);
     }
 }

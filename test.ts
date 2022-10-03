@@ -115,7 +115,6 @@ function setup()
 			gl
 		);
 
-		cubeShader.material.specular.set(1);
         cubeShader.material.shininess = 32;
 		
 		
@@ -131,6 +130,7 @@ function setup()
 		Texture.load(gl, "/images/test.png").then(texture =>
 		{
 			cubeShader.material.diffuse = texture;
+			cubeShader.material.specular = texture;
 			console.log(texture)
 			requestAnimationFrame(draw.bind(this))
 		})
