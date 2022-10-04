@@ -1,7 +1,7 @@
 import { glMatrix, mat3, mat4 } from "gl-matrix";
 import { Entity } from "./EntityComponentSystem/Entity";
-import { InputAxis } from "./InputManager/Input";
-import { Vector } from "./Transform/Vector";
+import { IInputAxis, InputAxis } from "./InputManager/Input";
+import { vec, Vector } from "./Transform/Vector";
 
 export enum ProjectionType
 {
@@ -72,14 +72,15 @@ export class Camera extends Entity
         document.addEventListener("mousemove", this.freelook_binded_mousemove, false)
     }
 
-    freecam(axis: InputAxis)
+    freecam(axis: IInputAxis)
     {
-        let mat = this.getTransformation();
-        let lookAtVector = new Vector(mat[2], mat[6], mat[10]).normalize();
         this.transform.rotation.y += (this.mouseX) / 500;
         this.transform.rotation.x += (this.mouseY) / 500;
         this.mouseX = 0;
         this.mouseY = 0;
+
+        let mat = this.getTransformation();
+        let lookAtVector = new Vector(mat[2], mat[6], mat[10]).normalize();
         let input = axis.getAxis();
         let movement = lookAtVector.copy();
         movement.mult(input.y * this.speed);

@@ -1,4 +1,4 @@
-import { InputAxis, InputManager } from "./src/InputManager/Input";
+import { CustomInputAxis, InputAxis, InputManager } from "./src/InputManager/Input";
 import { GeometryRenderable3D } from "./src/Renderables/Renderables";
 import * as utils from "./src/utilities";
 import { Vector, vec, vec4 } from "./src/Transform/Vector";
@@ -12,6 +12,7 @@ import { PBRShader } from "./src/Shaders/PBR";
 import { Texture } from "./src/Renderables/Texture";
 import { BufferSonic } from "./src/Abstraction/Buffer";
 import { Loader } from "./src/Loader/Loader";
+import { XBOX_ANALOG_INPUTS } from "./src/InputManager/Controller";
 
 let avgFps = 0;
 let framerateCalcs = 0;
@@ -59,7 +60,7 @@ function setup()
 	gl = SupersonicJS.init("glCanvas", vec4(0.1, 0.1, 0.1, 1));
 
 	// Lock cursor to canvas
-	utils.PointerLock.Lock("glCanvas");
+	// utils.PointerLock.Lock("glCanvas");
 	// Request Object Mesh
 	HTTP_REQUEST("/Models/example.obj").then(text =>
 	{
@@ -68,13 +69,13 @@ function setup()
 
 		// Prepare Camera
 		camera = new Camera(ProjectionType.PERSPECTIVE, 90, vec(-2, -2, -2));
-
+		camera.speed = 1;
 		// Create Input Events
 		inputManager = new InputManager()
 		// Create input "axis" for camera
 		cameraMovementInput = new InputAxis(inputManager, "d", "a", "w", "s");
 		// Hook Mouse move events to camera
-		camera.hook_freelook();
+		// camera.hook_freelook();
 		// camera.unhook_freelook(); To stop monitoring mouse movement
 
 		// Create an Entity with the name "Cube"
@@ -119,7 +120,8 @@ function setup()
 		
 		
 		cubeShader.light.ambient.set(0.2);
-		cubeShader.light.diffuse.set(0.5);
+	camera.freecam(cameraMovementInput);
+	cubeShader.light.diffuse.set(0.5);
 		cubeShader.light.specular.set(0.6);
 
 
@@ -132,13 +134,17 @@ function setup()
 			cubeShader.material.diffuse = texture;
 			cubeShader.material.specular = texture;
 			console.log(texture)
+			dt = Date.now();
 			requestAnimationFrame(draw.bind(this))
 		})
 	})
 }
+
+let dt = Date.now();
 function draw()
 {
-
+	let delta = (Date.now() - dt);
+	dt = Date.now();
 	// Do stuff that isnt  drawing
 	light.transform.position.set(Math.sin(framecount / 60)*4,0,Math.cos(framecount / 60)*4);
 
@@ -147,8 +153,21 @@ function draw()
 	SupersonicJS.clear(gl);
 
 	// Move Camera
-	camera.freecam(cameraMovementInput);
+	if (inputManager.mainController!="NONE")
+	{
+		let rotationVec = inputManager.controllers[inputManager.mainController].getAnalogStick(XBOX_ANALOG_INPUTS.RIGHT_STICK)
+		rotationVec.div(delta*2);
+		rotationVec = vec(rotationVec.y,rotationVec.x);
+		
+		camera.transform.rotation.add(rotationVec);
 
+		let movementVec = inputManager.controllers[inputManager.mainController].getAnalogStick(XBOX_ANALOG_INPUTS.LEFT_STICK)
+		movementVec.mult(vec(-1,-1));
+		movementVec.z = movementVec.y;
+		movementVec.y = 0;
+		movementVec.div(delta)
+		camera.freecam(new CustomInputAxis(movementVec.x, movementVec.z));
+	}
 	// Draw cube
 	cube.draw_tick(gl, camera);
 

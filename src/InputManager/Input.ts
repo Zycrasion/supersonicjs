@@ -1,4 +1,6 @@
-import { Vector } from "../Transform/Vector";
+import { vec, Vector } from "../Transform/Vector";
+import { Dict } from "../utilities";
+import { Controller } from "./Controller";
 
 type callbackType = "keydown" | "keyup" | "keypress";
 type keyCallback = (type: callbackType) => void;
@@ -40,7 +42,12 @@ class InputKey
 
 }
 
-export class InputAxis
+export interface IInputAxis
+{
+    getAxis() : Vector
+}
+
+export class InputAxis implements IInputAxis
 {
     negativeX: string; // KeyNames
     positiveX: string; // KeyNames
@@ -73,17 +80,54 @@ export class InputAxis
     }
 }
 
+export class CustomInputAxis implements IInputAxis
+{
+    x : number; y : number;
+
+    constructor(x : number, y : number)
+    {
+        this.x = x;
+        this.y = y;
+    }
+
+    static create(v : Vector)
+    {
+        return new CustomInputAxis(v.x,v.y);
+    }
+
+    getAxis(): Vector
+    {
+        return vec(this.x,this.y)
+    }
+}
+
 export class InputManager
 {
 
     listeners: keyCallbackMap;
+    controllers: Dict<Controller>;
+    mainController : string;
 
     constructor()
     {
         this.listeners = {};
+        this.controllers = {};
+        this.mainController = "NONE";
         window.addEventListener("keydown", this._KeyHandler.bind(this));
         window.addEventListener("keyup", this._KeyHandler.bind(this));
         window.addEventListener("keypress", this._KeyHandler.bind(this));
+        window.addEventListener("gamepadconnected", (ev : GamepadEvent) => {
+            this.controllers[ev.gamepad.index] = new Controller(ev.gamepad);
+            this.mainController = ev.gamepad.index.toString();
+        })
+
+        window.addEventListener("gamepaddisconnected", (ev : GamepadEvent) => {
+            delete this.controllers[ev.gamepad.index];
+            if (this.mainController == ev.gamepad.index.toString())
+            {
+                this.mainController = "NONE";
+            }
+        })
     }
 
     getKey(keyName: string)
