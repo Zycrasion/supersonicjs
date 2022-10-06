@@ -107,12 +107,15 @@ export class GeometryRenderable3D extends RenderableAbstract
         this.normals = new BufferSonic(gl, new Float32Array(normalsUnpacked), normalsUnpacked.length / 3);
         this.vao.enableVertexAttrib(gl, 1);
 
-        let texturesUnpacked = Vector.unpackVertices(textures);
-        this.textureBuffer = new BufferSonic(gl, new Float32Array(texturesUnpacked), texturesUnpacked.length / 3);
-        this.textureBuffer.bind(gl);
-        this.vao.enableVertexAttrib(gl, 2, 3);
-
-        console.log(this.textureBuffer.length, this.elements.length)
+        if (textures == undefined)
+        {
+            console.error("UV Coordintates not included!");
+            let texturesUnpacked = Vector.unpackVertices(textures);
+            this.textureBuffer = new BufferSonic(gl, new Float32Array(texturesUnpacked), texturesUnpacked.length / 3);
+            this.textureBuffer.bind(gl);
+            this.vao.enableVertexAttrib(gl, 2, 3);
+    
+        }
     }
 
     draw_tick(gl: WebGL2RenderingContext, Camera: Camera, shaderParamCallback = () => { }): void

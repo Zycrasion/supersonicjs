@@ -24,11 +24,16 @@ export class Shader3D extends Shader
 
     getModelViewMatrix() { return this.ModelViewMatrix }
 
+    bind(gl : WebGL2RenderingContext)
+    {
+        if (!this.hasLoaded()) {return false;}
+        gl.useProgram(this.ShaderProgram);
+        return true;
+    }
+
     protected defaults(gl: WebGL2RenderingContext): boolean
     {
-        if (!this.hasLoaded()) { return false }
-
-        gl.useProgram(this.ShaderProgram);
+        if (!this.bind(gl)) { return false }
 
         this.setShaderUniform_mat4fv(
             gl,
@@ -109,10 +114,19 @@ export class Shaded3D extends Shader3D
     {
         if (!this.defaults(gl)) { return; }
 
-        this.material.setUniforms(gl, this);
-        this.light.setUniforms(gl, this);
         this.setShaderUniform_3fv(gl, "uCameraPosition", this.viewPos);
         callback();
+    }
+
+    updateUniforms(gl : WebGL2RenderingContext)
+    {
+        if (!this.bind(gl))
+        {
+            setTimeout(this.updateUniforms.bind(this,gl), 100); // Wait for shader to load
+        }    
+
+        this.material.setUniforms(gl, this);
+        this.light.setUniforms(gl, this);
     }
 
     static Register(): void
