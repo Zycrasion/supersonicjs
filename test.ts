@@ -1,7 +1,7 @@
 import { CustomInputAxis, InputAxis, InputManager } from "./src/InputManager/Input";
 import { GeometryRenderable3D } from "./src/Renderables/Renderables";
 import * as utils from "./src/utilities";
-import { Vector, vec, vec4 } from "./src/Transform/Vector";
+import { vec, vec4 } from "./src/Transform/Vector";
 import { SupersonicJS } from "./src/supersonic";
 import { HTTP_REQUEST } from "./src/Request/httpRequest";
 import { Entity } from "./src/EntityComponentSystem/Entity";
@@ -9,8 +9,6 @@ import { ObjParser } from "./src/Parsers/ObjParser";
 import { Flat3D, Shaded3D } from "./src/Shaders/3DShader";
 import { Camera, ProjectionType } from "./src/Camera";
 import { PBRShader } from "./src/Shaders/PBR";
-import { Texture } from "./src/Renderables/Texture";
-import { BufferSonic } from "./src/Abstraction/Buffer";
 import { Loader } from "./src/Loader/Loader";
 import { XBOX_ANALOG_INPUTS, XBOX_ANALOG_RAW, XBOX_DIGITAL_INPUTS } from "./src/InputManager/Controller";
 import { Scene } from "./src/EntityComponentSystem/Scene";
@@ -183,16 +181,19 @@ function draw()
 	{
 		let controller = inputManager.controllers[inputManager.mainController];
 
-		if (controller.getButton(XBOX_DIGITAL_INPUTS.A).pressed)
+		if (controller.getButton(XBOX_DIGITAL_INPUTS.RIGHT_BUMPER).pressed)
 		{
-			camera.speed = 8
+			camera.speed = 16
 		} else
 		{
-			camera.speed = 4;
+			camera.speed = 8;
 		}
 
-		let zoom = controller.getAnalogRaw(XBOX_ANALOG_RAW.RIGHT_TRIGGER);
-		camera.fov = 90 + (90 * (controller.getAnalogRaw(XBOX_ANALOG_RAW.RIGHT_TRIGGER) + 1))
+		let dpad = controller.getAnalogStick(XBOX_ANALOG_INPUTS.DPAD);
+
+		let zoom = (controller.getAnalogRaw(XBOX_ANALOG_RAW.RIGHT_TRIGGER) + 1) / 2;
+		camera.fov = 90 - (45 * (zoom))
+		console.log(controller.getAnalogRaw(XBOX_ANALOG_RAW.RIGHT_TRIGGER));
 
 		let rotationVec = controller.getAnalogStick(XBOX_ANALOG_INPUTS.RIGHT_STICK)
 		rotationVec.div(delta * 2);
