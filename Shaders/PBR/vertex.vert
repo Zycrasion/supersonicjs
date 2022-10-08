@@ -6,11 +6,12 @@ layout (location = 2) in vec2 aTexCoord;
 out vec3 FragPos;
 out vec3 Normal;
 out vec2 TexCoords;
+out vec3 CameraPosition;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform mat4 uCameraMatrix;
-
+uniform vec3 uCameraPosition;
 void main()
 {
 
@@ -18,6 +19,7 @@ void main()
 
     FragPos = vec3(uModelViewMatrix * vec4(aVertexPosition, 1.0));
     Normal = mat3(transpose(inverse(uModelViewMatrix))) * aNormal;  
+    CameraPosition = vec3(uModelViewMatrix * vec4(aVertexPosition, 1.0));
     
     TexCoords = aTexCoord;
 

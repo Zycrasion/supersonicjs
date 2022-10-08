@@ -126,7 +126,7 @@ async function setup()
 	lightShader = Flat3D.create(gl);
 	lightShader.setColour(vec4(1, 1, 1, 1));
 	light = new Entity("Light");
-	light.transform.position = vec(0, 0, 2);
+	light.transform.position = vec(0, 2, 2);
 	light.transform.scale.set(0.5);
 	light.addComponent(
 		new GeometryRenderable3D(
@@ -169,7 +169,7 @@ function draw()
 		return;
 	}
 	// Do stuff that isnt  drawing
-	light.transform.position.set(Math.sin(framecount / 60) * 4, 0, Math.cos(framecount / 60) * 4);
+	light.transform.position.set(Math.sin(framecount / 60) * 20, 5, Math.cos(framecount / 60) * 20);
 
 	framecount++;
 	// Clear background
