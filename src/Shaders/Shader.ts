@@ -129,6 +129,10 @@ export class Shader
         gl.enableVertexAttribArray(vertexPositionLoc);
     }
 
+    updateUniforms(gl : WebGL2RenderingContext)
+    {
+    }
+
     setShaderUniform_mat4fv(gl: WebGL2RenderingContext, uniformPositionName: string, matrix: mat4)
     {
         if (!this.hasLoaded()) { return; }

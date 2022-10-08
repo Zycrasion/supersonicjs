@@ -13,6 +13,7 @@ import { Texture } from "./src/Renderables/Texture";
 import { BufferSonic } from "./src/Abstraction/Buffer";
 import { Loader } from "./src/Loader/Loader";
 import { XBOX_ANALOG_INPUTS, XBOX_ANALOG_RAW, XBOX_DIGITAL_INPUTS } from "./src/InputManager/Controller";
+import { Scene } from "./src/EntityComponentSystem/Scene";
 
 let avgFps = 0;
 let framerateCalcs = 0;
@@ -29,32 +30,6 @@ window["resetFrameCount"] = () =>
 	framerateCalcs = 0;
 }
 
-window["replaceObj"] = async (path : string) => 
-{
-	halt = true;
-	let meshRaw = Loader.LoadHTTP(path);
-	if (meshRaw=="404")
-	{
-		meshRaw = await HTTP_REQUEST(path);
-	}
-
-	let meshData = ObjParser.parse(meshRaw);
-	delete cube.components;
-	cube.components = [];
-	let mesh = new GeometryRenderable3D(
-		gl,
-		meshData.vertices,
-		meshData.indices,
-		meshData.normals,
-		meshData.textures,
-		cubeShader
-	);
-
-	mesh.name = "MESH";
-	cube.addComponent(mesh, gl);
-	halt = false;
-	requestAnimationFrame(draw);
-}
 
 function calculateFramerate()
 {
@@ -70,10 +45,9 @@ function calculateFramerate()
 }
 
 
-let cube: Entity;
-let cubeShader : Shaded3D;
 let light: Entity;
 let lightShader: Flat3D;
+let scene: Scene;
 
 let camera: Camera;
 let cameraMovementInput: InputAxis;
@@ -88,6 +62,8 @@ async function setup()
 	gl = SupersonicJS.init("glCanvas", vec4(0.1, 0.1, 0.1, 1));
 	let startupTime = Date.now();
 
+	scene = new Scene();
+
 	// Lock cursor to canvas
 	utils.PointerLock.Lock("glCanvas");
 	// Request Object Mesh
@@ -96,14 +72,47 @@ async function setup()
 	let LightText = await HTTP_REQUEST("/Models/example.obj");
 	console.log("CUBE DOWNLOADED")
 	// Parse raw text to get MeshData
-	let sceneMesh = ObjParser.parse(sceneText);
+	let sceneMeshes = ObjParser.parseAll(sceneText);
 	console.log("SCENE PARSED");
-	let lightMesh = ObjParser.parse(LightText);
+	let lightMesh = ObjParser.parseOne(LightText);
 	console.log("LIGHT PARSED")
+
+	camera = new Camera(ProjectionType.PERSPECTIVE, 90, vec(-2, -2, -2))
+
+	let groundShader = Shaded3D.create(gl);
+	groundShader.material.ambient = vec(29, 79, 17).div(255);
+	groundShader.material.diffuse = vec(27, 135, 1).div(255);
+	groundShader.material.specular = vec(255, 255, 255).div(255);
+	groundShader.viewPos = camera.transform.position;
+
+	let waterShader = Shaded3D.create(gl);
+	waterShader.material.ambient = vec(7, 31, 66).div(255);
+	waterShader.material.diffuse = vec(1, 99, 135).div(255);
+	waterShader.material.specular = vec(255, 255, 255).div(255);
+	waterShader.viewPos = camera.transform.position;
+	
+	for (let mesh of sceneMeshes)
+	{
+		let object = new Entity(mesh.name);
+		let geometry: GeometryRenderable3D;
+
+		let shaderDeterminator = object.name.split("_");
+		if (shaderDeterminator[shaderDeterminator.length - 1] == "water")
+		{
+			geometry = new GeometryRenderable3D(gl, mesh, waterShader);
+		} else
+		{
+			geometry = new GeometryRenderable3D(gl, mesh, groundShader);
+		}
+
+		object.addComponent(geometry, gl);
+		object.transform.scale.set(10);
+		scene.addEntity(object);
+	}
+	console.log(scene.Entities);
 
 
 	// Prepare Camera
-	camera = new Camera(ProjectionType.PERSPECTIVE, 90, vec(-2, -2, -2));
 	camera.speed = 1;
 	// Create Input Events
 	inputManager = new InputManager()
@@ -112,80 +121,41 @@ async function setup()
 	// Hook Mouse move events to camera
 	camera.hook_freelook();
 	// camera.unhook_freelook(); To stop monitoring mouse movement
-
-	// Create an Entity with the name "Cube"
-	cube = new Entity("Cube");
-
-	// Setup Shader
-	cubeShader = Shaded3D.create(gl);
-
-	// Add Renderable to Entity
-	cube.addComponent(
-		new GeometryRenderable3D(
-			gl,
-			sceneMesh.vertices,
-			sceneMesh.indices,
-			sceneMesh.normals,
-			sceneMesh.textures,
-			cubeShader
-		),
-		gl
-	)
-	cube.components[0].name = "MESH";
-	console.log("SCENE INITIALISED")
-
-
+	scene.MainCamera = camera;
 
 	lightShader = Flat3D.create(gl);
 	lightShader.setColour(vec4(1, 1, 1, 1));
 	light = new Entity("Light");
 	light.transform.position = vec(0, 0, 2);
 	light.transform.scale.set(0.5);
-	console.log(sceneMesh.textures)
 	light.addComponent(
 		new GeometryRenderable3D(
 			gl,
-			lightMesh.vertices,
-			lightMesh.indices,
-			lightMesh.normals,
-			lightMesh.textures,
+			lightMesh,
 			lightShader
 		),
 		gl
 	);
+
+	groundShader.light.setColour(vec(1,1,1));
+	waterShader.light = groundShader.light;
+	
+	groundShader.light.position = light.transform.position;
+
 	console.log("LIGHT INITIALISED")
+	scene.addEntity(light);
 
 	// cubeShader.material.shininess = 32;
 
-
-	cubeShader.light.ambient.set(0.2);
-
 	camera.far = 1000;
 
-	cubeShader.light.diffuse.set(0.5);
-	cubeShader.light.specular.set(0.6);
-
-
-	cubeShader.light.position = light.transform.position;
-	cubeShader.viewPos = camera.transform.position;
-	cubeShader.material.setColour(vec().set(0.25));
-
-	// Call draw on frame update
-	// Texture.load(gl, "/images/test.png").then(texture =>
-	// {
-	// 	cubeShader.material.diffuse = texture;
-	// 	cubeShader.material.specular = texture;
-	// 	console.log(texture)
-	// 	dt = Date.now();
 	console.log("SETUP DONE!");
-	cubeShader.updateUniforms(gl);
-	setInterval(draw, 1000/120)
+	requestAnimationFrame(draw);
 	setInterval(calculateFramerate, 1000);
 	startupTime = Date.now() - startupTime;
 	startupTime /= 1000;
 	console.log(`STARTUP TOOK ${startupTime} SECONDS`)
 	Loader.Free();
-	// })
 }
 
 let dt = Date.now();
@@ -193,13 +163,20 @@ function draw()
 {
 	let delta = (Date.now() - dt);
 	dt = Date.now();
+	if (gl == undefined)
+	{
+		console.error("error: gl undefined");
+		return;
+	}
 	// Do stuff that isnt  drawing
 	light.transform.position.set(Math.sin(framecount / 60) * 4, 0, Math.cos(framecount / 60) * 4);
-	cubeShader.updateUniforms(gl);
 
 	framecount++;
 	// Clear background
 	SupersonicJS.clear(gl);
+	scene.updateAllUniforms(gl);
+	scene.draw(gl);
+
 
 	// Move Camera
 	if (inputManager.mainController != "NONE")
@@ -229,18 +206,13 @@ function draw()
 		movementVec.y = 0;
 		movementVec.div(delta)
 		camera.freecam(new CustomInputAxis(movementVec.x, movementVec.z));
-	} else {
+	} else
+	{
 		camera.speed = 1;
 		camera.freecam(cameraMovementInput);
 	}
-	// Draw cube
-	cube.draw_tick(gl, camera);
+	requestAnimationFrame(draw);
 
-	// Draw light
-	light.draw_tick(gl, camera);
-
-	// Call draw again
-	// if (!halt) { requestAnimationFrame(draw.bind(this)) }
 }
 
 Loader.CacheImage("/images/test.png");

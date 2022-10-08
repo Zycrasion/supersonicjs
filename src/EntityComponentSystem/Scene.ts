@@ -1,4 +1,5 @@
 import { Camera } from "../Camera";
+import { GeometryRenderable2D, GeometryRenderable3D } from "../Renderables/Renderables";
 import { Entity } from "./Entity";
 
 export class Scene
@@ -17,6 +18,18 @@ export class Scene
 
     }
 
+    updateAllUniforms(gl : WebGL2RenderingContext)
+    {
+        for (let ent of this.Entities)
+        {
+            if (ent.getComponent(GeometryRenderable3D.Name) != null)
+            {
+                let component = ent.getComponent(GeometryRenderable3D.Name) as GeometryRenderable3D;
+                component.shader.updateUniforms(gl);
+            }
+        }
+    }
+
     draw(gl: WebGL2RenderingContext)
     {
         // TODO: No Physics Engine
@@ -33,6 +46,10 @@ export class Scene
         }
         for (let ent of this.Entities)
         {
+            if (this.MainCamera==undefined)
+            {
+                break;
+            }
             ent.draw_tick(gl, this.MainCamera);
         }
     }

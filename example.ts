@@ -35,7 +35,7 @@ function setup()
 	HTTP_REQUEST("/Models/example.obj").then(text =>
 	{
 		// Parse raw text to get MeshData
-		let MeshData = ObjParser.parse(text);
+		let MeshData = ObjParser.parseOne(text);
 
 		// Prepare Camera
 		camera = new Camera(ProjectionType.PERSPECTIVE, 90, vec(-2, -2, -2));

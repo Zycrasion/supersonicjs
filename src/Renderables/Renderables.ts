@@ -4,6 +4,7 @@ import { VertexArray } from "../Abstraction/VAO";
 import { Camera } from "../Camera";
 import { Component } from "../EntityComponentSystem/Component";
 import { Entity } from "../EntityComponentSystem/Entity";
+import { MeshData } from "../Parsers/ObjParser";
 import { Shader3D } from "../Shaders/3DShader";
 import { Shader } from "../Shaders/Shader";
 import { Transform } from "../Transform/Transform";
@@ -79,7 +80,7 @@ export class GeometryRenderable3D extends RenderableAbstract
 {
     vertices: BufferSonic;
 
-    elements: BufferSonic;
+    indices: BufferSonic;
 
     normals: BufferSonic;
 
@@ -91,26 +92,26 @@ export class GeometryRenderable3D extends RenderableAbstract
 
     static Name = "GeometryRenderable3D";
 
-    constructor(gl: WebGL2RenderingContext, vertices: Vector[], elements: number[], normals: Vector[], textures: Vector[], shader: Shader)
+    constructor(gl: WebGL2RenderingContext, Mesh : MeshData, shader: Shader)
     {
         super(shader, GeometryRenderable3D.Name);
 
         this.vao = new VertexArray(gl);
 
-        let verticesUnpacked = Vector.unpackVertices(vertices)
-        this.vertices = new BufferSonic(gl, new Float32Array(verticesUnpacked), vertices.length / 3);
+        let verticesUnpacked = Vector.unpackVertices(Mesh.vertices)
+        this.vertices = new BufferSonic(gl, new Float32Array(verticesUnpacked), Mesh.vertices.length / 3);
 
-        this.elements = new BufferSonic(gl, new Uint16Array(elements), elements.length, gl.ELEMENT_ARRAY_BUFFER);
+        this.indices = new BufferSonic(gl, new Uint32Array(Mesh.indices), Mesh.indices.length, gl.ELEMENT_ARRAY_BUFFER);
         this.vao.enableVertexAttrib(gl, 0);
 
-        let normalsUnpacked = Vector.unpackVertices(normals);
+        let normalsUnpacked = Vector.unpackVertices(Mesh.normals);
         this.normals = new BufferSonic(gl, new Float32Array(normalsUnpacked), normalsUnpacked.length / 3);
         this.vao.enableVertexAttrib(gl, 1);
 
-        if (textures == undefined)
+        if (Mesh.textures == undefined)
         {
             console.error("UV Coordintates not included!");
-            let texturesUnpacked = Vector.unpackVertices(textures);
+            let texturesUnpacked = Vector.unpackVertices(Mesh.textures);
             this.textureBuffer = new BufferSonic(gl, new Float32Array(texturesUnpacked), texturesUnpacked.length / 3);
             this.textureBuffer.bind(gl);
             this.vao.enableVertexAttrib(gl, 2, 3);
@@ -138,7 +139,7 @@ export class GeometryRenderable3D extends RenderableAbstract
 
             shaderParamCallback();
 
-            gl.drawElements(gl.TRIANGLES, this.elements.length, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_INT, 0);
         });
     }
 }
