@@ -9,9 +9,17 @@ export enum ProjectionType
     PERSPECTIVE
 }
 
-export class Camera extends Entity
+export interface CameraLike
+{
+    generateProjection(gl : WebGL2RenderingContext)
+    getTransformation()
+}
+
+export class Camera extends Entity implements CameraLike 
 {
     projection: ProjectionType; fov: number;
+
+
     near = 0.1;
     far = 100;
     speed = 0.1;
@@ -35,6 +43,7 @@ export class Camera extends Entity
 
     generateProjection(gl: WebGL2RenderingContext)
     {
+
         let proj = mat4.create();
         if (this.projection == ProjectionType.ORTHOGRAPHIC)
         {

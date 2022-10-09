@@ -1,4 +1,4 @@
-import { Camera } from "../Camera";
+import { CameraLike } from "../Camera";
 import { Entity } from "./Entity";
 
 export class Component
@@ -9,7 +9,7 @@ export class Component
     constructor(name: string) { this.name = name; }
     attach(parent: Entity) { this.parent_ptr = parent; }
     start(gl: WebGL2RenderingContext) { }
-    draw_tick(gl: WebGL2RenderingContext, Camera: Camera) { }
+    draw_tick(gl: WebGL2RenderingContext, Camera: CameraLike) { }
     phys_tick() { }
     copy(params = {}): Component { return new Component(this.name.concat(" - Copy")) }
     end(gl: WebGL2RenderingContext) { }

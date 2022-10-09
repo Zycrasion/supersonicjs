@@ -3,9 +3,9 @@ import { Vector4 } from "./Transform/Vector";
 
 export class SupersonicJS
 {
-    static init(canvasid: string, clearColour: Vector4): WebGL2RenderingContext
+    static init(canvasid: string, clearColour: Vector4, attribs : WebGLContextAttributes = {}): WebGL2RenderingContext
     {
-        let gl = (document.getElementById(canvasid) as HTMLCanvasElement).getContext("webgl2");
+        let gl = (document.getElementById(canvasid) as HTMLCanvasElement).getContext("webgl2",attribs);
         if (gl === null)
         {
             alert("Your device does not support WebGL2")

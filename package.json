@@ -3,26 +3,32 @@
   "version": "0.3.11",
   "description": "",
   "main": "tsBuild/supersonic.js",
+  "type": "module",
   "scripts": {
     "test": "echo 'USE DEV1 AND DEV2 IN SEPERATE TERMINAL SESSIONS' && exit 1",
-    "browserify" : "npx browserify -e tsBuild/test.js -o ./build/build.js",
-    "dev1": "npx nodemon -e js -w ./tsBuild/ -i ./build --exec 'npm run browserify'",
-    "dev2": "tsc --watch",
-    "build": "tsc && npm run browserify",
-    "install" : "tsc"
+    "dev": "snowpack dev --polyfill-node",
+    "build": "snowpack build --polyfill-node",
+    "install": "tsc"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@ampproject/remapping": "^2.2.0",
+    "@babel/compat-data": "^7.9.0",
     "@types/gl-matrix": "^3.2.0",
     "@types/node": "^18.7.14",
     "nodemon": "^2.0.19",
-    "typescript": "^4.8.2",
-    "browserify": "^17.0.0"
+    "snowpack": "^3.8.8",
+    "typescript": "^4.8.2"
   },
   "dependencies": {
-    "gl-matrix": "^3.4.3"
+    "@babel/core": "^7.19.3",
+    "@types/webxr": "^0.5.0",
+    "gl-matrix": "^3.4.3",
+    "path": "^0.12.7"
   },
-  "files": ["src/**"]
+  "files": [
+    "src/**"
+  ]
 }

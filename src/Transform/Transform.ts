@@ -7,6 +7,8 @@ export class Transform
     rotation: Vector;
     scale: Vector;
 
+    overrideMatrix : mat4;
+
     constructor()
     {
         this.position = new Vector();
@@ -67,6 +69,10 @@ export class Transform
 
     generateMat4(): mat4
     {
+        if (this.overrideMatrix!= null)
+        {
+            return this.overrideMatrix;
+        }
         let matrix = mat4.create();
         let axis = this.rotation.toArray();
         for (let i = 0; i < 3; i++)

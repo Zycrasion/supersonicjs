@@ -1,21 +1,21 @@
 import { mat4 } from "gl-matrix";
 import { BufferSonic } from "../Abstraction/Buffer";
 import { VertexArray } from "../Abstraction/VAO";
-import { Camera } from "../Camera";
+import { CameraLike, Camera } from "../Camera";
 import { Component } from "../EntityComponentSystem/Component";
 import { Entity } from "../EntityComponentSystem/Entity";
 import { MeshData } from "../Parsers/ObjParser";
 import { Shader3D } from "../Shaders/3DShader";
-import { Shader } from "../Shaders/Shader";
+import { Shader, Shader2D } from "../Shaders/Shader";
 import { Transform } from "../Transform/Transform";
 import { Vector } from "../Transform/Vector";
 import { ProjectionMatrix } from "../utilities";
 
-export class RenderableAbstract extends Component
+export abstract class RenderableAbstract extends Component
 {
     transform: Transform;
-    shader: Shader;
-    constructor(shader: Shader, name?: string) { super(name); this.parent_ptr = null; this.transform = new Transform(); this.shader = shader };
+    abstract shader: Shader;
+    constructor(name?: string) { super(name); this.parent_ptr = null; this.transform = new Transform(); };
     attach(parent: Entity): void
     {
         this.parent_ptr = parent;
@@ -27,11 +27,16 @@ export class GeometryRenderable2D extends RenderableAbstract
     vertices: number[];
     verticesBuffer: WebGLBuffer;
     vertexLength: number;
+
+
+    shader : Shader2D;
+
     static Name = "GeometryRenderable2D";
 
-    constructor(gl: WebGL2RenderingContext, vertices: number[], shader: Shader)
+    constructor(gl: WebGL2RenderingContext, vertices: number[], shader: Shader2D)
     {
-        super(shader, GeometryRenderable2D.Name);
+        super(GeometryRenderable2D.Name);
+        this.shader = shader;
         this.vertices = vertices;
         this.vertexLength = vertices.length / 2;
         this.verticesBuffer = gl.createBuffer();
@@ -39,7 +44,7 @@ export class GeometryRenderable2D extends RenderableAbstract
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
     }
 
-    draw_tick(gl: WebGL2RenderingContext, Camera: Camera): void
+    draw_tick(gl: WebGL2RenderingContext, Camera: CameraLike): void
     {
         this.shader.use(gl, () =>
         {
@@ -92,10 +97,10 @@ export class GeometryRenderable3D extends RenderableAbstract
 
     static Name = "GeometryRenderable3D";
 
-    constructor(gl: WebGL2RenderingContext, Mesh : MeshData, shader: Shader)
+    constructor(gl: WebGL2RenderingContext, Mesh : MeshData, shader: Shader3D)
     {
-        super(shader, GeometryRenderable3D.Name);
-
+        super(GeometryRenderable3D.Name);
+        this.shader = shader;
         this.vao = new VertexArray(gl);
 
         let verticesUnpacked = Vector.unpackVertices(Mesh.vertices)
@@ -119,7 +124,7 @@ export class GeometryRenderable3D extends RenderableAbstract
         }
     }
 
-    draw_tick(gl: WebGL2RenderingContext, Camera: Camera, shaderParamCallback = () => { }): void
+    draw_tick(gl: WebGL2RenderingContext, Camera: CameraLike, shaderParamCallback = () => { }): void
     {
         this.shader.setViewMatrix(Camera.getTransformation());
         this.shader.setProjectionMatrix(Camera.generateProjection(gl))

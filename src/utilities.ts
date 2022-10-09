@@ -44,6 +44,11 @@ export class Math2
     {
         return Math.log2(x) % 1 === 0;
     }
+
+    static copySign(x, y)
+    {
+        return Math.sign(x) === Math.sign(y) ? x : -x;
+    }
 }
 
 export class PointerLock

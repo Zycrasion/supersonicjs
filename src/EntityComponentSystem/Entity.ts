@@ -1,5 +1,5 @@
 import { mat4 } from "gl-matrix";
-import { Camera } from "../Camera";
+import { CameraLike } from "../Camera";
 import { Transform } from "../Transform/Transform";
 import { Component } from "./Component";
 
@@ -21,7 +21,7 @@ export class Entity
         this.name = name;
     }
 
-    draw_tick(gl: WebGL2RenderingContext, Camera: Camera)
+    draw_tick(gl: WebGL2RenderingContext, Camera: CameraLike)
     {
         for (let component of this.components)
         {

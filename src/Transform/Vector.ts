@@ -1,3 +1,5 @@
+import { Math2 } from "../utilities";
+
 export function vec(x = 0, y = 0, z = 0)
 {
     return new Vector(x, y, z);
@@ -7,6 +9,23 @@ export function vec4(x = 0, y = 0, z = 0, w = 0)
 {
     return new Vector4(x, y, z, w);
 }
+
+
+export interface VectorLike
+{
+    x: number;
+    y: number;
+    z: number;
+}
+
+export interface Quaternion
+{
+    x: number;
+    y: number;
+    z: number;
+    w: number;
+}
+
 export class Vector
 {
     x: number; y: number; z: number;
@@ -24,6 +43,39 @@ export class Vector
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+    // bruh my brain hurts
+    fromQuat(q: Quaternion)
+    {
+        // x axis
+        let sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+        let cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+        this.x = Math.atan2(sinr_cosp, cosr_cosp);
+
+        // y axis
+        let sinp = 2 * (q.w * q.y - q.z * q.x);
+        if (Math.abs(sinp) >= 1)
+        {
+            this.y = Math2.copySign(Math.PI / 2, sinp);
+        } else
+        {
+            this.y = Math.asin(sinp);
+        }
+
+        // z axis
+        let siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+        let cosy_cosp = 2 * (q.w * q.z + q.x * q.y);
+        this.z = Math.atan2(siny_cosp, cosy_cosp);
+    }
+
+    setVec(v: VectorLike)
+    {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+        return this;
     }
 
     set(a: number, b = a, c = a)

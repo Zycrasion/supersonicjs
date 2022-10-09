@@ -1,4 +1,4 @@
-import { Camera } from "../Camera";
+import { CameraLike } from "../Camera";
 import { GeometryRenderable2D, GeometryRenderable3D } from "../Renderables/Renderables";
 import { Entity } from "./Entity";
 
@@ -6,7 +6,7 @@ export class Scene
 {
     Entities: Array<Entity>;
     physicsIterations: number;
-    MainCamera: Camera;
+    MainCamera: CameraLike;
 
     constructor()
     {
@@ -54,7 +54,7 @@ export class Scene
         }
     }
 
-    setMainCamera(cam: Camera)
+    setMainCamera(cam: CameraLike)
     {
         this.MainCamera = cam;
     }
