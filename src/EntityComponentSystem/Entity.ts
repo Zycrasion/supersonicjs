@@ -1,6 +1,6 @@
 import { mat4 } from "gl-matrix";
 import { CameraLike } from "../Camera";
-import { Transform } from "../Transform/Transform";
+import { Transform, TransformLike } from "../Transform/Transform";
 import { Component } from "./Component";
 
 export class Entity

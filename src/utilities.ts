@@ -1,5 +1,6 @@
-import { mat4 } from "gl-matrix";
+import { mat4, quat, vec3 } from "gl-matrix";
 import { BufferSonic } from "./Abstraction/Buffer";
+import { Vector } from "./Transform/Vector";
 
 
 export interface Dict<Type>
@@ -49,6 +50,41 @@ export class Math2
     {
         return Math.sign(x) === Math.sign(y) ? x : -x;
     }
+
+    // https://github.com/toji/gl-matrix/issues/329
+    static getEuler(out : Vector, quat : DOMPointReadOnly) : Vector
+    {
+        let x = quat.x,
+            y = quat.y,
+            z = quat.z,
+            w = quat.w,
+            x2 = x * x,
+            y2 = y * y,
+            z2 = z * z,
+            w2 = w * w;
+        let unit = x2 + y2 + z2 + w2;
+        let test = x * w - y * z;
+        if (test > 0.499995 * unit)
+        { //TODO: Use glmatrix.EPSILON
+            // singularity at the north pole
+            out.x = Math.PI / 2;
+            out.y = 2 * Math.atan2(y, x);
+            out.z = 0;
+        } else if (test < -0.499995 * unit)
+        { //TODO: Use glmatrix.EPSILON
+            // singularity at the south pole
+            out.x = -Math.PI / 2;
+            out.y = 2 * Math.atan2(y, x);
+            out.z = 0;
+        } else
+        {
+            out.x = Math.asin(2 * (x * z - w * y));
+            out.y = Math.atan2(2 * (x * w + y * z), 1 - 2 * (z2 + w2));
+            out.z = Math.atan2(2 * (x * y + z * w), 1 - 2 * (y2 + z2));
+        }
+        // TODO: Return them as degrees and not as radians
+        return out;
+    }
 }
 
 export class PointerLock
@@ -91,10 +127,10 @@ export class PointerLock
 export class UV
 {
     static legacy = {
-        DefaultSquare : (gl: WebGL2RenderingContext) =>
+        DefaultSquare: (gl: WebGL2RenderingContext) =>
         {
             const textureCoordinates = gl.createBuffer();
-    
+
             const square = [
                 1, 1,
                 0, 1,
@@ -107,23 +143,23 @@ export class UV
                 new Float32Array(square),
                 gl.STATIC_DRAW
             );
-    
+
             return textureCoordinates;
         }
     }
-    
-    static DefaultSquare(gl : WebGL2RenderingContext) : BufferSonic
+
+    static DefaultSquare(gl: WebGL2RenderingContext): BufferSonic
     {
-    
+
         const square = [
             1, 1,
             0, 1,
             1, 0,
             0, 0
         ]
-    
+
         const textureCoordinates = new BufferSonic(gl, new Float32Array(square), square.length);
-        
+
         return textureCoordinates;
     }
 }

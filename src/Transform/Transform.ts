@@ -1,7 +1,10 @@
-import { mat4 } from "gl-matrix";
+import { mat4, quat, vec3 } from "gl-matrix";
 import { Vector } from "./Vector";
-
-export class Transform
+export interface TransformLike 
+{
+    generateMat4() :mat4
+}
+export class Transform implements TransformLike
 {
     position: Vector;
     rotation: Vector;
@@ -20,37 +23,12 @@ export class Transform
     static Combine(parent: Transform, child: Transform): mat4
     {
         let matrix = mat4.create();
-        mat4.translate(matrix, matrix, parent.position.toFloat32Array());
-        let axis = parent.rotation.toArray();
-        for (let i = 0; i < 3; i++)
-        {
-            let currAxis = [0, 0, 0];
-            currAxis[i] = 1;
-            mat4.rotate(
-                matrix,
-                matrix,
-                axis[i],
-                new Float32Array(currAxis)
-            )
-        }
-        mat4.scale(matrix, matrix, parent.scale.toFloat32Array());
-
-        mat4.translate(matrix, matrix, child.position.toFloat32Array());
-        axis = child.rotation.toArray();
-        for (let i = 0; i < 3; i++)
-        {
-            let currAxis = [0, 0, 0];
-            currAxis[i] = 1;
-            mat4.rotate(
-                matrix,
-                matrix,
-                axis[i],
-                new Float32Array(currAxis)
-            )
-        }
-        mat4.scale(matrix, matrix, child.scale.toFloat32Array());
-
-        return matrix
+        
+        let childMat = child.generateMat4();
+        let parentMat = parent.generateMat4();
+        
+        mat4.multiply(matrix,parentMat,childMat);
+        return matrix;
     }
 
     copy()

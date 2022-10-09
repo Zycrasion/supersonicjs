@@ -7,7 +7,7 @@ import { Entity } from "../EntityComponentSystem/Entity";
 import { MeshData } from "../Parsers/ObjParser";
 import { Shader3D } from "../Shaders/3DShader";
 import { Shader, Shader2D } from "../Shaders/Shader";
-import { Transform } from "../Transform/Transform";
+import { Transform, TransformLike } from "../Transform/Transform";
 import { Vector } from "../Transform/Vector";
 import { ProjectionMatrix } from "../utilities";
 

@@ -1,12 +1,10 @@
-import { CameraLike, ProjectionType } from "./src/Camera";
 import { Entity } from "./src/EntityComponentSystem/Entity";
 import { Scene } from "./src/EntityComponentSystem/Scene";
 import { Loader } from "./src/Loader/Loader";
 import { ObjParser } from "./src/Parsers/ObjParser";
 import { GeometryRenderable3D } from "./src/Renderables/Renderables";
-import { HTTP_REQUEST } from "./src/Request/httpRequest";
 import { Flat3D, Shaded3D } from "./src/Shaders/3DShader";
-import { SupersonicJS } from "./src/supersonic";
+import { Transform } from "./src/Transform/Transform";
 import { vec, vec4 } from "./src/Transform/Vector";
 import { XR } from "./src/XR/XR";
 import { XRCamera } from "./src/XR/XRCamera";
@@ -41,7 +39,9 @@ function setup(xr : XR, gl : WebGL2RenderingContext)
 
     monkey = new Entity("MONKEY");
     monkey.addComponent(monkeyMesh, gl);
-    monkey.transform.position.set(0,0,-2)
+    monkey.transform.position.set(0,0,-2);
+    monkeyMesh.transform.scale.set(0.1);
+    monkeyMesh.transform.rotation.x = -Math.PI/2;
 
     // Light
     let lightData = ObjParser.parseOne(Loader.LoadHTTP("/Models/example.obj"));
@@ -54,6 +54,7 @@ function setup(xr : XR, gl : WebGL2RenderingContext)
     light.addComponent(lightMesh, gl);
 
     light.transform.position.set(2,2,2)
+    lightMesh.transform.scale.set(0.1);
 
     // Scene
     scene = new Scene();
@@ -61,11 +62,14 @@ function setup(xr : XR, gl : WebGL2RenderingContext)
     scene.addEntity(light);
 
     // Shaders
+    flat.setColour(vec4(1,1,1,1));
+
+
     shaded.material.setColour(vec(1,0,0.25));
-    shaded.light.setColour(vec(1,1,1));
+    shaded.material.ambient.setVec(shaded.material.diffuse.div(10));
+    shaded.light.setColour(flat.getColour().toVector3());
     shaded.light.position = light.transform.position;
 
-    flat.setColour(vec4(1,1,1,1));
     
     // XR
     xr.xr_draw = draw;
@@ -74,14 +78,46 @@ function setup(xr : XR, gl : WebGL2RenderingContext)
 function draw(xr : XR, gl : WebGL2RenderingContext, camera : XRCamera, frame : XRFrame)
 {
     shaded.viewPos = camera.getPosition().toVector3();
+
+
+    if (xr.inputSources.length >= 2)
+    {
+        let one = xr.inputSources[0];
+        let two = xr.inputSources[1];
+
+        let leftInput : XRInputSource;
+        let rightInput : XRInputSource;
+
+        let left : Transform;
+        let right : Transform;
+
+        if (one.handedness == "right")
+        {
+            rightInput = one;
+            leftInput = two;
+        } else {            
+            rightInput = two;
+            leftInput = one;
+        }
+
+        let grip = frame.getPose(rightInput.gripSpace, xr.referenceSpace);
+        right = monkey.transform;
+        right.position = vec().setVec(grip.transform.position);
+        right.overrideMatrix = grip.transform.matrix;
+
+        grip = frame.getPose(leftInput.gripSpace, xr.referenceSpace);
+        left = light.transform;
+        left.position = vec().setVec(grip.transform.position);
+        left.overrideMatrix = grip.transform.matrix
+
+        light.transform = right;
+        monkey.transform = left;
+    }
+
+    shaded.light.position = light.transform.position;
+
     shaded.updateUniforms(gl);
     flat.updateUniforms(gl);
-
-    for (let input of xr.inputSources)
-    {
-        light.transform.overrideMatrix = frame.getPose(input.gripSpace, xr.referenceSpace).transform.matrix;
-        console.log(light.transform.overrideMatrix)
-    }
 
     scene.MainCamera = camera;
     scene.draw(gl);
