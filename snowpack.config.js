@@ -17,5 +17,6 @@ export default {
   },
   buildOptions: {
     out:"build/build.js"
-  }
+  },
+  exclude: [".git/**"]
 };
