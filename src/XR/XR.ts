@@ -1,4 +1,5 @@
 import { SupersonicJS } from "../supersonic";
+import { Transform } from "../Transform/Transform";
 import { vec4 } from "../Transform/Vector";
 import { XRCamera } from "./XRCamera";
 
@@ -13,6 +14,7 @@ export class XR
     session : XRSession;
 
     inputSources : XRInputSourceArray;
+    currentFrame : XRFrame;
 
     xr_draw: XRDrawCallback;
     xr_setup: XRSetupCallback;
@@ -82,8 +84,8 @@ export class XR
 
     protected draw(time: DOMHighResTimeStamp, frame: XRFrame)
     {
-        let pose = this.getPose(frame);
-
+        this.currentFrame = frame;
+        let pose = this.getPose();
 
         if (pose)
         {
@@ -100,9 +102,24 @@ export class XR
         frame.session.requestAnimationFrame(this.draw.bind(this));
     }
 
-    getPose(frame: XRFrame): XRViewerPose
+    getPose(): XRViewerPose
     {
-        return frame.getViewerPose(this.referenceSpace);
+        return this.currentFrame.getViewerPose(this.referenceSpace);
+    }
+
+    getControllerTransform(controller : XRInputSource)
+    {
+
+        let grip = this.currentFrame.getPose(controller.gripSpace, this.referenceSpace);
+
+        let transform = new Transform();
+        transform.position.setVec(grip.transform.position);
+        transform.overrideMatrix = grip.transform.matrix;
+        if (grip == null)
+        {
+            return new Transform();
+        }
+        return transform;
     }
 
     protected updateInputSources(event : XRInputSourceChangeEvent)

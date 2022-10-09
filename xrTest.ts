@@ -11,6 +11,7 @@ import { XRCamera } from "./src/XR/XRCamera";
 
 Loader.CacheHTTP("/Models/monkey.obj");
 Loader.CacheHTTP("/Models/example.obj");
+Loader.CacheHTTP("/Models/scene_test.obj")
 
 Shaded3D.Register();
 Flat3D.Register();
@@ -27,6 +28,10 @@ let monkey : Entity;
 let light : Entity;
 let shaded : Shaded3D;
 let flat : Flat3D;
+
+let groundShader : Shaded3D;
+let waterShader : Shaded3D;
+
 
 function setup(xr : XR, gl : WebGL2RenderingContext)
 {
@@ -71,6 +76,41 @@ function setup(xr : XR, gl : WebGL2RenderingContext)
     shaded.light.position = light.transform.position;
 
     
+    // World
+
+    let sceneMeshes = ObjParser.parseAll(Loader.LoadHTTP("/Models/scene_test.obj"));
+
+    groundShader = Shaded3D.create(gl);
+	groundShader.material.ambient = vec(29, 79, 17).div(255);
+	groundShader.material.diffuse = vec(27, 135, 1).div(255);
+	groundShader.material.specular = vec(255, 255, 255).div(255);
+
+	waterShader = Shaded3D.create(gl);
+	waterShader.material.ambient = vec(7, 31, 66).div(255);
+	waterShader.material.diffuse = vec(1, 99, 135).div(255);
+	waterShader.material.specular = vec(255, 255, 255).div(255);
+	
+	for (let mesh of sceneMeshes)
+	{
+		let object = new Entity(mesh.name);
+		let geometry: GeometryRenderable3D;
+
+		let shaderDeterminator = object.name.split("_");
+		if (shaderDeterminator[shaderDeterminator.length - 1] == "water")
+		{
+			geometry = new GeometryRenderable3D(gl, mesh, waterShader);
+		} else
+		{
+			geometry = new GeometryRenderable3D(gl, mesh, groundShader);
+		}
+
+		object.addComponent(geometry, gl);
+		object.transform.scale.set(10);
+		scene.addEntity(object);
+	}
+	groundShader.light.setColour(vec(1,1,1));
+	waterShader.light = groundShader.light;
+
     // XR
     xr.xr_draw = draw;
 }
@@ -80,16 +120,13 @@ function draw(xr : XR, gl : WebGL2RenderingContext, camera : XRCamera, frame : X
     shaded.viewPos = camera.getPosition().toVector3();
 
 
-    if (xr.inputSources.length >= 2)
+    if (xr.inputSources.length >= 2 )
     {
         let one = xr.inputSources[0];
         let two = xr.inputSources[1];
 
         let leftInput : XRInputSource;
         let rightInput : XRInputSource;
-
-        let left : Transform;
-        let right : Transform;
 
         if (one.handedness == "right")
         {
@@ -100,24 +137,21 @@ function draw(xr : XR, gl : WebGL2RenderingContext, camera : XRCamera, frame : X
             leftInput = one;
         }
 
-        let grip = frame.getPose(rightInput.gripSpace, xr.referenceSpace);
-        right = monkey.transform;
-        right.position = vec().setVec(grip.transform.position);
-        right.overrideMatrix = grip.transform.matrix;
-
-        grip = frame.getPose(leftInput.gripSpace, xr.referenceSpace);
-        left = light.transform;
-        left.position = vec().setVec(grip.transform.position);
-        left.overrideMatrix = grip.transform.matrix
-
-        light.transform = right;
-        monkey.transform = left;
+        light.transform = xr.getControllerTransform(rightInput);
+        monkey.transform = xr.getControllerTransform(leftInput);
     }
 
+    groundShader.light.position = light.transform.position;
+    waterShader.light.position = light.transform.position;
     shaded.light.position = light.transform.position;
+
+    groundShader.viewPos = camera.getPosition();
+    waterShader.viewPos = camera.getPosition();
 
     shaded.updateUniforms(gl);
     flat.updateUniforms(gl);
+    groundShader.updateUniforms(gl);
+    waterShader.updateUniforms(gl);
 
     scene.MainCamera = camera;
     scene.draw(gl);
