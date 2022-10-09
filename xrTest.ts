@@ -1,11 +1,13 @@
+import { mat4 } from "gl-matrix";
 import { Entity } from "./src/EntityComponentSystem/Entity";
 import { Scene } from "./src/EntityComponentSystem/Scene";
+import { Controller, GamepadType } from "./src/InputManager/Controller";
 import { Loader } from "./src/Loader/Loader";
 import { ObjParser } from "./src/Parsers/ObjParser";
 import { GeometryRenderable3D } from "./src/Renderables/Renderables";
 import { Flat3D, Shaded3D } from "./src/Shaders/3DShader";
 import { Transform } from "./src/Transform/Transform";
-import { vec, vec4 } from "./src/Transform/Vector";
+import { vec, vec4, Vector } from "./src/Transform/Vector";
 import { XR } from "./src/XR/XR";
 import { XRCamera } from "./src/XR/XRCamera";
 
@@ -31,10 +33,12 @@ let flat : Flat3D;
 
 let groundShader : Shaded3D;
 let waterShader : Shaded3D;
+let parent : Entity;
 
 
 function setup(xr : XR, gl : WebGL2RenderingContext)
 {
+    parent = new Entity();
     // Monkey
     let monkeyData = ObjParser.parseOne(Loader.LoadHTTP("/Models/monkey.obj"));
     
@@ -111,10 +115,15 @@ function setup(xr : XR, gl : WebGL2RenderingContext)
 	groundShader.light.setColour(vec(1,1,1));
 	waterShader.light = groundShader.light;
 
+ 
+
     // XR
     xr.xr_draw = draw;
+
+    offset = new Vector();
 }
 
+let offset : Vector;
 function draw(xr : XR, gl : WebGL2RenderingContext, camera : XRCamera, frame : XRFrame)
 {
     shaded.viewPos = camera.getPosition().toVector3();
@@ -137,8 +146,25 @@ function draw(xr : XR, gl : WebGL2RenderingContext, camera : XRCamera, frame : X
             leftInput = one;
         }
 
+        if (rightInput.gamepad.axes.length >= 4)
+        {
+            let movement = camera.lookAt.mult(rightInput.gamepad.axes[3]);
+            offset.add(movement.div(10).mult(-1))
+        }
+
         light.transform = xr.getControllerTransform(rightInput);
+        light.transform.position.sub(offset);
+        let lightMatrix = mat4.create();
+        mat4.translate(lightMatrix, lightMatrix, offset.copy().mult(-1).toFloat32Array());
+        mat4.multiply(lightMatrix,lightMatrix,light.transform.overrideMatrix);
+        light.transform.overrideMatrix = lightMatrix;
+
         monkey.transform = xr.getControllerTransform(leftInput);
+        monkey.transform.position.sub(offset);
+        let monkeyMatrix = mat4.create();
+        mat4.translate(monkeyMatrix, monkeyMatrix, offset.copy().mult(-1).toFloat32Array());
+        mat4.multiply(monkeyMatrix,monkeyMatrix,monkey.transform.overrideMatrix);
+        monkey.transform.overrideMatrix = monkeyMatrix;
     }
 
     groundShader.light.position = light.transform.position;
@@ -152,6 +178,11 @@ function draw(xr : XR, gl : WebGL2RenderingContext, camera : XRCamera, frame : X
     flat.updateUniforms(gl);
     groundShader.updateUniforms(gl);
     waterShader.updateUniforms(gl);
+
+    
+    let last = camera.transformationMatrix;
+    mat4.translate(last,last,offset.toFloat32Array());
+    
 
     scene.MainCamera = camera;
     scene.draw(gl);

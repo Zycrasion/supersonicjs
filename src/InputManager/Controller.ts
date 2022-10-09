@@ -1,45 +1,18 @@
 import { vec, Vector } from "../Transform/Vector";
 import { InputAxis, InputManager } from "./Input";
+import { XBOX_DIGITAL_INPUTS, XBOX_ANALOG_RAW, XBOX_ANALOG_INPUTS } from "./mappings/xbox_mappings";
 
 export enum GamepadType 
 {
     XBOX,
+    QUEST,
     UNSUPPORTED
 }
 
-export enum XBOX_ANALOG_RAW
-{
-    LEFT_X,
-    LEFT_Y,
-    LEFT_TRIGGER,
-    RIGHT_X,
-    RIGHT_Y,
-    RIGHT_TRIGGER,
-    DPAD_X,
-    DPAD_Y
-} 
+export type DIGITAL_INPUT = XBOX_DIGITAL_INPUTS;
+export type ANALOG_INPUT = XBOX_ANALOG_INPUTS;
+export type ANALOG_INPUT_RAW = XBOX_ANALOG_RAW;
 
-export enum XBOX_ANALOG_INPUTS
-{
-    LEFT_STICK,
-    RIGHT_STICK,
-    DPAD
-}
-
-export enum XBOX_DIGITAL_INPUTS
-{
-    A,
-    B,
-    Y,
-    X,
-    LEFT_BUMPER,
-    RIGHT_BUMPER,
-    SHARE,
-    MENU,
-    XBOX,
-    LEFT_STICK,
-    RIGHT_STICK
-}
 
 export class Controller
 {
@@ -57,32 +30,41 @@ export class Controller
         this.active = true;
     }
 
-    getButton(input : XBOX_DIGITAL_INPUTS)
+    getButton(input : DIGITAL_INPUT)
     {
         return this.gamepad.buttons[input];
     }
 
     getAnalogRaw(input : XBOX_ANALOG_RAW)
     {
-        if (input == XBOX_ANALOG_RAW.RIGHT_TRIGGER && this.right_trigger_pressed == false)
+        switch(this.type)
         {
-            if (this.gamepad.axes[XBOX_ANALOG_RAW.RIGHT_TRIGGER] == 0)
-            {
-                return -1;
-            } else {
-                this.right_trigger_pressed = true;
-            }
+            case GamepadType.XBOX:
+                if (input == XBOX_ANALOG_RAW.RIGHT_TRIGGER && this.right_trigger_pressed == false)
+                {
+                    if (this.gamepad.axes[XBOX_ANALOG_RAW.RIGHT_TRIGGER] == 0)
+                    {
+                        return -1;
+                    } else {
+                        this.right_trigger_pressed = true;
+                    }
+                }
+        
+                if (input == XBOX_ANALOG_RAW.LEFT_TRIGGER && this.left_trigger_pressed == false)
+                {
+                    if (this.gamepad.axes[XBOX_ANALOG_RAW.LEFT_TRIGGER] == 0)
+                    {
+                        return -1;
+                    } else {
+                        this.left_trigger_pressed = true;
+                    }
+                }
+                break;
+            
+            case GamepadType.QUEST:
+                break;
         }
-
-        if (input == XBOX_ANALOG_RAW.LEFT_TRIGGER && this.left_trigger_pressed == false)
-        {
-            if (this.gamepad.axes[XBOX_ANALOG_RAW.LEFT_TRIGGER] == 0)
-            {
-                return -1;
-            } else {
-                this.left_trigger_pressed = true;
-            }
-        }
+        
 
         if (Math.abs(this.gamepad.axes[input]) < this.deadZone)
         {
@@ -91,27 +73,39 @@ export class Controller
         return this.gamepad.axes[input];
     }
     
-    getAnalogStick(input : XBOX_ANALOG_INPUTS): Vector
+    getAnalogStick(input : ANALOG_INPUT): Vector
     {
         if ([GamepadType.UNSUPPORTED].includes(this.type))
         {
             throw new Error("Gamepad UNSUPPORTED");
         }
 
-        if (input==XBOX_ANALOG_INPUTS.LEFT_STICK)
+
+        switch(this.type)
         {
-            return vec(this.getAnalogRaw(XBOX_ANALOG_RAW.LEFT_X),this.getAnalogRaw(XBOX_ANALOG_RAW.LEFT_Y));
+            case GamepadType.XBOX:
+                if (input==XBOX_ANALOG_INPUTS.LEFT_STICK)
+                {
+                    return vec(this.getAnalogRaw(XBOX_ANALOG_RAW.LEFT_X),this.getAnalogRaw(XBOX_ANALOG_RAW.LEFT_Y));
+                }
+        
+                if (input==XBOX_ANALOG_INPUTS.RIGHT_STICK)
+                {
+                    return vec(this.getAnalogRaw(XBOX_ANALOG_RAW.RIGHT_X),this.getAnalogRaw(XBOX_ANALOG_RAW.RIGHT_Y));
+                }
+        
+                if (input==XBOX_ANALOG_INPUTS.DPAD)
+                {
+                    return vec(this.getAnalogRaw(XBOX_ANALOG_RAW.DPAD_X), this.getAnalogRaw(XBOX_ANALOG_RAW.DPAD_Y));
+                }
+                break;
+            
+            case GamepadType.QUEST:
+                
+                break;
         }
 
-        if (input==XBOX_ANALOG_INPUTS.RIGHT_STICK)
-        {
-            return vec(this.getAnalogRaw(XBOX_ANALOG_RAW.RIGHT_X),this.getAnalogRaw(XBOX_ANALOG_RAW.RIGHT_Y));
-        }
-
-        if (input==XBOX_ANALOG_INPUTS.DPAD)
-        {
-            return vec(this.getAnalogRaw(XBOX_ANALOG_RAW.DPAD_X), this.getAnalogRaw(XBOX_ANALOG_RAW.DPAD_Y));
-        }
+       
 
         throw new Error("INPUT DOESNT EXIST")
     }

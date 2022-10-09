@@ -1,6 +1,6 @@
 import { mat4 } from "gl-matrix";
 import { CameraLike } from "../Camera";
-import { vec4, Vector4 } from "../Transform/Vector";
+import { vec, vec4, Vector4 } from "../Transform/Vector";
 
 export class XRCamera implements CameraLike
 {
@@ -12,6 +12,12 @@ export class XRCamera implements CameraLike
     {
         this.transformationMatrix = vrEye.transform.inverse.matrix;
         this.projectionMatrix = vrEye.projectionMatrix;
+    }
+
+    get lookAt()
+    {
+        let mat = this.transformationMatrix;
+        return vec(mat[2], mat[6], mat[10]).normalize();
     }
 
     getPosition() : Vector4

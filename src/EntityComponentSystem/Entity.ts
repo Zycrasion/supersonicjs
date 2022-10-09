@@ -6,6 +6,8 @@ import { Component } from "./Component";
 export class Entity
 {
     components: Component[];
+    children: Entity[];
+    parent_ptr : Entity | null;
     transform: Transform;
     name: string;
     private lastTransform: Transform;
@@ -16,6 +18,7 @@ export class Entity
     {
         this.transform = new Transform();
         this.components = new Array<Component>();
+        this.children = new Array<Entity>();
         this.lastTransform = this.transform.copy();
         this.transformMatrix = this.transform.generateMat4();
         this.name = name;
@@ -27,6 +30,16 @@ export class Entity
         {
             component.draw_tick(gl, Camera);
         }
+        for (let ent of this.children)
+        {
+            ent.draw_tick(gl, Camera);
+        }
+    }
+
+    addEntity(ent : Entity)
+    {
+        ent.parent_ptr = this;
+        this.children.push(ent);
     }
 
     phys_tick()
@@ -51,6 +64,14 @@ export class Entity
 
     getTransformation()
     {
+        console.log(this.parent_ptr)
+        if (this.parent_ptr != null)
+        {
+            this.transformMatrix = Transform.Combine(this.parent_ptr.transform, this.transform);
+            console.log("?????")
+            return this.transformMatrix;
+        }
+
         if (!this.lastTransform.compare(this.transform))
         {
             this.transformMatrix = this.transform.generateMat4();
