@@ -1,5 +1,5 @@
 # SupersonicJS
-Status: Beta v0.3.14
+Status: Beta v0.4.0
 
 ## Getting Started (NOTE: You should have an understanding of javascript/typescript before trying the engine. its currently more like an abstraction layer on top of WebGL.)
 clone the repo 
@@ -154,6 +154,3 @@ setup();
 
 ## Debugging Resources
 - https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Constants
-
-## Known Bugs
-- Sometimes the light wont draw due to only supplying 4 vertices?
