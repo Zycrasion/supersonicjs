@@ -1,14 +1,12 @@
 {
   "name": "supersonicjs",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "",
-  "main": "tsBuild/supersonic.js",
+  "main": "src/supersonic.ts",
   "type": "module",
   "scripts": {
-    "test": "echo 'USE DEV1 AND DEV2 IN SEPERATE TERMINAL SESSIONS' && exit 1",
     "dev": "snowpack dev --polyfill-node",
     "build": "snowpack build --polyfill-node",
-    "install": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -19,8 +17,7 @@
     "@types/gl-matrix": "^3.2.0",
     "@types/node": "^18.7.14",
     "nodemon": "^2.0.19",
-    "snowpack": "^3.8.8",
-    "typescript": "^4.8.2"
+    "snowpack": "^3.8.8"
   },
   "dependencies": {
     "@babel/core": "^7.19.3",
