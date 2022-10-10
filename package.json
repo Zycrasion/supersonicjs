@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "snowpack dev --polyfill-node",
-    "build": "snowpack build --polyfill-node",
+    "build": "snowpack build --polyfill-node"
   },
   "keywords": [],
   "author": "",
