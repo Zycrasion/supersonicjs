@@ -1,5 +1,5 @@
 import { mat4, quat, vec3 } from "gl-matrix";
-import { Vector } from "./Vector";
+import { vec, Vector } from "./Vector";
 export interface TransformLike 
 {
     generateMat4() :mat4
@@ -29,6 +29,12 @@ export class Transform implements TransformLike
         
         mat4.multiply(matrix,parentMat,childMat);
         return matrix;
+    }
+
+    get lookAt()
+    {
+        let mat = this.generateMat4();
+        return vec(mat[2], mat[6], mat[10]).normalize();
     }
 
     copy()

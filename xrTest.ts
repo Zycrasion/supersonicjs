@@ -1,4 +1,5 @@
 import { mat4 } from "gl-matrix";
+import { CameraLike } from "./src/Camera";
 import { Entity } from "./src/EntityComponentSystem/Entity";
 import { Scene } from "./src/EntityComponentSystem/Scene";
 import { Controller, GamepadType } from "./src/InputManager/Controller";
@@ -124,7 +125,7 @@ function setup(xr : XR, gl : WebGL2RenderingContext)
 }
 
 let offset : Vector;
-function draw(xr : XR, gl : WebGL2RenderingContext, camera : XRCamera, frame : XRFrame)
+function draw(xr : XR, gl : WebGL2RenderingContext, camera : CameraLike)
 {
     shaded.viewPos = camera.getPosition().toVector3();
 
@@ -146,25 +147,32 @@ function draw(xr : XR, gl : WebGL2RenderingContext, camera : XRCamera, frame : X
             leftInput = one;
         }
 
-        if (rightInput.gamepad.axes.length >= 4)
-        {
-            let movement = camera.lookAt.mult(rightInput.gamepad.axes[3]);
-            offset.add(movement.div(10).mult(-1))
-        }
 
         light.transform = xr.getControllerTransform(rightInput);
         light.transform.position.sub(offset);
+
+
+        monkey.transform = xr.getControllerTransform(leftInput);
+        monkey.transform.position.sub(offset);
+
+        if (leftInput.gamepad.axes.length >= 4)
+        {
+            let movement = camera.lookAt.mult(leftInput.gamepad.axes[3]);
+            offset.add(movement.div(10).mult(-1))
+        }
+
         let lightMatrix = mat4.create();
         mat4.translate(lightMatrix, lightMatrix, offset.copy().mult(-1).toFloat32Array());
         mat4.multiply(lightMatrix,lightMatrix,light.transform.overrideMatrix);
         light.transform.overrideMatrix = lightMatrix;
 
-        monkey.transform = xr.getControllerTransform(leftInput);
-        monkey.transform.position.sub(offset);
         let monkeyMatrix = mat4.create();
         mat4.translate(monkeyMatrix, monkeyMatrix, offset.copy().mult(-1).toFloat32Array());
         mat4.multiply(monkeyMatrix,monkeyMatrix,monkey.transform.overrideMatrix);
         monkey.transform.overrideMatrix = monkeyMatrix;
+
+
+
     }
 
     groundShader.light.position = light.transform.position;

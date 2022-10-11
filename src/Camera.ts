@@ -1,7 +1,7 @@
 import { glMatrix, mat3, mat4 } from "gl-matrix";
 import { Entity } from "./EntityComponentSystem/Entity";
 import { IInputAxis, InputAxis } from "./InputManager/Input";
-import { vec, Vector } from "./Transform/Vector";
+import { vec, vec4, Vector, Vector4 } from "./Transform/Vector";
 
 export enum ProjectionType
 {
@@ -11,8 +11,11 @@ export enum ProjectionType
 
 export interface CameraLike
 {
-    generateProjection(gl : WebGL2RenderingContext)
+    generateProjection(gl: WebGL2RenderingContext)
     getTransformation()
+    getPosition(): Vector4;
+    get lookAt();
+    get transformationMatrix();
 }
 
 export class Camera extends Entity implements CameraLike 
@@ -34,6 +37,23 @@ export class Camera extends Entity implements CameraLike
         this.projection = projection;
         this.fov = fov;
         this.transform.position = position.copy();
+    }
+
+    getPosition(): Vector4
+    {
+        return vec4(this.transformationMatrix[0], this.transformationMatrix[1], this.transformationMatrix[2], this.transformationMatrix[3])
+
+    }
+
+    get lookAt(): any
+    {
+        let mat = this.transformationMatrix;
+        return vec(mat[2], mat[6], mat[10]).normalize();
+    }
+
+    get transformationMatrix(): any
+    {
+        return this.transform.generateMat4();
     }
 
     setFov(fov: number)

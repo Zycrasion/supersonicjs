@@ -10,8 +10,8 @@ import { Flat3D, Shaded3D } from "./src/Shaders/3DShader";
 import { Camera, ProjectionType } from "./src/Camera";
 import { PBRShader } from "./src/Shaders/PBR";
 import { Loader } from "./src/Loader/Loader";
-import { XBOX_ANALOG_INPUTS, XBOX_ANALOG_RAW, XBOX_DIGITAL_INPUTS } from "./src/InputManager/Controller";
 import { Scene } from "./src/EntityComponentSystem/Scene";
+import { XBOX_ANALOG_RAW, XBOX_ANALOG_INPUTS, XBOX_DIGITAL_INPUTS } from "./src/InputManager/mappings/xbox_mappings";
 
 let avgFps = 0;
 let framerateCalcs = 0;
@@ -56,14 +56,18 @@ let gl: WebGL2RenderingContext;
 
 async function setup()
 {
+	let canvas = SupersonicJS.createCanvas();
+	canvas.width *= 2;
+	canvas.height *= 2;
+	
 	// vec and vec4 are shorthand for new Vector and new Vector4
-	gl = SupersonicJS.init("glCanvas", vec4(0.1, 0.1, 0.1, 1));
+	gl = SupersonicJS.init(canvas.id, vec4(0.1, 0.1, 0.1, 1));
 	let startupTime = Date.now();
 
 	scene = new Scene();
 
 	// Lock cursor to canvas
-	utils.PointerLock.Lock("glCanvas");
+	utils.PointerLock.Lock(canvas.id);
 	// Request Object Mesh
 	let sceneText = await HTTP_REQUEST("/Models/scene_test.obj");
 	console.log("SCENE DOWNLOADED")
