@@ -12,6 +12,8 @@ import { PBRShader } from "./src/Shaders/PBR";
 import { Loader } from "./src/Loader/Loader";
 import { Scene } from "./src/EntityComponentSystem/Scene";
 import { XBOX_ANALOG_RAW, XBOX_ANALOG_INPUTS, XBOX_DIGITAL_INPUTS } from "./src/InputManager/mappings/xbox_mappings";
+import { ITexture, Texture } from "./src/Renderables/Texture";
+import { FrameTexture } from "./src/Renderables/FrameTextures";
 
 let avgFps = 0;
 let framerateCalcs = 0;
@@ -54,30 +56,30 @@ let inputManager: InputManager;
 
 let gl: WebGL2RenderingContext;
 
+let container: GeometryRenderable3D;
+
 async function setup()
 {
-	let canvas = SupersonicJS.createCanvas();
-	canvas.width *= 2;
-	canvas.height *= 2;
-	
+
 	// vec and vec4 are shorthand for new Vector and new Vector4
-	gl = SupersonicJS.init(canvas.id, vec4(0.1, 0.1, 0.1, 1));
+	gl = SupersonicJS.init("glCanvas", vec4(0.1, 0.1, 0.1, 1));
 	let startupTime = Date.now();
 
 	scene = new Scene();
 
 	// Lock cursor to canvas
-	utils.PointerLock.Lock(canvas.id);
+	utils.PointerLock.Lock("glCanvas");
 	// Request Object Mesh
 	let sceneText = await HTTP_REQUEST("/Models/scene_test.obj");
 	console.log("SCENE DOWNLOADED")
-	let LightText = await HTTP_REQUEST("/Models/example.obj");
+	let cubeText = await HTTP_REQUEST("/Models/example.obj");
 	console.log("CUBE DOWNLOADED")
 	// Parse raw text to get MeshData
 	let sceneMeshes = ObjParser.parseAll(sceneText);
 	console.log("SCENE PARSED");
-	let lightMesh = ObjParser.parseOne(LightText);
+	let cubeMesh = ObjParser.parseOne(cubeText);
 	console.log("LIGHT PARSED")
+	console.log(cubeMesh);
 
 	camera = new Camera(ProjectionType.PERSPECTIVE, 90, vec(-2, -2, -2))
 
@@ -85,14 +87,12 @@ async function setup()
 	groundShader.material.ambient = vec(29, 79, 17).div(255);
 	groundShader.material.diffuse = vec(27, 135, 1).div(255);
 	groundShader.material.specular = vec(255, 255, 255).div(255);
-	groundShader.viewPos = camera.transform.position;
 
 	let waterShader = Shaded3D.create(gl);
 	waterShader.material.ambient = vec(7, 31, 66).div(255);
 	waterShader.material.diffuse = vec(1, 99, 135).div(255);
 	waterShader.material.specular = vec(255, 255, 255).div(255);
-	waterShader.viewPos = camera.transform.position;
-	
+
 	for (let mesh of sceneMeshes)
 	{
 		let object = new Entity(mesh.name);
@@ -111,8 +111,6 @@ async function setup()
 		object.transform.scale.set(10);
 		scene.addEntity(object);
 	}
-	console.log(scene.Entities);
-
 
 	// Prepare Camera
 	camera.speed = 1;
@@ -133,16 +131,57 @@ async function setup()
 	light.addComponent(
 		new GeometryRenderable3D(
 			gl,
-			lightMesh,
+			cubeMesh,
 			lightShader
 		),
 		gl
 	);
 
-	groundShader.light.setColour(vec(1,1,1));
+	groundShader.light.setColour(vec(1, 1, 1));
+	groundShader.light.ambient = vec(1,1,1);
+	groundShader.light.diffuse = vec(0.5,0.5,0.5);
 	waterShader.light = groundShader.light;
-	
+
 	groundShader.light.position = light.transform.position;
+
+	pcDiffuse = Shaded3D.create(gl);
+	pcDiffuse.light = groundShader.light;
+	pcDiffuse.material.ambient.set(0.1);
+	pcDiffuse.material.diffuse.set(0.5);
+	pcDiffuse.material.specular.set(1);
+
+	pcPBR = PBRShader.create(gl);
+	pcPBR.light = groundShader.light;
+	pcPBR.material.diffuse = screen = FrameTexture.create(gl, gl.canvas.width, gl.canvas.height);
+	pcPBR.material.specular = pcPBR.material.diffuse;
+
+	pc = new Entity();
+	let pcMesh = ObjParser.parseAll(await HTTP_REQUEST("/Models/pc.obj"));
+	for (let mesh of pcMesh)
+	{
+		let split = mesh.name.split("_");
+		if (split[split.length-1] == "screen")
+		{
+			pc.addComponent(
+				new GeometryRenderable3D(
+					gl,
+					mesh,
+					pcPBR
+				),
+				gl
+			)
+		} else 
+		{
+			pc.addComponent(
+				new GeometryRenderable3D(
+					gl,
+					mesh,
+					pcDiffuse
+				),
+				gl
+			)
+		}
+	}
 
 	console.log("LIGHT INITIALISED")
 	scene.addEntity(light);
@@ -151,15 +190,11 @@ async function setup()
 
 	camera.far = 1000;
 
-	console.log("SETUP DONE!");
 	requestAnimationFrame(draw);
-	setInterval(calculateFramerate, 1000);
-	startupTime = Date.now() - startupTime;
-	startupTime /= 1000;
-	console.log(`STARTUP TOOK ${startupTime} SECONDS`)
-	Loader.Free();
 }
 
+let pc : Entity, pcDiffuse : Shaded3D, pcPBR : PBRShader, screen : FrameTexture;
+let tex : FrameTexture;
 let dt = Date.now();
 function draw()
 {
@@ -170,13 +205,28 @@ function draw()
 		console.error("error: gl undefined");
 		return;
 	}
-	// Do stuff that isnt  drawing
-	light.transform.position.set(Math.sin(framecount / 60) * 20, 5, Math.cos(framecount / 60) * 20);
+	// pcScreen
 
+	screen.bindFrameBuffer(gl);
+	let _ = SupersonicJS.clearColour;
+	SupersonicJS.setClearColour(gl, vec4());
+	SupersonicJS.clear(gl);
+
+	SupersonicJS.setClearColour(gl, _);
+	screen.unbindFrameBuffer(gl);
+
+	// Back to scene
+
+
+
+	// Do stuff that isnt  drawing
+	light.transform.position.set(Math.sin(framecount / 60) * 4, 7	, Math.cos(framecount / 60) * 4);
 	framecount++;
 	// Clear background
 	SupersonicJS.clear(gl);
 	scene.updateAllUniforms(gl);
+	pcDiffuse.updateUniforms(gl);
+	pc.draw_tick(gl, camera);
 	scene.draw(gl);
 
 
@@ -225,4 +275,9 @@ PBRShader.Register();
 Flat3D.Register();
 Loader.CacheHTTP("/Models/example.obj");
 Loader.CacheHTTP("/Models/scene_test.obj");
+Loader.CacheHTTP("/Models/pc.obj");
+
+Loader.CacheImage("/images/container_specular.png");
+Loader.CacheImage("/images/container_diffuse.png");
+
 Loader.LoadAll().then(setup);

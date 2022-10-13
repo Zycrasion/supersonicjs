@@ -22,7 +22,7 @@ out vec4 FragColor;
 
 in vec3 Normal;  
 in vec3 FragPos;  
-in vec3 CameraPosition;
+uniform vec3 uCameraPosition;
 
 uniform Material material;
 uniform Light light;
@@ -39,9 +39,9 @@ void main()
     vec3 diffuse = (diff * material.diffuse) * light.diffuse;
     
     // specular
-    vec3 viewDir = normalize(CameraPosition - FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shiny) * max(dot(viewDir, norm), 0.0);
+    vec3 viewDir = normalize(uCameraPosition - FragPos);
+    vec3 reflectDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(norm, reflectDir), 0.0), material.shiny) * max(dot(viewDir, norm), 0.0);
     vec3 specular = (material.specular * spec) * light.specular; 
      
 

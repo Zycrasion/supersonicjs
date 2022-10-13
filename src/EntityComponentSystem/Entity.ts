@@ -64,11 +64,9 @@ export class Entity
 
     getTransformation()
     {
-        console.log(this.parent_ptr)
         if (this.parent_ptr != null)
         {
             this.transformMatrix = Transform.Combine(this.parent_ptr.transform, this.transform);
-            console.log("?????")
             return this.transformMatrix;
         }
 

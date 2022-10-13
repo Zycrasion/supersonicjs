@@ -1,4 +1,4 @@
-import { mat4 } from "gl-matrix";
+import { mat4, vec2 } from "gl-matrix";
 import { Loader } from "../Loader/Loader";
 import { Vector, Vector4 } from "../Transform/Vector";
 import { Light } from "./LightSource";
@@ -11,6 +11,11 @@ export class Shader3D extends Shader
     protected ViewMatrix: mat4;
     protected ProjectionMatrix: mat4;
     protected ModelViewMatrix: mat4;
+    protected viewPos: Vector;
+
+    setViewPos(v: Vector) { this.viewPos = v }
+
+    getViewPos() { return this.viewPos }
 
     setViewMatrix(matrix: mat4) { this.ViewMatrix = matrix }
 
@@ -24,9 +29,9 @@ export class Shader3D extends Shader
 
     getModelViewMatrix() { return this.ModelViewMatrix }
 
-    bind(gl : WebGL2RenderingContext)
+    bind(gl: WebGL2RenderingContext)
     {
-        if (!this.hasLoaded()) {return false;}
+        if (!this.hasLoaded()) { return false; }
         gl.useProgram(this.ShaderProgram);
         return true;
     }
@@ -98,10 +103,10 @@ export class Flat3D extends Shader3D
 
 export class Shaded3D extends Shader3D
 {
-    viewPos: Vector;
 
     material: Material;
     light: Light;
+
 
     constructor(gl: WebGL2RenderingContext)
     {
@@ -118,12 +123,12 @@ export class Shaded3D extends Shader3D
         callback();
     }
 
-    updateUniforms(gl : WebGL2RenderingContext)
+    updateUniforms(gl: WebGL2RenderingContext)
     {
         if (!this.bind(gl))
         {
-            setTimeout(this.updateUniforms.bind(this,gl), 100); // Wait for shader to load
-        }    
+            setTimeout(this.updateUniforms.bind(this, gl), 100); // Wait for shader to load
+        }
 
         this.material.setUniforms(gl, this);
         this.light.setUniforms(gl, this);

@@ -22,7 +22,7 @@ out vec4 FragColor;
 in vec3 Normal;  
 in vec3 FragPos;  
 in vec2 TexCoords;
-in vec3 CameraPosition;
+uniform vec3 uCameraPosition;
 
 uniform Material material;
 uniform Light light;
@@ -30,6 +30,7 @@ uniform Light light;
 void main()
 {
     vec3 textureColour = texture(material.diffuse, TexCoords).rgb;
+    vec3 specularColour = texture(material.specular, TexCoords).rgb;
     // ambient
     vec3 ambient = textureColour * light.ambient;
   	
@@ -40,12 +41,12 @@ void main()
     vec3 diffuse = (diff * textureColour) * light.diffuse;
     
     // specular
-    vec3 viewDir = normalize(CameraPosition -  FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * spec * texture(material.specular,TexCoords).rgb;  
-     
+    vec3 viewDir = normalize(uCameraPosition -  FragPos);
+    vec3 reflectDir = normalize(lightDir + viewDir);  
+    float spec = pow(max(dot(norm, reflectDir), 0.0), material.shininess);
+    vec3 specular = light.specular * spec * specularColour;  
+    
 
     vec3 result = (ambient + diffuse + specular);
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result , 1.0);
 } 

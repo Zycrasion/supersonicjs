@@ -1,8 +1,20 @@
-import { Vector4 } from "./Transform/Vector";
+import { vec4, Vector4 } from "./Transform/Vector";
 
 
 export class SupersonicJS
 {
+
+    static clearColour = vec4();
+
+    static setClearColour(gl : WebGL2RenderingContext, clearColour = SupersonicJS.clearColour)
+    {
+        gl.clearColor(clearColour.x, clearColour.y, clearColour.z, clearColour.w);
+        gl.clearDepth(1);
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
+        SupersonicJS.clearColour = clearColour;
+    }
+
     static init(canvasid: string, clearColour: Vector4, attribs : WebGLContextAttributes = {}): WebGL2RenderingContext
     {
         let gl = (document.getElementById(canvasid) as HTMLCanvasElement).getContext("webgl2",attribs);
@@ -11,10 +23,8 @@ export class SupersonicJS
             alert("Your device does not support WebGL2")
             return null;
         }
-        gl.clearColor(clearColour.x, clearColour.y, clearColour.z, clearColour.w);
-        gl.clearDepth(1);
-        gl.enable(gl.DEPTH_TEST);
-        gl.depthFunc(gl.LEQUAL);
+        SupersonicJS.clearColour = clearColour;
+        this.setClearColour(gl);
         return gl;
     }
 

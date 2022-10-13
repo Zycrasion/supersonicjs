@@ -2,6 +2,12 @@ import { resolve } from "path";
 import { BufferSonic } from "../Abstraction/Buffer";
 import { Loader } from "../Loader/Loader";
 import { Math2, UV } from "../utilities";
+
+export interface ITexture
+{
+
+    bind(gl : WebGL2RenderingContext, SLOT : number)
+}
 export class Texture 
 {
     texture: WebGLTexture;

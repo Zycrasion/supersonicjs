@@ -1,5 +1,5 @@
 import { Loader } from "../Loader/Loader";
-import { Texture } from "../Renderables/Texture";
+import { ITexture } from "../Renderables/Texture";
 import { vec, Vector } from "../Transform/Vector";
 import { Shader3D } from "./3DShader";
 import { Light } from "./LightSource";
@@ -9,13 +9,13 @@ import { Shader } from "./Shader";
 export class PBRMaterial implements BaseMaterial
 {
 
-    diffuse: Texture;
-    specular: Texture;
+    diffuse: ITexture;
+    specular: ITexture;
     shininess: number;
 
     constructor()
     {
-        this.shininess = 32;
+        this.shininess = 64;
     }
 
     setUniforms(gl: WebGL2RenderingContext, shader: Shader, name = "material"): void

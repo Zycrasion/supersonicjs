@@ -116,17 +116,19 @@ export class GeometryRenderable3D extends RenderableAbstract
         if (Mesh.textures == undefined)
         {
             console.error("UV Coordintates not included!");
+        } else 
+        {
             let texturesUnpacked = Vector.unpackVertices(Mesh.textures);
             this.textureBuffer = new BufferSonic(gl, new Float32Array(texturesUnpacked), texturesUnpacked.length / 3);
             this.textureBuffer.bind(gl);
             this.vao.enableVertexAttrib(gl, 2, 3);
-    
         }
     }
 
     draw_tick(gl: WebGL2RenderingContext, Camera: CameraLike, shaderParamCallback = () => { }): void
     {
         this.shader.setViewMatrix(Camera.getTransformation());
+        this.shader.setViewPos(Camera.getPosition().toVector3())
         this.shader.setProjectionMatrix(Camera.generateProjection(gl))
         let matrix: mat4;
         if (this.parent_ptr != null)
@@ -137,6 +139,7 @@ export class GeometryRenderable3D extends RenderableAbstract
             matrix = this.transform.generateMat4();
         }
         this.shader.setModelViewMatrix(matrix);
+        this.shader.updateUniforms(gl);
 
         this.shader.use(gl, () =>
         {
