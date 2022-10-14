@@ -15,6 +15,7 @@ import { XBOX_ANALOG_RAW, XBOX_ANALOG_INPUTS, XBOX_DIGITAL_INPUTS } from "./src/
 import { ITexture, Texture } from "./src/Renderables/Texture";
 import { FrameTexture } from "./src/Renderables/FrameTextures";
 import { Font } from "./src/Renderables/Font";
+import { font8x8 } from "./font-8x8";
 
 let avgFps = 0;
 let framerateCalcs = 0;
@@ -59,6 +60,8 @@ let gl: WebGL2RenderingContext;
 
 let container: GeometryRenderable;
 
+let groundShader : Shaded3D;
+
 async function setup()
 {
 
@@ -84,7 +87,7 @@ async function setup()
 
 	camera = new Camera(ProjectionType.PERSPECTIVE, 90, vec(-2, -2, -2))
 
-	let groundShader = Shaded3D.create(gl);
+	groundShader = Shaded3D.create(gl);
 	groundShader.material.ambient = vec(29, 79, 17).div(255);
 	groundShader.material.diffuse = vec(27, 135, 1).div(255);
 	groundShader.material.specular = vec(255, 255, 255).div(255);
@@ -143,7 +146,7 @@ async function setup()
 	groundShader.light.diffuse = vec(0.5, 0.5, 0.5);
 	waterShader.light = groundShader.light;
 
-	groundShader.light.position = light.transform.position;
+	groundShader.light.position = camera.transform.position;
 
 	pcDiffuse = Shaded3D.create(gl);
 	pcDiffuse.light = groundShader.light;
@@ -194,37 +197,11 @@ async function setup()
 
 	camera.far = 1000;
 
-	let atlas = {};
-	let atlasARr = "abcdefghijklmnopqrstuvwxyz0123456789-*!?".split("");
-	let x = 0;
-	let y = 32;
-	atlasARr.forEach(v =>
-	{
-		atlas[v] = { x, y };
-		x += 8;
-		if (x > 56)
-		{
-			y -= 8;
-			x = 0;
-		}
-	})
+	
 
 
-	font = new Font({
-		letterinfo: {
-			letterHeight: 8,
-			letterWidth: 8,
-			spaceWidth: 8,
-			spacing: -1
-		},
-		textureInfo: {
-			width: 64,
-			height: 40
-		},
-		texture: await Texture.load(gl, "/images/8x8-font.png", gl.NEAREST),
-		atlas
-	});
-
+	font = new Font(font8x8);
+	font.texture = await Texture.load(gl, "/images/8x8-font.png")
 	let data = font.createText("supersonicjs is cool");
 	console.log(data);
 	let flat = PBRShader.create(gl);
@@ -252,6 +229,7 @@ function draw()
 		return;
 	}
 	
+	groundShader.light.position = light.transform.position;
 
 	// pcScreen
 

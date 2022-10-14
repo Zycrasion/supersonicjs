@@ -146,6 +146,11 @@ export class Vector
         return this;
     }
 
+    toVector4() : Vector4
+    {
+        return new Vector4(this.x,this.y,this.z, 0);
+    }
+
     normalize()
     {
         let mag = this.getMagnitude();

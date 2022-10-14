@@ -41,7 +41,7 @@ export class Camera extends Entity implements CameraLike
 
     getPosition(): Vector4
     {
-        return vec4(this.transformationMatrix[0], this.transformationMatrix[1], this.transformationMatrix[2], this.transformationMatrix[3])
+        return this.transform.position.toVector4().mult(-1);
 
     }
 
