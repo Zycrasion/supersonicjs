@@ -1,5 +1,5 @@
 import { CustomInputAxis, InputAxis, InputManager } from "./src/InputManager/Input";
-import { GeometryRenderable3D } from "./src/Renderables/Renderables";
+import { GeometryRenderable } from "./src/Renderables/Renderables";
 import * as utils from "./src/utilities";
 import { vec, vec4 } from "./src/Transform/Vector";
 import { SupersonicJS } from "./src/supersonic";
@@ -14,6 +14,7 @@ import { Scene } from "./src/EntityComponentSystem/Scene";
 import { XBOX_ANALOG_RAW, XBOX_ANALOG_INPUTS, XBOX_DIGITAL_INPUTS } from "./src/InputManager/mappings/xbox_mappings";
 import { ITexture, Texture } from "./src/Renderables/Texture";
 import { FrameTexture } from "./src/Renderables/FrameTextures";
+import { Font } from "./src/Renderables/Font";
 
 let avgFps = 0;
 let framerateCalcs = 0;
@@ -56,7 +57,7 @@ let inputManager: InputManager;
 
 let gl: WebGL2RenderingContext;
 
-let container: GeometryRenderable3D;
+let container: GeometryRenderable;
 
 async function setup()
 {
@@ -96,15 +97,15 @@ async function setup()
 	for (let mesh of sceneMeshes)
 	{
 		let object = new Entity(mesh.name);
-		let geometry: GeometryRenderable3D;
+		let geometry: GeometryRenderable;
 
 		let shaderDeterminator = object.name.split("_");
 		if (shaderDeterminator[shaderDeterminator.length - 1] == "water")
 		{
-			geometry = new GeometryRenderable3D(gl, mesh, waterShader);
+			geometry = new GeometryRenderable(gl, mesh, waterShader);
 		} else
 		{
-			geometry = new GeometryRenderable3D(gl, mesh, groundShader);
+			geometry = new GeometryRenderable(gl, mesh, groundShader);
 		}
 
 		object.addComponent(geometry, gl);
@@ -129,7 +130,7 @@ async function setup()
 	light.transform.position = vec(0, 2, 2);
 	light.transform.scale.set(0.5);
 	light.addComponent(
-		new GeometryRenderable3D(
+		new GeometryRenderable(
 			gl,
 			cubeMesh,
 			lightShader
@@ -138,8 +139,8 @@ async function setup()
 	);
 
 	groundShader.light.setColour(vec(1, 1, 1));
-	groundShader.light.ambient = vec(1,1,1);
-	groundShader.light.diffuse = vec(0.5,0.5,0.5);
+	groundShader.light.ambient = vec(1, 1, 1);
+	groundShader.light.diffuse = vec(0.5, 0.5, 0.5);
 	waterShader.light = groundShader.light;
 
 	groundShader.light.position = light.transform.position;
@@ -160,10 +161,10 @@ async function setup()
 	for (let mesh of pcMesh)
 	{
 		let split = mesh.name.split("_");
-		if (split[split.length-1] == "screen")
+		if (split[split.length - 1] == "screen")
 		{
 			pc.addComponent(
-				new GeometryRenderable3D(
+				new GeometryRenderable(
 					gl,
 					mesh,
 					pcPBR
@@ -173,7 +174,7 @@ async function setup()
 		} else 
 		{
 			pc.addComponent(
-				new GeometryRenderable3D(
+				new GeometryRenderable(
 					gl,
 					mesh,
 					pcDiffuse
@@ -183,6 +184,9 @@ async function setup()
 		}
 	}
 
+	screenCam = new Camera(ProjectionType.ORTHOGRAPHIC);
+	screenCam.transform.position.z = -3;
+
 	console.log("LIGHT INITIALISED")
 	scene.addEntity(light);
 
@@ -190,12 +194,54 @@ async function setup()
 
 	camera.far = 1000;
 
+	let atlas = {};
+	let atlasARr = "abcdefghijklmnopqrstuvwxyz0123456789-*!?".split("");
+	let x = 0;
+	let y = 32;
+	atlasARr.forEach(v => {
+		atlas[v] = {x, y};
+		x += 8;
+		if (x>56)
+		{
+			y -= 8;
+			x = 0;
+		}
+	})
+	
+
+	font = new Font({
+		letterinfo: {
+			letterHeight: 8,
+			letterWidth: 8,
+			spaceWidth: 8,
+			spacing: -1
+		},
+		textureInfo: {
+			width: 64,
+			height: 40
+		},
+		texture: await Texture.load(gl, "/images/8x8-font.png", gl.NEAREST),
+		atlas
+	});
+
+	let data = font.createText("supersonicjs!");
+	console.log(data);
+	let flat = PBRShader.create(gl);
+	flat.light = groundShader.light;
+	flat.material.specular = font.texture;
+	flat.material.diffuse = font.texture;
+	flat.updateUniforms(gl);
+	text = new GeometryRenderable(gl, data, flat);
+	text.transform.scale.set(0.1);
+
 	requestAnimationFrame(draw);
 }
 
-let pc : Entity, pcDiffuse : Shaded3D, pcPBR : PBRShader, screen : FrameTexture;
-let tex : FrameTexture;
+let pc: Entity, pcDiffuse: Shaded3D, pcPBR: PBRShader, screen: FrameTexture, screenCam : Camera;
 let dt = Date.now();
+let mouseOn = true;
+let keyDownLastFrame = false;
+let font: Font, text : GeometryRenderable;
 function draw()
 {
 	let delta = (Date.now() - dt);
@@ -209,8 +255,9 @@ function draw()
 
 	screen.bindFrameBuffer(gl);
 	let _ = SupersonicJS.clearColour;
-	SupersonicJS.setClearColour(gl, vec4());
+	SupersonicJS.setClearColour(gl, vec4(0,0.1,0));
 	SupersonicJS.clear(gl);
+	text.draw_tick(gl,screenCam);
 
 	SupersonicJS.setClearColour(gl, _);
 	screen.unbindFrameBuffer(gl);
@@ -218,9 +265,8 @@ function draw()
 	// Back to scene
 
 
-
 	// Do stuff that isnt  drawing
-	light.transform.position.set(Math.sin(framecount / 60) * 4, 7	, Math.cos(framecount / 60) * 4);
+	light.transform.position.set(Math.sin(framecount / 60) * 4, 7, Math.cos(framecount / 60) * 4);
 	framecount++;
 	// Clear background
 	SupersonicJS.clear(gl);
@@ -228,6 +274,25 @@ function draw()
 	pcDiffuse.updateUniforms(gl);
 	pc.draw_tick(gl, camera);
 	scene.draw(gl);
+
+	if (inputManager.getKey("F").isPressed)
+	{
+		if (!keyDownLastFrame)
+		{
+			mouseOn = !mouseOn;
+			if (mouseOn)
+			{
+				camera.hook_freelook();
+			} else
+			{
+				camera.unhook_freelook();
+			}
+		}
+		keyDownLastFrame = true;
+	} else
+	{
+		keyDownLastFrame = false;
+	}
 
 
 	// Move Camera

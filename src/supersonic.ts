@@ -1,11 +1,28 @@
 import { vec4, Vector4 } from "./Transform/Vector";
 
-
 export class SupersonicJS
 {
+    static PRODUCTION = false;
 
     static clearColour = vec4();
 
+    static warn(message? : string, optionalParameters? : any[])
+    {
+        if (this.PRODUCTION)
+        {
+            return;
+        }
+        console.warn(message, optionalParameters);
+    }
+
+    static error(message? : string, optionalParameters? : any[])
+    {
+        if (this.PRODUCTION)
+        {
+            return;
+        }
+        console.error(message, optionalParameters);
+    }
     static setClearColour(gl : WebGL2RenderingContext, clearColour = SupersonicJS.clearColour)
     {
         gl.clearColor(clearColour.x, clearColour.y, clearColour.z, clearColour.w);
@@ -43,3 +60,5 @@ export class SupersonicJS
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 }
+// Shortened
+export const sonic = SupersonicJS;

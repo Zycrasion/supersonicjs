@@ -5,7 +5,7 @@ import { Scene } from "./src/EntityComponentSystem/Scene";
 import { Controller, GamepadType } from "./src/InputManager/Controller";
 import { Loader } from "./src/Loader/Loader";
 import { ObjParser } from "./src/Parsers/ObjParser";
-import { GeometryRenderable3D } from "./src/Renderables/Renderables";
+import { GeometryRenderable } from "./src/Renderables/Renderables";
 import { Flat3D, Shaded3D } from "./src/Shaders/3DShader";
 import { Transform } from "./src/Transform/Transform";
 import { vec, vec4, Vector } from "./src/Transform/Vector";
@@ -45,7 +45,7 @@ function setup(xr : XR, gl : WebGL2RenderingContext)
     
     shaded = Shaded3D.create(gl);
     
-    let monkeyMesh = new GeometryRenderable3D(gl, monkeyData, shaded);
+    let monkeyMesh = new GeometryRenderable(gl, monkeyData, shaded);
 
     monkey = new Entity("MONKEY");
     monkey.addComponent(monkeyMesh, gl);
@@ -58,7 +58,7 @@ function setup(xr : XR, gl : WebGL2RenderingContext)
 
     flat = Flat3D.create(gl);
 
-    let lightMesh = new GeometryRenderable3D(gl, lightData, flat);
+    let lightMesh = new GeometryRenderable(gl, lightData, flat);
 
     light = new Entity("Light");
     light.addComponent(lightMesh, gl);
@@ -98,15 +98,15 @@ function setup(xr : XR, gl : WebGL2RenderingContext)
 	for (let mesh of sceneMeshes)
 	{
 		let object = new Entity(mesh.name);
-		let geometry: GeometryRenderable3D;
+		let geometry: GeometryRenderable;
 
 		let shaderDeterminator = object.name.split("_");
 		if (shaderDeterminator[shaderDeterminator.length - 1] == "water")
 		{
-			geometry = new GeometryRenderable3D(gl, mesh, waterShader);
+			geometry = new GeometryRenderable(gl, mesh, waterShader);
 		} else
 		{
-			geometry = new GeometryRenderable3D(gl, mesh, groundShader);
+			geometry = new GeometryRenderable(gl, mesh, groundShader);
 		}
 
 		object.addComponent(geometry, gl);

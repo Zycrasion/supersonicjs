@@ -22,26 +22,27 @@ export abstract class RenderableAbstract extends Component
     }
 }
 
+/**
+ * @deprecated
+ */
 export class GeometryRenderable2D extends RenderableAbstract
 {
-    vertices: number[];
-    verticesBuffer: WebGLBuffer;
-    vertexLength: number;
+    vertices: BufferSonic;
 
+    vao : VertexArray;
 
     shader : Shader2D;
 
     static Name = "GeometryRenderable2D";
 
-    constructor(gl: WebGL2RenderingContext, vertices: number[], shader: Shader2D)
+    constructor(gl: WebGL2RenderingContext, Mesh : MeshData,  shader: Shader2D)
     {
         super(GeometryRenderable2D.Name);
         this.shader = shader;
-        this.vertices = vertices;
-        this.vertexLength = vertices.length / 2;
-        this.verticesBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+        this.vao = new VertexArray(gl);
+        this.vao.bind(gl);
+        this.vertices = new BufferSonic(gl, new Float32Array(Vector.unpackVertices(Mesh.vertices)), Mesh.vertices.length);
+        this.vao.enableVertexAttrib(gl, 0);
     }
 
     draw_tick(gl: WebGL2RenderingContext, Camera: CameraLike): void
@@ -56,7 +57,9 @@ export class GeometryRenderable2D extends RenderableAbstract
             {
                 matrix = this.transform.generateMat4();
             }
-            this.shader.enableVertexAttrib(gl, this.verticesBuffer);
+
+            this.vao.bind(gl);
+
             this.shader.setShaderUniform_mat4fv(
                 gl,
                 "uProjectionMatrix",
@@ -75,13 +78,13 @@ export class GeometryRenderable2D extends RenderableAbstract
                 Camera.getTransformation()
             )
 
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertexLength);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertices.length);
         });
     }
 
 }
 
-export class GeometryRenderable3D extends RenderableAbstract
+export class GeometryRenderable extends RenderableAbstract
 {
     vertices: BufferSonic;
 
@@ -99,7 +102,7 @@ export class GeometryRenderable3D extends RenderableAbstract
 
     constructor(gl: WebGL2RenderingContext, Mesh : MeshData, shader: Shader3D)
     {
-        super(GeometryRenderable3D.Name);
+        super(GeometryRenderable.Name);
         this.shader = shader;
         this.vao = new VertexArray(gl);
 

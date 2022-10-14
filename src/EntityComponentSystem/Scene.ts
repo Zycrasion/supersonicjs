@@ -1,5 +1,5 @@
 import { CameraLike } from "../Camera";
-import { GeometryRenderable2D, GeometryRenderable3D } from "../Renderables/Renderables";
+import { GeometryRenderable2D, GeometryRenderable } from "../Renderables/Renderables";
 import { Entity } from "./Entity";
 
 export class Scene
@@ -22,9 +22,9 @@ export class Scene
     {
         for (let ent of this.Entities)
         {
-            if (ent.getComponent(GeometryRenderable3D.Name) != null)
+            if (ent.getComponent(GeometryRenderable.Name) != null)
             {
-                let component = ent.getComponent(GeometryRenderable3D.Name) as GeometryRenderable3D;
+                let component = ent.getComponent(GeometryRenderable.Name) as GeometryRenderable;
                 component.shader.updateUniforms(gl);
             }
         }

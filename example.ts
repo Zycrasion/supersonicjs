@@ -1,5 +1,5 @@
 import { CustomInputAxis, InputAxis, InputManager } from "./src/InputManager/Input";
-import { GeometryRenderable3D } from "./src/Renderables/Renderables";
+import { GeometryRenderable } from "./src/Renderables/Renderables";
 import * as utils from "./src/utilities";
 import { vec, vec4 } from "./src/Transform/Vector";
 import { SupersonicJS } from "./src/supersonic";
@@ -91,15 +91,15 @@ async function setup()
 	for (let mesh of sceneMeshes)
 	{
 		let object = new Entity(mesh.name);
-		let geometry: GeometryRenderable3D;
+		let geometry: GeometryRenderable;
 
 		let shaderDeterminator = object.name.split("_");
 		if (shaderDeterminator[shaderDeterminator.length - 1] == "water")
 		{
-			geometry = new GeometryRenderable3D(gl, mesh, waterShader);
+			geometry = new GeometryRenderable(gl, mesh, waterShader);
 		} else
 		{
-			geometry = new GeometryRenderable3D(gl, mesh, groundShader);
+			geometry = new GeometryRenderable(gl, mesh, groundShader);
 		}
 
 		object.addComponent(geometry, gl);
@@ -126,7 +126,7 @@ async function setup()
 	light.transform.position = vec(0, 2, 2);
 	light.transform.scale.set(0.5);
 	light.addComponent(
-		new GeometryRenderable3D(
+		new GeometryRenderable(
 			gl,
 			lightMesh,
 			lightShader

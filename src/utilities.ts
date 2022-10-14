@@ -6,8 +6,7 @@ import { Vector } from "./Transform/Vector";
 export interface Dict<Type>
 {
     [key: string]: Type
-}
-
+} 
 export class ProjectionMatrix
 {
     static perspectiveDefault(gl: WebGLRenderingContext): mat4

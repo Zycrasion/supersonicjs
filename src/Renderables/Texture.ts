@@ -15,7 +15,19 @@ export class Texture
     bind(gl : WebGL2RenderingContext, SLOT = gl.TEXTURE0)
     {
         gl.activeTexture(SLOT);
+        
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.texParameteri(
+            gl.TEXTURE_2D,
+            gl.TEXTURE_WRAP_S,
+            gl.CLAMP_TO_EDGE
+        )
+
+        gl.texParameteri(
+            gl.TEXTURE_2D,
+            gl.TEXTURE_WRAP_T,
+            gl.CLAMP_TO_EDGE
+        )
     }
 
     protected init(gl: WebGL2RenderingContext, image : HTMLImageElement, FILTERING = gl.NEAREST, level=0, imageFormat = gl.RGBA, srcFormat = gl.RGBA, srcType=gl.UNSIGNED_BYTE)
@@ -44,18 +56,10 @@ export class Texture
             FILTERING
         )
 
-        gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(
-            gl.TEXTURE_2D,
-            gl.TEXTURE_WRAP_S,
-            gl.CLAMP_TO_EDGE
-        )
 
-        gl.texParameteri(
-            gl.TEXTURE_2D,
-            gl.TEXTURE_WRAP_T,
-            gl.CLAMP_TO_EDGE
-        )
+
+        gl.generateMipmap(gl.TEXTURE_2D);
+
 
     }
 
