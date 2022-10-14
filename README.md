@@ -16,7 +16,7 @@ The code:
 in an html file somewhere have a canvas with any id like:
 `<canvas id="glCanvas" width="720" height="480"></canvas>`
 in a typescript file (note: i will not be going through how to browserify this)
-(example.ts)
+(example.ts) (OUTDATED beta v0.3.3)
 ```ts
 import { InputAxis, InputManager } from "./src/InputManager/Input";
 import { GeometryRenderable3D } from "./src/Renderables/Renderables";
