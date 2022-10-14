@@ -198,16 +198,17 @@ async function setup()
 	let atlasARr = "abcdefghijklmnopqrstuvwxyz0123456789-*!?".split("");
 	let x = 0;
 	let y = 32;
-	atlasARr.forEach(v => {
-		atlas[v] = {x, y};
+	atlasARr.forEach(v =>
+	{
+		atlas[v] = { x, y };
 		x += 8;
-		if (x>56)
+		if (x > 56)
 		{
 			y -= 8;
 			x = 0;
 		}
 	})
-	
+
 
 	font = new Font({
 		letterinfo: {
@@ -224,7 +225,7 @@ async function setup()
 		atlas
 	});
 
-	let data = font.createText("supersonicjs!");
+	let data = font.createText("supersonicjs is cool");
 	console.log(data);
 	let flat = PBRShader.create(gl);
 	flat.light = groundShader.light;
@@ -232,16 +233,15 @@ async function setup()
 	flat.material.diffuse = font.texture;
 	flat.updateUniforms(gl);
 	text = new GeometryRenderable(gl, data, flat);
-	text.transform.scale.set(0.1);
-
+	text.transform.scale.set(0.05);
 	requestAnimationFrame(draw);
 }
 
-let pc: Entity, pcDiffuse: Shaded3D, pcPBR: PBRShader, screen: FrameTexture, screenCam : Camera;
+let pc: Entity, pcDiffuse: Shaded3D, pcPBR: PBRShader, screen: FrameTexture, screenCam: Camera;
 let dt = Date.now();
 let mouseOn = true;
 let keyDownLastFrame = false;
-let font: Font, text : GeometryRenderable;
+let font: Font, text: GeometryRenderable;
 function draw()
 {
 	let delta = (Date.now() - dt);
@@ -251,14 +251,15 @@ function draw()
 		console.error("error: gl undefined");
 		return;
 	}
+	
+
 	// pcScreen
 
 	screen.bindFrameBuffer(gl);
 	let _ = SupersonicJS.clearColour;
-	SupersonicJS.setClearColour(gl, vec4(0,0.1,0));
+	SupersonicJS.setClearColour(gl, vec4(0, 0.1, 0));
 	SupersonicJS.clear(gl);
-	text.draw_tick(gl,screenCam);
-
+	text.draw_tick(gl, screenCam);
 	SupersonicJS.setClearColour(gl, _);
 	screen.unbindFrameBuffer(gl);
 

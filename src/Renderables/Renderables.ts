@@ -128,6 +128,21 @@ export class GeometryRenderable extends RenderableAbstract
         }
     }
 
+
+    replaceMesh(gl : WebGL2RenderingContext, Mesh : MeshData)
+    {
+        let verticesUnpacked = new Float32Array(Vector.unpackVertices(Mesh.vertices))
+        this.vertices.changeData(gl, verticesUnpacked, Mesh.vertices.length);
+        this.indices.changeData(gl, new Uint32Array(Mesh.indices), Mesh.indices.length);
+
+        let normalsUnpacked = new Float32Array(Vector.unpackVertices(Mesh.normals));
+        this.normals.changeData(gl, normalsUnpacked, Mesh.normals.length);
+
+        let texturesUnpacked = new Float32Array(Vector.unpackVertices(Mesh.textures));
+        this.textureBuffer.changeData(gl, texturesUnpacked, Mesh.textures.length);
+
+    }
+
     draw_tick(gl: WebGL2RenderingContext, Camera: CameraLike, shaderParamCallback = () => { }): void
     {
         this.shader.setViewMatrix(Camera.getTransformation());
@@ -149,8 +164,8 @@ export class GeometryRenderable extends RenderableAbstract
             this.vao.bind(gl);
 
             shaderParamCallback();
-
             gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_INT, 0);
         });
     }
+
 }

@@ -73,6 +73,11 @@ export class Font implements FontInformation
         {
             let letterInfo = this.atlas[letter];
 
+            if (letterInfo == undefined||letter == " ")
+            {
+                x += 1;
+                continue;
+            }
 
             let texX = letterInfo.x;
             let texY = letterInfo.y;
