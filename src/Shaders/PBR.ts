@@ -31,27 +31,28 @@ export class PBRMaterial implements BaseMaterial
 export class PBRShader extends Shader3D
 {
 
-    material: PBRMaterial;
-    light: Light;
-    cameraPosition: Vector;
-
     constructor(gl: WebGL2RenderingContext)
     {
         super(gl);
-        this.light = new Light();
-        this.material = new PBRMaterial();
-        this.cameraPosition = vec();
     }
 
     use(gl: WebGL2RenderingContext, callback: () => void): void
     {
         if (!this.defaults(gl)) { return; }
 
-        this.material.setUniforms(gl, this, "material");
-        this.light.setUniforms(gl, this, "light");
-        this.setShaderUniform_3fv(gl, "uCameraPosition", this.cameraPosition);
-
         callback();
+    }
+
+    useMaterial(gl: WebGL2RenderingContext, material: PBRMaterial)
+    {
+        if (!this.bind(gl)) { return; }
+        material.setUniforms(gl, this, "material");
+    }
+
+    useLight(gl: WebGL2RenderingContext, light: Light)
+    {
+        if (!this.bind(gl)) { return; }
+        light.setUniforms(gl, this, "light");
     }
 
     static Register(): void

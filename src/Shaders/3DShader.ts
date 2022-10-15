@@ -2,7 +2,8 @@ import { mat4, vec2 } from "gl-matrix";
 import { Loader } from "../Loader/Loader";
 import { Vector, Vector4 } from "../Transform/Vector";
 import { Light } from "./LightSource";
-import { Material } from "./Material";
+import { BaseMaterial, Material } from "./Material";
+import { PBRMaterial } from "./PBR";
 import { Shader } from "./Shader";
 
 
@@ -28,6 +29,10 @@ export class Shader3D extends Shader
     setModelViewMatrix(matrix: mat4) { this.ModelViewMatrix = matrix }
 
     getModelViewMatrix() { return this.ModelViewMatrix }
+
+    useMaterial(gl : WebGL2RenderingContext, material : BaseMaterial) {}
+
+    useLight(gl : WebGL2RenderingContext, light : Light) {}
 
     bind(gl: WebGL2RenderingContext)
     {
@@ -61,6 +66,9 @@ export class Shader3D extends Shader
     }
 }
 
+/**
+ * @deprecated
+ */
 export class Flat3D extends Shader3D
 {
 
@@ -103,16 +111,10 @@ export class Flat3D extends Shader3D
 
 export class Shaded3D extends Shader3D
 {
-
-    material: Material;
-    light: Light;
-
-
     constructor(gl: WebGL2RenderingContext)
     {
         super(gl);
-        this.light = new Light();
-        this.material = new Material();
+
     }
 
     use(gl: WebGL2RenderingContext, callback: () => void = () => { }): void
@@ -123,15 +125,25 @@ export class Shaded3D extends Shader3D
         callback();
     }
 
+    useLight(gl: WebGL2RenderingContext, light: Light): void
+    {
+        if (!this.bind(gl)) {return}
+        light.setUniforms(gl, this, "light");
+    }
+
+    useMaterial(gl: WebGL2RenderingContext, material: BaseMaterial): void
+    {
+        if (!this.bind(gl)) {return}
+        material.setUniforms(gl, this, "material")
+    }
+
+    /** @deprecated */
     updateUniforms(gl: WebGL2RenderingContext)
     {
         if (!this.bind(gl))
         {
             setTimeout(this.updateUniforms.bind(this, gl), 100); // Wait for shader to load
         }
-
-        this.material.setUniforms(gl, this);
-        this.light.setUniforms(gl, this);
     }
 
     static Register(): void

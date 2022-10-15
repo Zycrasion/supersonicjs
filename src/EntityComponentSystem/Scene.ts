@@ -1,5 +1,6 @@
 import { CameraLike } from "../Camera";
-import { GeometryRenderable2D, GeometryRenderable } from "../Renderables/Renderables";
+import { GeometryRenderable } from "../Renderables/Renderables";
+import { Light } from "../Shaders/LightSource";
 import { Entity } from "./Entity";
 
 export class Scene
@@ -7,6 +8,8 @@ export class Scene
     Entities: Array<Entity>;
     physicsIterations: number;
     MainCamera: CameraLike;
+
+    light : Light;
 
     constructor()
     {
@@ -50,7 +53,7 @@ export class Scene
             {
                 break;
             }
-            ent.draw_tick(gl, this.MainCamera);
+            ent.draw_tick(gl, this);
         }
     }
 

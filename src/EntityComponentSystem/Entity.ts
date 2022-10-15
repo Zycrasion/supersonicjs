@@ -1,7 +1,9 @@
 import { mat4 } from "gl-matrix";
 import { CameraLike } from "../Camera";
+import { BaseMaterial } from "../Shaders/Material";
 import { Transform, TransformLike } from "../Transform/Transform";
 import { Component } from "./Component";
+import { Scene } from "./Scene";
 
 export class Entity
 {
@@ -24,15 +26,15 @@ export class Entity
         this.name = name;
     }
 
-    draw_tick(gl: WebGL2RenderingContext, Camera: CameraLike)
+    draw_tick(gl: WebGL2RenderingContext, scene : Scene)
     {
         for (let component of this.components)
         {
-            component.draw_tick(gl, Camera);
+            component.draw_tick(gl, scene);
         }
         for (let ent of this.children)
         {
-            ent.draw_tick(gl, Camera);
+            ent.draw_tick(gl, scene);
         }
     }
 
@@ -75,11 +77,11 @@ export class Entity
         return this.transformMatrix;
     }
 
-    addComponent(component: Component, gl: WebGL2RenderingContext)
+    addComponent(component: Component)
     {
         component.attach(this);
         this.components.push(component);
-        component.start(gl);
+        ;
     }
 
     removeComponent(name: string, gl: WebGL2RenderingContext)

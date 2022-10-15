@@ -4,8 +4,10 @@ import { VertexArray } from "../Abstraction/VAO";
 import { CameraLike, Camera } from "../Camera";
 import { Component } from "../EntityComponentSystem/Component";
 import { Entity } from "../EntityComponentSystem/Entity";
+import { Scene } from "../EntityComponentSystem/Scene";
 import { MeshData } from "../Parsers/ObjParser";
 import { Shader3D } from "../Shaders/3DShader";
+import { BaseMaterial } from "../Shaders/Material";
 import { Shader, Shader2D } from "../Shaders/Shader";
 import { Transform, TransformLike } from "../Transform/Transform";
 import { Vector } from "../Transform/Vector";
@@ -22,64 +24,24 @@ export abstract class RenderableAbstract extends Component
     }
 }
 
-/**
- * @deprecated
- */
-export class GeometryRenderable2D extends RenderableAbstract
+export class GeometryRenderableLite extends Component
 {
-    vertices: BufferSonic;
+    parent: GeometryRenderable;
+    material: BaseMaterial;
 
-    vao : VertexArray;
-
-    shader : Shader2D;
-
-    static Name = "GeometryRenderable2D";
-
-    constructor(gl: WebGL2RenderingContext, Mesh : MeshData,  shader: Shader2D)
+    constructor(parent: GeometryRenderable, mat: BaseMaterial)
     {
-        super(GeometryRenderable2D.Name);
-        this.shader = shader;
-        this.vao = new VertexArray(gl);
-        this.vao.bind(gl);
-        this.vertices = new BufferSonic(gl, new Float32Array(Vector.unpackVertices(Mesh.vertices)), Mesh.vertices.length);
-        this.vao.enableVertexAttrib(gl, 0);
+        super("GeometryRenederableLite")
+        this.parent = parent;
+        this.material = mat;
     }
 
-    draw_tick(gl: WebGL2RenderingContext, Camera: CameraLike): void
+    draw_tick(gl: WebGL2RenderingContext, scene : Scene, shaderParamCallback = () => { })
     {
-        this.shader.use(gl, () =>
-        {
-            let matrix: mat4;
-            if (this.parent_ptr != null)
-            {
-                matrix = Transform.Combine(this.parent_ptr.transform, this.transform)
-            } else
-            {
-                matrix = this.transform.generateMat4();
-            }
-
-            this.vao.bind(gl);
-
-            this.shader.setShaderUniform_mat4fv(
-                gl,
-                "uProjectionMatrix",
-                Camera.generateProjection(gl)
-            );
-
-            this.shader.setShaderUniform_mat4fv(
-                gl,
-                "uModelViewMatrix",
-                matrix
-            );
-
-            this.shader.setShaderUniform_mat4fv(
-                gl,
-                "uViewMatrix",
-                Camera.getTransformation()
-            )
-
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.vertices.length);
-        });
+        this.parent.shader.useMaterial(gl, this.material);
+        this.parent.shader.useLight(gl, scene.light);
+        this.parent.parent_ptr = this.parent_ptr;
+        this.parent.draw_tick(gl, scene, shaderParamCallback);
     }
 
 }
@@ -100,7 +62,7 @@ export class GeometryRenderable extends RenderableAbstract
 
     static Name = "GeometryRenderable3D";
 
-    constructor(gl: WebGL2RenderingContext, Mesh : MeshData, shader: Shader3D)
+    constructor(gl: WebGL2RenderingContext, Mesh: MeshData, shader: Shader3D)
     {
         super(GeometryRenderable.Name);
         this.shader = shader;
@@ -128,8 +90,12 @@ export class GeometryRenderable extends RenderableAbstract
         }
     }
 
+    with(material: BaseMaterial): GeometryRenderableLite
+    {
+        return new GeometryRenderableLite(this, material);
+    }
 
-    replaceMesh(gl : WebGL2RenderingContext, Mesh : MeshData)
+    replaceMesh(gl: WebGL2RenderingContext, Mesh: MeshData)
     {
         let verticesUnpacked = new Float32Array(Vector.unpackVertices(Mesh.vertices))
         this.vertices.changeData(gl, verticesUnpacked, Mesh.vertices.length);
@@ -143,8 +109,9 @@ export class GeometryRenderable extends RenderableAbstract
 
     }
 
-    draw_tick(gl: WebGL2RenderingContext, Camera: CameraLike, shaderParamCallback = () => { }): void
+    draw_tick(gl: WebGL2RenderingContext, scene : Scene, shaderParamCallback = () => { }): void
     {
+        let Camera = scene.MainCamera;
         this.shader.setViewMatrix(Camera.getTransformation());
         this.shader.setViewPos(Camera.getPosition().toVector3())
         this.shader.setProjectionMatrix(Camera.generateProjection(gl))
