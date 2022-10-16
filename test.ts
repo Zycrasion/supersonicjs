@@ -1,4 +1,4 @@
-import { Rotating } from "./component_test";
+import { FollowPosition, Rotating, SpeedColourChange } from "./component_test";
 import { Camera } from "./src/Camera";
 import { Entity } from "./src/EntityComponentSystem/Entity";
 import { Scene } from "./src/EntityComponentSystem/Scene";
@@ -77,7 +77,9 @@ async function setup()
 		cubeMeshPBR.with(containerMaterial)
 	)
 	container.addComponent(
-		new Rotating()
+		new FollowPosition(
+			light.position
+		)
 	)
 
 	scene.addEntity(container);
@@ -101,13 +103,33 @@ async function setup()
 		cubeMeshShaded.with(lightMaterial)
 	);
 
-	lightObject.transform.position = light.position.copy();
+	let _ = new FollowPosition(container.transform.position)
+	.setMag(
+		750
+	);
+
+	lightObject.addComponent(
+		_	
+	).addComponent(
+		new SpeedColourChange(_.vel, lightMaterial)
+	)
 
 	scene.addEntity(lightObject);
 
+	scene.addEntity(
+		new Entity()
+		.addComponent(
+			cubeMeshPBR.with(containerMaterial)
+		)
+		.addComponent(
+			new FollowPosition(lightObject.transform.position)
+			.setMag(250)
+		)
+	)
 
 	camera.hook_freelook();
 
+	camera.far = 1000;
 	scene.MainCamera = camera;
 
 

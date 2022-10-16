@@ -81,7 +81,7 @@ export class Entity
     {
         component.attach(this);
         this.components.push(component);
-        ;
+        return this;
     }
 
     removeComponent(name: string, gl: WebGL2RenderingContext)
