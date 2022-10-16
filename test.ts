@@ -1,3 +1,4 @@
+import { Rotating } from "./component_test";
 import { Camera } from "./src/Camera";
 import { Entity } from "./src/EntityComponentSystem/Entity";
 import { Scene } from "./src/EntityComponentSystem/Scene";
@@ -16,7 +17,13 @@ import { PointerLock } from "./src/utilities";
 
 const cubeHTTP = "/Models/example.obj";
 
-Loader.CacheHTTP(cubeHTTP)
+const container_diffuse = "/images/container_diffuse.png";
+const container_specular = "/images/container_specular.png";
+
+Loader.CacheHTTP(cubeHTTP);
+
+Loader.LoadImage(container_diffuse);
+Loader.LoadImage(container_specular);
 
 PBRShader.Register();
 Shaded3D.Register();
@@ -63,11 +70,14 @@ async function setup()
 	let container = new Entity();
 
 	containerMaterial = new PBRMaterial();
-	containerMaterial.diffuse = await Texture.load(gl, "/images/container_diffuse.png");
-	containerMaterial.specular = await Texture.load(gl, "/images/container_specular.png");
+	containerMaterial.diffuse = await Texture.load(gl, container_diffuse);
+	containerMaterial.specular = await Texture.load(gl, container_specular);
 
 	container.addComponent(
 		cubeMeshPBR.with(containerMaterial)
+	)
+	container.addComponent(
+		new Rotating()
 	)
 
 	scene.addEntity(container);
@@ -75,6 +85,8 @@ async function setup()
 	light.ambient.set(.1);
 	light.diffuse.set(.5);
 	light.specular.set(1);
+	light.position.set(Math.sin(framecount/100) * 5, 0, Math.cos(framecount/100) * 5)
+
 	
 	scene.light = light;
 
@@ -89,7 +101,7 @@ async function setup()
 		cubeMeshShaded.with(lightMaterial)
 	);
 
-	lightObject.transform.position = light.position;
+	lightObject.transform.position = light.position.copy();
 
 	scene.addEntity(lightObject);
 
@@ -107,7 +119,7 @@ function draw()
 {
 	framecount++;
 	light.position.set(Math.sin(framecount/100) * 5, 0, Math.cos(framecount/100) * 5)
-
+	
 	sonic.clear(gl);
 	camera.freecam(wasd);
 	scene.updateAllUniforms(gl);

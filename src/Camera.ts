@@ -12,7 +12,6 @@ export enum ProjectionType
 export interface CameraLike
 {
     generateProjection(gl: WebGL2RenderingContext)
-    getTransformation()
     getPosition(): Vector4;
     get lookAt();
     get transformationMatrix();
@@ -53,7 +52,7 @@ export class Camera extends Entity implements CameraLike
 
     get transformationMatrix(): any
     {
-        return this.transform.generateMat4();
+        return this.transform.generateMat4Camera();
     }
 
     setFov(fov: number)
@@ -108,7 +107,7 @@ export class Camera extends Entity implements CameraLike
         this.mouseX = 0;
         this.mouseY = 0;
 
-        let mat = this.getTransformation();
+        let mat = this.transformationMatrix;
         let lookAtVector = new Vector(mat[2], mat[6], mat[10]).normalize();
         let input = axis.getAxis();
         let movement = lookAtVector.copy();

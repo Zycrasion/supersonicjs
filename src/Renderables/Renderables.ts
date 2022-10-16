@@ -40,8 +40,10 @@ export class GeometryRenderableLite extends Component
     {
         this.parent.shader.useMaterial(gl, this.material);
         this.parent.shader.useLight(gl, scene.light);
+        let parent_ptr_old = this.parent.parent_ptr;
         this.parent.parent_ptr = this.parent_ptr;
         this.parent.draw_tick(gl, scene, shaderParamCallback);
+        this.parent.parent_ptr = parent_ptr_old;
     }
 
 }
@@ -112,7 +114,7 @@ export class GeometryRenderable extends RenderableAbstract
     draw_tick(gl: WebGL2RenderingContext, scene : Scene, shaderParamCallback = () => { }): void
     {
         let Camera = scene.MainCamera;
-        this.shader.setViewMatrix(Camera.getTransformation());
+        this.shader.setViewMatrix(Camera.transformationMatrix);
         this.shader.setViewPos(Camera.getPosition().toVector3())
         this.shader.setProjectionMatrix(Camera.generateProjection(gl))
         let matrix: mat4;

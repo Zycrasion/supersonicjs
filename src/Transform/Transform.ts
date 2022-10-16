@@ -57,33 +57,26 @@ export class Transform implements TransformLike
         {
             return this.overrideMatrix;
         }
-        let matrix = mat4.create();
-        let axis = this.rotation.toArray();
-        for (let i = 0; i < 3; i++)
-        {
-            let currAxis = [0, 0, 0];
-            currAxis[i] = 1;
-            mat4.rotate(
-                matrix,
-                matrix,
-                axis[i],
-                new Float32Array(currAxis)
-            )
-        }
-
-        mat4.translate(
-            matrix,
-            matrix,
-            this.position.toFloatArray()
-        );
-
-        mat4.scale(
-            matrix,
-            matrix,
-            this.scale.toFloatArray()
+        let matrix = mat4.fromRotationTranslationScale(
+            mat4.create(),
+            quat.fromEuler(quat.create(), this.rotation.x, this.rotation.y,this.rotation.z),
+            this.position.toFloat32Array(),
+            this.scale.toFloat32Array()
         )
-
         return matrix
+    }
+
+    generateMat4Camera()
+    {
+        let matrix = mat4.create();
+        mat4.rotate(matrix, matrix, this.rotation.x, [1,0,0]);
+        mat4.rotate(matrix, matrix, this.rotation.y, [0,1,0]);
+        mat4.rotate(matrix, matrix, this.rotation.z, [0,0,1]);
+
+        mat4.translate(matrix, matrix, this.position.toFloat32Array());
+        mat4.scale(matrix,matrix, this.scale.toFloat32Array());
+
+        return matrix;
     }
 
 }
