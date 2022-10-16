@@ -1,3 +1,4 @@
+import { mat4 } from "gl-matrix";
 import { FollowPosition, Rotating, SpeedColourChange } from "./component_test";
 import { Camera } from "./src/Camera";
 import { Entity } from "./src/EntityComponentSystem/Entity";
@@ -126,6 +127,17 @@ async function setup()
 			.setMag(250)
 		)
 	)
+	let lightC = new Entity().addComponent(
+		cubeMeshShaded.with(lightMaterial.copy())
+	)
+
+	lightC.transform.position = light.position;
+	scene.addEntity(
+		lightC
+	)
+
+	camera.lookAt = light.position;
+
 
 	camera.hook_freelook();
 
@@ -140,10 +152,11 @@ async function setup()
 function draw()
 {
 	framecount++;
-	light.position.set(Math.sin(framecount/100) * 5, 0, Math.cos(framecount/100) * 5)
+	light.position.set(Math.sin(framecount/100) * 5, Math.sin(framecount/60) * 10, Math.cos(framecount/100) * 5)
 	
+	camera.transform.position.set(0, 0, 0);
+
 	sonic.clear(gl);
-	camera.freecam(wasd);
 	scene.updateAllUniforms(gl);
 	scene.draw(gl);
 	requestAnimationFrame(draw);

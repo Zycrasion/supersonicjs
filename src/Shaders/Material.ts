@@ -1,12 +1,11 @@
 import { vec, Vector, Vector4 } from "../Transform/Vector";
 import { Shader } from "./Shader";
 
-export class BaseMaterial
+export abstract class BaseMaterial
 {
-    setUniforms(gl : WebGL2RenderingContext, shader : Shader, name = "material")
-    {
-        
-    }
+    abstract setUniforms(gl : WebGL2RenderingContext, shader : Shader, name)
+
+    abstract copy() : BaseMaterial
 }
 
 export class Material extends BaseMaterial
@@ -23,6 +22,15 @@ export class Material extends BaseMaterial
         this.specular = vec();
         this.diffuse = vec();
         this.shiny = 32;
+    }
+
+    copy(): BaseMaterial
+    {
+        let material = new Material();
+        material.ambient = this.ambient.copy();
+        material.specular= this.specular.copy();
+        material.diffuse = this.diffuse.copy();
+        return material;
     }
 
     setColour(col: Vector)

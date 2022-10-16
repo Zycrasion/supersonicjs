@@ -18,6 +18,15 @@ export class PBRMaterial implements BaseMaterial
         this.shininess = 64;
     }
 
+    /**
+     * @description doesnt actually return a copy, just a pointer
+     * @returns {PBRMaterial}
+     */
+    copy(): PBRMaterial
+    {
+        return this;
+    }
+
     setUniforms(gl: WebGL2RenderingContext, shader: Shader, name = "material"): void
     {
         this.diffuse.bind(gl, gl.TEXTURE0);

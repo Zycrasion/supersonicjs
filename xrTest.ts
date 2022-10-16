@@ -157,7 +157,7 @@ function draw(xr : XR, gl : WebGL2RenderingContext, camera : CameraLike)
 
         if (leftInput.gamepad.axes.length >= 4)
         {
-            let movement = camera.lookAt.mult(leftInput.gamepad.axes[3]);
+            let movement = camera.getLookAt.mult(leftInput.gamepad.axes[3]);
             offset.add(movement.div(10).mult(-1))
         }
 

@@ -54,6 +54,11 @@ export class Camera extends Entity implements CameraLike
     {
         return this.transform.generateMat4Camera();
     }
+    
+    set lookAt(look : Vector)
+    {
+        this.transform.lookAt = look;
+    }
 
     setFov(fov: number)
     {

@@ -10,6 +10,8 @@ export class Transform implements TransformLike
     rotation: Vector;
     scale: Vector;
 
+    private lAt : Vector;
+
     overrideMatrix : mat4;
 
     constructor()
@@ -35,6 +37,11 @@ export class Transform implements TransformLike
     {
         let mat = this.generateMat4();
         return vec(mat[2], mat[6], mat[10]).normalize();
+    }
+
+    set lookAt(v : Vector)
+    {
+        this.lAt = v;
     }
 
     copy()
@@ -69,13 +76,19 @@ export class Transform implements TransformLike
     generateMat4Camera()
     {
         let matrix = mat4.create();
-        mat4.rotate(matrix, matrix, this.rotation.x, [1,0,0]);
-        mat4.rotate(matrix, matrix, this.rotation.y, [0,1,0]);
-        mat4.rotate(matrix, matrix, this.rotation.z, [0,0,1]);
-
-        mat4.translate(matrix, matrix, this.position.toFloat32Array());
-        mat4.scale(matrix,matrix, this.scale.toFloat32Array());
-
+        if (this.lAt != null)
+        {
+            mat4.lookAt(matrix, this.position.toFloat32Array(), this.lAt.toFloat32Array(), [0,1,0])
+        } else {
+            mat4.rotate(matrix, matrix, this.rotation.x, [1,0,0]);
+            mat4.rotate(matrix, matrix, this.rotation.y, [0,1,0]);
+            mat4.rotate(matrix, matrix, this.rotation.z, [0,0,1]);
+    
+            mat4.translate(matrix, matrix, this.position.toFloat32Array());
+            mat4.scale(matrix,matrix, this.scale.toFloat32Array());
+    
+        }
+        
         return matrix;
     }
 
