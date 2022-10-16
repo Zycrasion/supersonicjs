@@ -1,5 +1,4 @@
-build/*.js
-build/src
+build
 tsBuild/**
 # Currently local just contains reference files so i can refer to it
 local
