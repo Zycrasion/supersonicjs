@@ -1,5 +1,6 @@
 import { mat4 } from "gl-matrix";
 import { CameraLike } from "../Camera";
+import { Shader3D } from "../Shaders/3DShader";
 import { BaseMaterial } from "../Shaders/Material";
 import { Transform, TransformLike } from "../Transform/Transform";
 import { Component } from "./Component";
@@ -35,6 +36,18 @@ export class Entity
         for (let ent of this.children)
         {
             ent.draw_tick(gl, scene);
+        }
+    }
+
+    shadow_tick(gl: WebGL2RenderingContext, scene : Scene, shader : Shader3D)
+    {
+        for (let component of this.components)
+        {
+            component.shadow_tick(gl, scene, shader);
+        }
+        for (let ent of this.children)
+        {
+            ent.shadow_tick(gl, scene, shader);
         }
     }
 
@@ -98,13 +111,13 @@ export class Entity
         return true;
     }
 
-    getComponent(name: string)
+    getComponent<T extends Component>(name : string ) : T
     {
         for (let component of this.components)
         {
             if (component.name == name)
             {
-                return component;
+                return component as T;
             }
         }
         return null;

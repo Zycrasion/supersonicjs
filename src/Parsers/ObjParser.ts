@@ -6,7 +6,6 @@ export interface MeshData
     vertices: Vector[];
     indices: number[];
     normals: Vector[];
-    normalIndices: number[];
     textures: Vector[];
     name : string;
 }
@@ -15,7 +14,7 @@ export class ObjParser
 {
     static parseOne(text: string): MeshData
     {
-        let results: MeshData = {name : "Object", vertices: [], indices: [], normals: [], normalIndices: [], textures: [] };
+        let results: MeshData = {name : "Object", vertices: [], indices: [], normals: [],  textures: [] };
         let objectCount = 0;
         let lines = text.split("\n");
 
@@ -95,7 +94,7 @@ export class ObjParser
     {
         function createMeshData(name : string) : MeshData
         {
-            return { name, vertices: [], indices: [], normals: [], normalIndices: [], textures: [] }
+            return { name, vertices: [], indices: [], normals: [], textures: [] }
         }
         let results: MeshData[] = [];
         let lines = text.split("\n");

@@ -34,6 +34,12 @@ export class Shader3D extends Shader
 
     useLight(gl : WebGL2RenderingContext, light : Light) {}
 
+    use(gl: WebGL2RenderingContext, callback: () => void): void
+    {
+        if (!this.defaults(gl)) { return; }
+        callback();
+    }
+
     bind(gl: WebGL2RenderingContext)
     {
         if (!this.hasLoaded()) { return false; }

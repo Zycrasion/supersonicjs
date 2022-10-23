@@ -42,7 +42,8 @@ export class FollowPosition extends Component
         this.parent_ptr = parent;
         this.parent_ptr.transform.position.setVec(
             this.following.copy().mult(2)
-        )
+        );
+        this.parent_ptr["FollowPosition"] = this;
     }
 
     draw_tick(gl: WebGL2RenderingContext, scene: Scene): void

@@ -187,7 +187,6 @@ export class Shader
     {
         let vertexSource = await HTTP_REQUEST(`${Shader.shaderpath}/${folderName}/vertex.vert`);
         let fragmentSource = await HTTP_REQUEST(`${Shader.shaderpath}/${folderName}/fragment.frag`);
-
         this.createProgram(gl, vertexSource, fragmentSource);
     }
 

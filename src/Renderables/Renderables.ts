@@ -7,6 +7,7 @@ import { Entity } from "../EntityComponentSystem/Entity";
 import { Scene } from "../EntityComponentSystem/Scene";
 import { MeshData } from "../Parsers/ObjParser";
 import { Shader3D } from "../Shaders/3DShader";
+import { DepthShader } from "../Shaders/DepthShader";
 import { BaseMaterial } from "../Shaders/Material";
 import { Shader, Shader2D } from "../Shaders/Shader";
 import { Transform, TransformLike } from "../Transform/Transform";
@@ -36,7 +37,7 @@ export class GeometryRenderableLite extends Component
         this.material = mat;
     }
 
-    draw_tick(gl: WebGL2RenderingContext, scene : Scene, shaderParamCallback = () => { })
+    draw_tick(gl: WebGL2RenderingContext, scene: Scene, shaderParamCallback = () => { })
     {
         this.parent.shader.useMaterial(gl, this.material);
         this.parent.shader.useLight(gl, scene.light);
@@ -97,6 +98,11 @@ export class GeometryRenderable extends RenderableAbstract
         return new GeometryRenderableLite(this, material);
     }
 
+    with_Entity(material: BaseMaterial): Entity
+    {
+        return new Entity().addComponent(new GeometryRenderableLite(this, material));
+    }
+
     replaceMesh(gl: WebGL2RenderingContext, Mesh: MeshData)
     {
         let verticesUnpacked = new Float32Array(Vector.unpackVertices(Mesh.vertices))
@@ -111,7 +117,7 @@ export class GeometryRenderable extends RenderableAbstract
 
     }
 
-    draw_tick(gl: WebGL2RenderingContext, scene : Scene, shaderParamCallback = () => { }): void
+    draw_tick(gl: WebGL2RenderingContext, scene: Scene, shaderParamCallback = () => { }): void
     {
         let Camera = scene.MainCamera;
         this.shader.setViewMatrix(Camera.transformationMatrix);
@@ -135,6 +141,23 @@ export class GeometryRenderable extends RenderableAbstract
             shaderParamCallback();
             gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_INT, 0);
         });
+    }
+
+    shadow_tick(gl: WebGL2RenderingContext, scene: Scene, shader: DepthShader)
+    {
+        let modelViewMatrix = this.parent_ptr != null ? Transform.Combine(this.parent_ptr.transform, this.transform) : this.transform.generateMat4(); // cursed, i know, im sorry
+        shader.setModelViewMatrix(modelViewMatrix);
+        scene.light.setUniforms(gl,shader);
+        shader.updateUniforms(gl);
+        shader.use(
+            gl,
+            () =>
+            {
+                this.vao.bind(gl);
+                gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_INT, 0)
+        
+            }
+        )
     }
 
 }
