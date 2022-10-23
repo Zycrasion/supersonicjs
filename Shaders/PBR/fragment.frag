@@ -35,7 +35,7 @@ float LinearizeDepth(float depth, float near_plane, float far_plane)
 
 void main()
 {
-    vec3 textureColour = texture(material.diffuse, TexCoords).rrr;
+    vec3 textureColour = texture(material.diffuse, TexCoords).rgb;
     // textureColour /= 100.0;
     if (texture(material.diffuse, TexCoords).a == 0.0)
     {
@@ -43,7 +43,7 @@ void main()
     }
     vec3 specularColour = texture(material.specular, TexCoords).rgb;
     // ambient
-    vec3 ambient = textureColour ;
+    vec3 ambient = textureColour * light.ambient;
   	
     // diffuse 
     vec3 norm = normalize(Normal);
@@ -59,5 +59,5 @@ void main()
     
 
     vec3 result = (ambient + diffuse + specular);   
-    FragColor = vec4(vec3(LinearizeDepth(textureColour.r, 1.0, 7.5)) , 1.0);
+    FragColor = vec4(result , 1.0);
 } 

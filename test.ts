@@ -75,6 +75,7 @@ let quad : MeshData = {
 
 async function setup()
 {
+	console.log("I EXIST???");
 	let ext = gl.getExtension("EXT_color_buffer_float");
 	if (!ext)
 	{
@@ -119,8 +120,8 @@ async function setup()
 	)
 
 	let mat = new PBRMaterial();
-	// mat.diffuse = SceneMaterial.diffuse;
-	mat.diffuse = MainScene.shadowFBO
+	mat.diffuse = SceneMaterial.diffuse;
+	// mat.diffuse = MainScene.shadowFBO
 	mat.specular = mat.diffuse;
 
 	let e = quadMesh.with_Entity(mat);
