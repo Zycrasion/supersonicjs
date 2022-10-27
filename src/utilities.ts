@@ -6,7 +6,7 @@ import { Vector } from "./Transform/Vector";
 export interface Dict<Type>
 {
     [key: string]: Type
-} 
+}
 export class ProjectionMatrix
 {
     static perspectiveDefault(gl: WebGLRenderingContext): mat4
@@ -51,7 +51,7 @@ export class Math2
     }
 
     // https://github.com/toji/gl-matrix/issues/329
-    static getEuler(out : Vector, quat : DOMPointReadOnly) : Vector
+    static getEuler(out: Vector, quat: DOMPointReadOnly): Vector
     {
         let x = quat.x,
             y = quat.y,

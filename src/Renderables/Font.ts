@@ -47,7 +47,6 @@ export class Font implements FontInformation
             vertices: [],
             indices: [],
             normals: [],
-            normalIndices: [],
             textures: [],
             name: ""
         }
@@ -73,7 +72,7 @@ export class Font implements FontInformation
         {
             let letterInfo = this.atlas[letter];
 
-            if (letterInfo == undefined||letter == " ")
+            if (letterInfo == undefined || letter == " ")
             {
                 x += 1;
                 continue;

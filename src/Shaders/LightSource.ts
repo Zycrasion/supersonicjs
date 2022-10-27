@@ -10,10 +10,10 @@ export class Light implements BaseMaterial
     diffuse: Vector;
     specular: Vector;
 
-    lightSpaceTransform : mat4;
-    readonly lookAt : Vector;
+    lightSpaceTransform: mat4;
+    readonly lookAt: Vector;
 
-    constructor(pos : Vector, lookAt : Vector)
+    constructor(pos: Vector, lookAt: Vector)
     {
         this.position = pos;
         this.setColour(vec());
@@ -31,7 +31,7 @@ export class Light implements BaseMaterial
             mat4.create(),
             this.position.toFloat32Array(),
             lookAt.toFloat32Array(),
-            [0,1,0]
+            [0, 1, 0]
         )
 
         this.lightSpaceTransform = mat4.multiply(
@@ -63,6 +63,6 @@ export class Light implements BaseMaterial
         shader.setShaderUniform_3fv(gl, name + ".specular", this.specular);
         shader.setShaderUniform_3fv(gl, name + ".diffuse", this.diffuse);
         shader.setShaderUniform_3fv(gl, name + ".position", this.position);
-        shader.setShaderUniform_mat4fv(gl, "lightSpaceMatrix", this.lightSpaceTransform);   
+        shader.setShaderUniform_mat4fv(gl, "lightSpaceMatrix", this.lightSpaceTransform);
     }
 }

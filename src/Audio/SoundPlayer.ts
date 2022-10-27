@@ -4,9 +4,9 @@ import { Vector } from "../Transform/Vector";
 
 export class SoundPlayer extends Component
 {
-    private reference : HTMLAudioElement;
-    private position : Vector = null;
-    pos_cutoff : number = 10.0;
+    private reference: HTMLAudioElement;
+    private position: Vector = null;
+    pos_cutoff: number = 10.0;
 
     get duration()
     {
@@ -20,12 +20,14 @@ export class SoundPlayer extends Component
         super(SoundPlayer.Name);
     }
 
-    loadAUDIO(url : string) : Promise<void>
+    loadAUDIO(url: string): Promise<void>
     {
         return new Promise<void>(
-            (resolve, reject) => {
+            (resolve, reject) =>
+            {
                 this.reference = new Audio(url);
-                this.reference.addEventListener("canplaythrough", (event) => {
+                this.reference.addEventListener("canplaythrough", (event) =>
+                {
                     this.reference.pause();
                     this.reference.currentTime = 0;
                     resolve();
@@ -59,26 +61,26 @@ export class SoundPlayer extends Component
 
     play()
     {
-        if (!this.isValid()) {return;}
+        if (!this.isValid()) { return; }
         this.reference.play();
     }
 
     pause()
     {
-        if (!this.isValid()) {return;}
+        if (!this.isValid()) { return; }
         this.reference.pause();
     }
 
-    loop(loop : boolean = !this.reference.loop)
+    loop(loop: boolean = !this.reference.loop)
     {
-        if (!this.isValid()) {return;}
+        if (!this.isValid()) { return; }
         this.reference.loop = loop;
     }
 
-    isValid() : boolean
+    isValid(): boolean
     {
         if (this.reference == null) { console.error("AUDIO OBJECT NULL, THIS HAPPENS WHEN sound.delete() is called and the reference to the soundplayer class has been called."); return false; }
-        return true;    
+        return true;
     }
 
     delete()

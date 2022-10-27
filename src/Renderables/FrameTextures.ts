@@ -3,10 +3,10 @@ import { ITexture } from "./Texture";
 interface FrameTextureOptions
 {
     attachment?: number;
-    filtering? : number;
-    internalFormat? : number;
-    format? : number;
-    storage? : number;
+    filtering?: number;
+    internalFormat?: number;
+    format?: number;
+    storage?: number;
 }
 export class FrameTexture implements ITexture
 {

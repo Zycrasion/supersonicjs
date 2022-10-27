@@ -7,14 +7,14 @@ export interface MeshData
     indices: number[];
     normals: Vector[];
     textures: Vector[];
-    name : string;
+    name: string;
 }
 
 export class ObjParser
 {
     static parseOne(text: string): MeshData
     {
-        let results: MeshData = {name : "Object", vertices: [], indices: [], normals: [],  textures: [] };
+        let results: MeshData = { name: "Object", vertices: [], indices: [], normals: [], textures: [] };
         let objectCount = 0;
         let lines = text.split("\n");
 
@@ -39,7 +39,7 @@ export class ObjParser
             {
 
                 case "o":
-                    if (objectCount>0)
+                    if (objectCount > 0)
                     {
                         break loop;
                     }
@@ -90,9 +90,9 @@ export class ObjParser
         return results;
     }
 
-    static parseAll(text : string) : MeshData[]
+    static parseAll(text: string): MeshData[]
     {
-        function createMeshData(name : string) : MeshData
+        function createMeshData(name: string): MeshData
         {
             return { name, vertices: [], indices: [], normals: [], textures: [] }
         }
@@ -155,11 +155,11 @@ export class ObjParser
 
                         // results.normalIndices.push(normalIndex);
                         // results.indices.push(vertexIndex);
-                        results[results.length-1].indices.push(
-                            results[results.length-1].vertices.push(vertices[vertexIndex]) - 1
+                        results[results.length - 1].indices.push(
+                            results[results.length - 1].vertices.push(vertices[vertexIndex]) - 1
                         )
-                        results[results.length-1].normals.push(normals[normalIndex]);
-                        results[results.length-1].textures.push(textures[textureIndex]);
+                        results[results.length - 1].normals.push(normals[normalIndex]);
+                        results[results.length - 1].textures.push(textures[textureIndex]);
                     }
                     break;
             }

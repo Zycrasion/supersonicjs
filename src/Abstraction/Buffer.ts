@@ -24,7 +24,7 @@ export class BufferSonic
         gl.bindBuffer(this.type, this.buffer);
     }
 
-    changeData(gl: WebGL2RenderingContext, data: BufferSource, length : number)
+    changeData(gl: WebGL2RenderingContext, data: BufferSource, length: number)
     {
         this.data = data;
         this.length = length;

@@ -30,9 +30,9 @@ export class Shader3D extends Shader
 
     getModelViewMatrix() { return this.ModelViewMatrix }
 
-    useMaterial(gl : WebGL2RenderingContext, material : BaseMaterial) {}
+    useMaterial(gl: WebGL2RenderingContext, material: BaseMaterial) { }
 
-    useLight(gl : WebGL2RenderingContext, light : Light) {}
+    useLight(gl: WebGL2RenderingContext, light: Light) { }
 
     use(gl: WebGL2RenderingContext, callback: () => void): void
     {
@@ -133,13 +133,13 @@ export class Shaded3D extends Shader3D
 
     useLight(gl: WebGL2RenderingContext, light: Light): void
     {
-        if (!this.bind(gl)) {return}
+        if (!this.bind(gl)) { return }
         light.setUniforms(gl, this, "light");
     }
 
     useMaterial(gl: WebGL2RenderingContext, material: BaseMaterial): void
     {
-        if (!this.bind(gl)) {return}
+        if (!this.bind(gl)) { return }
         material.setUniforms(gl, this, "material")
     }
 

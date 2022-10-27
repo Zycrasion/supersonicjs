@@ -2,7 +2,7 @@ import { mat4, quat, vec3 } from "gl-matrix";
 import { vec, Vector } from "./Vector";
 export interface TransformLike 
 {
-    generateMat4() :mat4
+    generateMat4(): mat4
 }
 export class Transform implements TransformLike
 {
@@ -10,9 +10,9 @@ export class Transform implements TransformLike
     rotation: Vector;
     scale: Vector;
 
-    private lAt : Vector;
+    private lAt: Vector;
 
-    overrideMatrix : mat4;
+    overrideMatrix: mat4;
 
     constructor()
     {
@@ -25,11 +25,11 @@ export class Transform implements TransformLike
     static Combine(parent: Transform, child: Transform): mat4
     {
         let matrix = mat4.create();
-        
+
         let childMat = child.generateMat4();
         let parentMat = parent.generateMat4();
-        
-        mat4.multiply(matrix,parentMat,childMat);
+
+        mat4.multiply(matrix, parentMat, childMat);
         return matrix;
     }
 
@@ -39,7 +39,7 @@ export class Transform implements TransformLike
         return vec(mat[2], mat[6], mat[10]).normalize();
     }
 
-    set lookAt(v : Vector)
+    set lookAt(v: Vector)
     {
         this.lAt = v;
     }
@@ -60,13 +60,13 @@ export class Transform implements TransformLike
 
     generateMat4(): mat4
     {
-        if (this.overrideMatrix!= null)
+        if (this.overrideMatrix != null)
         {
             return this.overrideMatrix;
         }
         let matrix = mat4.fromRotationTranslationScale(
             mat4.create(),
-            quat.fromEuler(quat.create(), this.rotation.x, this.rotation.y,this.rotation.z),
+            quat.fromEuler(quat.create(), this.rotation.x, this.rotation.y, this.rotation.z),
             this.position.toFloat32Array(),
             this.scale.toFloat32Array()
         )
@@ -78,17 +78,18 @@ export class Transform implements TransformLike
         let matrix = mat4.create();
         if (this.lAt != null)
         {
-            mat4.lookAt(matrix, this.position.toFloat32Array(), this.lAt.toFloat32Array(), [0,1,0])
-        } else {
-            mat4.rotate(matrix, matrix, this.rotation.x, [1,0,0]);
-            mat4.rotate(matrix, matrix, this.rotation.y, [0,1,0]);
-            mat4.rotate(matrix, matrix, this.rotation.z, [0,0,1]);
-    
+            mat4.lookAt(matrix, this.position.toFloat32Array(), this.lAt.toFloat32Array(), [0, 1, 0])
+        } else
+        {
+            mat4.rotate(matrix, matrix, this.rotation.x, [1, 0, 0]);
+            mat4.rotate(matrix, matrix, this.rotation.y, [0, 1, 0]);
+            mat4.rotate(matrix, matrix, this.rotation.z, [0, 0, 1]);
+
             mat4.translate(matrix, matrix, this.position.toFloat32Array());
-            mat4.scale(matrix,matrix, this.scale.toFloat32Array());
-    
+            mat4.scale(matrix, matrix, this.scale.toFloat32Array());
+
         }
-        
+
         return matrix;
     }
 

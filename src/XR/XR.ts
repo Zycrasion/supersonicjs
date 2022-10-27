@@ -3,7 +3,7 @@ import { Transform } from "../Transform/Transform";
 import { vec4 } from "../Transform/Vector";
 import { XRCamera } from "./XRCamera";
 
-type XRDrawCallback = (xr: XR, gl: WebGL2RenderingContext, camera: XRCamera, frame : XRFrame) => void;
+type XRDrawCallback = (xr: XR, gl: WebGL2RenderingContext, camera: XRCamera, frame: XRFrame) => void;
 type XRSetupCallback = (xr: XR, gl: WebGL2RenderingContext) => void;
 
 export class XR
@@ -11,10 +11,10 @@ export class XR
     gl: WebGL2RenderingContext;
     referenceSpace: XRReferenceSpace;
 
-    session : XRSession;
+    session: XRSession;
 
-    inputSources : XRInputSourceArray;
-    currentFrame : XRFrame;
+    inputSources: XRInputSourceArray;
+    currentFrame: XRFrame;
 
     xr_draw: XRDrawCallback;
     xr_setup: XRSetupCallback;
@@ -45,7 +45,7 @@ export class XR
 
     onResize()
     {
-        this.gl.canvas.width =  this.gl.canvas.clientWidth * window.devicePixelRatio;
+        this.gl.canvas.width = this.gl.canvas.clientWidth * window.devicePixelRatio;
         this.gl.canvas.height = this.gl.canvas.clientHeight * window.devicePixelRatio;
     }
 
@@ -64,7 +64,7 @@ export class XR
         this.session = session;
 
         this.session.addEventListener("inputsourceschange", this.updateInputSources.bind(this))
-        
+
         this.inputSources = this.session.inputSources;
 
         let glLayer = new XRWebGLLayer(session, this.gl);
@@ -107,7 +107,7 @@ export class XR
         return this.currentFrame.getViewerPose(this.referenceSpace);
     }
 
-    getControllerTransform(controller : XRInputSource)
+    getControllerTransform(controller: XRInputSource)
     {
 
         let grip = this.currentFrame.getPose(controller.gripSpace, this.referenceSpace);
@@ -122,7 +122,7 @@ export class XR
         return transform;
     }
 
-    protected updateInputSources(event : XRInputSourceChangeEvent)
+    protected updateInputSources(event: XRInputSourceChangeEvent)
     {
         this.inputSources = event.session.inputSources;
     }

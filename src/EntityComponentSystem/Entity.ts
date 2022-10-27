@@ -10,7 +10,7 @@ export class Entity
 {
     components: Component[];
     children: Entity[];
-    parent_ptr : Entity | null;
+    parent_ptr: Entity | null;
     transform: Transform;
     name: string;
     private lastTransform: Transform;
@@ -27,7 +27,7 @@ export class Entity
         this.name = name;
     }
 
-    draw_tick(gl: WebGL2RenderingContext, scene : Scene)
+    draw_tick(gl: WebGL2RenderingContext, scene: Scene)
     {
         for (let component of this.components)
         {
@@ -39,7 +39,7 @@ export class Entity
         }
     }
 
-    shadow_tick(gl: WebGL2RenderingContext, scene : Scene, shader : Shader3D)
+    shadow_tick(gl: WebGL2RenderingContext, scene: Scene, shader: Shader3D)
     {
         for (let component of this.components)
         {
@@ -51,7 +51,7 @@ export class Entity
         }
     }
 
-    addEntity(ent : Entity)
+    addEntity(ent: Entity)
     {
         ent.parent_ptr = this;
         this.children.push(ent);
@@ -111,7 +111,7 @@ export class Entity
         return true;
     }
 
-    getComponent<T extends Component>(name : string ) : T
+    getComponent<T extends Component>(name: string): T
     {
         for (let component of this.components)
         {

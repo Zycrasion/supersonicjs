@@ -6,16 +6,16 @@ import { Math2, UV } from "../utilities";
 export interface ITexture
 {
 
-    bind(gl : WebGL2RenderingContext, SLOT : number)
+    bind(gl: WebGL2RenderingContext, SLOT: number)
 }
 export class Texture 
 {
     texture: WebGLTexture;
 
-    bind(gl : WebGL2RenderingContext, SLOT = gl.TEXTURE0)
+    bind(gl: WebGL2RenderingContext, SLOT = gl.TEXTURE0)
     {
         gl.activeTexture(SLOT);
-        
+
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
         gl.texParameteri(
             gl.TEXTURE_2D,
@@ -30,7 +30,7 @@ export class Texture
         )
     }
 
-    protected init(gl: WebGL2RenderingContext, image : HTMLImageElement, FILTERING = gl.NEAREST, level=0, imageFormat = gl.RGBA, srcFormat = gl.RGBA, srcType=gl.UNSIGNED_BYTE)
+    protected init(gl: WebGL2RenderingContext, image: HTMLImageElement, FILTERING = gl.NEAREST, level = 0, imageFormat = gl.RGBA, srcFormat = gl.RGBA, srcType = gl.UNSIGNED_BYTE)
     {
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -93,31 +93,33 @@ export class Texture
             pixel
         );
 
-        
+
         // Check if image is cached
         let response = Loader.LoadImage(imageSrc);
         if (typeof response != "string")
         {
             // Image is cached
-            const image : HTMLImageElement = response;
-            return new Promise<Texture>(resolve => {
-                texture.init(gl,image,FILTERING,level,imageFormat,srcFormat,srcType);
+            const image: HTMLImageElement = response;
+            return new Promise<Texture>(resolve =>
+            {
+                texture.init(gl, image, FILTERING, level, imageFormat, srcFormat, srcType);
                 resolve(texture);
             })
         }
 
         // Load the image
         const image = new Image();
-        return new Promise<Texture>(resolve => {
+        return new Promise<Texture>(resolve =>
+        {
             image.onload = (ev: Event) =>
             {
-                texture.init(gl,image,FILTERING,level,imageFormat,srcFormat,srcType);
+                texture.init(gl, image, FILTERING, level, imageFormat, srcFormat, srcType);
                 resolve(texture);
             }
-    
+
             // Start Loading Process
             image.src = imageSrc;
         })
-        
+
     }
 }

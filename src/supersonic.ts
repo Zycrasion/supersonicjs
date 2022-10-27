@@ -6,7 +6,7 @@ export class SupersonicJS
 
     static clearColour = vec4();
 
-    static warn(message? : string, optionalParameters? : any[])
+    static warn(message?: string, optionalParameters?: any[])
     {
         if (this.PRODUCTION)
         {
@@ -15,7 +15,7 @@ export class SupersonicJS
         console.warn(message, optionalParameters);
     }
 
-    static error(message? : string, optionalParameters? : any[])
+    static error(message?: string, optionalParameters?: any[])
     {
         if (this.PRODUCTION)
         {
@@ -23,7 +23,7 @@ export class SupersonicJS
         }
         console.error(message, optionalParameters);
     }
-    static setClearColour(gl : WebGL2RenderingContext, clearColour = SupersonicJS.clearColour)
+    static setClearColour(gl: WebGL2RenderingContext, clearColour = SupersonicJS.clearColour)
     {
         gl.clearColor(clearColour.x, clearColour.y, clearColour.z, clearColour.w);
         gl.clearDepth(1);
@@ -32,9 +32,9 @@ export class SupersonicJS
         SupersonicJS.clearColour = clearColour;
     }
 
-    static init(canvasid: string, clearColour: Vector4, attribs : WebGLContextAttributes = {}): WebGL2RenderingContext
+    static init(canvasid: string, clearColour: Vector4, attribs: WebGLContextAttributes = {}): WebGL2RenderingContext
     {
-        let gl = (document.getElementById(canvasid) as HTMLCanvasElement).getContext("webgl2",attribs);
+        let gl = (document.getElementById(canvasid) as HTMLCanvasElement).getContext("webgl2", attribs);
         if (gl === null)
         {
             alert("Your device does not support WebGL2")
@@ -45,7 +45,7 @@ export class SupersonicJS
         return gl;
     }
 
-    static createCanvas(id = "SUPERSONIC_CANVAS") : HTMLCanvasElement
+    static createCanvas(id = "SUPERSONIC_CANVAS"): HTMLCanvasElement
     {
         let canvas = document.createElement("canvas");
         canvas.id = id;

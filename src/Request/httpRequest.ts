@@ -6,7 +6,7 @@ export function HTTP_REQUEST(url: string, method: string = "GET", headers: Dict<
     return new Promise<string>((resolve, reject) =>
     {
         let response = Loader.LoadHTTP(url);
-        if (response!="404")
+        if (response != "404")
         {
             resolve(response);
             return;

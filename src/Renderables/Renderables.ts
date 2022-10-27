@@ -147,7 +147,7 @@ export class GeometryRenderable extends RenderableAbstract
     {
         let modelViewMatrix = this.parent_ptr != null ? Transform.Combine(this.parent_ptr.transform, this.transform) : this.transform.generateMat4(); // cursed, i know, im sorry
         shader.setModelViewMatrix(modelViewMatrix);
-        scene.light.setUniforms(gl,shader);
+        scene.light.setUniforms(gl, shader);
         shader.updateUniforms(gl);
         shader.use(
             gl,
@@ -155,7 +155,7 @@ export class GeometryRenderable extends RenderableAbstract
             {
                 this.vao.bind(gl);
                 gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_INT, 0)
-        
+
             }
         )
     }

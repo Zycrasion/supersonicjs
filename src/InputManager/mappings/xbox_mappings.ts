@@ -8,7 +8,7 @@ export enum XBOX_ANALOG_RAW
     RIGHT_TRIGGER,
     DPAD_X,
     DPAD_Y
-} 
+}
 
 export enum XBOX_ANALOG_INPUTS
 {

@@ -129,7 +129,7 @@ export class Shader
         gl.enableVertexAttribArray(vertexPositionLoc);
     }
 
-    updateUniforms(gl : WebGL2RenderingContext)
+    updateUniforms(gl: WebGL2RenderingContext)
     {
     }
 

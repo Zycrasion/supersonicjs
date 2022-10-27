@@ -19,7 +19,7 @@ export class DepthShader extends Shader3D
 
     useLight(gl: WebGL2RenderingContext, light: Light): void
     {
-        if (!this.bind(gl)) {return}
+        if (!this.bind(gl)) { return }
         light.setUniforms(gl, this, "light");
     }
 

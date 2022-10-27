@@ -47,7 +47,8 @@ export class Loader
 
     protected static CheckFinishedLoadingImages()
     {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>((resolve) =>
+        {
             let interval = setInterval(check, 100);
             function check()
             {
@@ -74,7 +75,8 @@ export class Loader
             this.imageCache[url] = new Image();
             this.imageCache[url].onload = (ev: Event) =>
             {
-                this.imagePending = this.imagePending.filter(v => {
+                this.imagePending = this.imagePending.filter(v =>
+                {
                     return v != url;
                 });
             }

@@ -3,9 +3,9 @@ import { Shader } from "./Shader";
 
 export abstract class BaseMaterial
 {
-    abstract setUniforms(gl : WebGL2RenderingContext, shader : Shader, name)
+    abstract setUniforms(gl: WebGL2RenderingContext, shader: Shader, name)
 
-    abstract copy() : BaseMaterial
+    abstract copy(): BaseMaterial
 }
 
 export class Material extends BaseMaterial
@@ -28,7 +28,7 @@ export class Material extends BaseMaterial
     {
         let material = new Material();
         material.ambient = this.ambient.copy();
-        material.specular= this.specular.copy();
+        material.specular = this.specular.copy();
         material.diffuse = this.diffuse.copy();
         return material;
     }
