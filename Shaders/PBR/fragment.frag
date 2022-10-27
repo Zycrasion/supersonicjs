@@ -43,7 +43,7 @@ void main()
 
     vec3 specularColour = texture(material.specular, TexCoords).rgb;
     // ambient
-    vec3 ambient = textureColour * light.ambient;
+    vec3 ambient = textureColour * light.ambient* light.ambient;
   	
     // diffuse 
     vec3 norm = normalize(Normal);

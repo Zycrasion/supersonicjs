@@ -53,6 +53,7 @@ let quad : MeshData = SquareMesh(1,1);
 
 async function setup()
 {
+	console.log("I EXIST???");
 	let ext = gl.getExtension("EXT_color_buffer_float");
 	if (!ext)
 	{
