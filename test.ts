@@ -110,7 +110,7 @@ async function setup()
 
 	let soundTest = new SoundPlayer();
 	await soundTest.loadAUDIO("AudioTest/test.wav");
-
+	// soundTest.play(); // annoying sound everytime you reload
 	MainScene.addEntity(soundTest.toEntity());
 
 	Loader.Free();
