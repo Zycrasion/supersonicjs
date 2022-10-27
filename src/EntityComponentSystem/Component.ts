@@ -6,7 +6,7 @@ import { Scene } from "./Scene";
 export class Component
 {
     parent_ptr: Entity;
-    name: string;
+    readonly name: string;
     static Name: string;
     constructor(name: string) { this.name = name; }
     attach(parent: Entity) { this.parent_ptr = parent; }
@@ -16,4 +16,8 @@ export class Component
     phys_tick() { }
     copy(params = {}): Component { return new Component(this.name.concat(" - Copy")) }
     end(gl: WebGL2RenderingContext) { }
+    toEntity() : Entity
+    {
+        return new Entity().addComponent(this);
+    }
 }

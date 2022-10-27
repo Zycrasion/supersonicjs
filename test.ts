@@ -1,8 +1,10 @@
+import { SoundPlayer } from "./src/Audio/SoundPlayer";
 import { Camera, ProjectionType } from "./src/Camera";
 import { Scene } from "./src/EntityComponentSystem/Scene";
 import { InputAxis, InputManager } from "./src/InputManager/Input";
 import { Loader } from "./src/Loader/Loader"
 import { MeshData, ObjParser } from "./src/Parsers/ObjParser";
+import { SquareMesh } from "./src/Renderables/DefaultMeshes/square";
 import { GeometryRenderable } from "./src/Renderables/Renderables";
 import { Texture } from "./src/Renderables/Texture";
 import { DepthShader } from "./src/Shaders/DepthShader";
@@ -47,31 +49,7 @@ const cam = new Camera(ProjectionType.PERSPECTIVE);
 const wasd = new InputAxis(new InputManager(), "d" , "a", "w", "s");
 
 
-let quad : MeshData = {
-	vertices: [
-		vec(-1,1),
-		vec(-1,-1),
-		vec(1,1),
-		vec(1,-1),
-	],
-	indices: [
-		0,1,2,
-		2,3,1
-	],
-	normals: [
-		vec(0,0,1),
-		vec(0,0,1),
-		vec(0,0,1),
-		vec(0,0,1),
-	],
-	textures: [
-		vec(0,1),
-		vec(0,0),
-		vec(1,1),
-		vec(1,0)
-	],
-	name: ""
-}
+let quad : MeshData = SquareMesh(1,1);
 
 async function setup()
 {
@@ -119,8 +97,7 @@ async function setup()
 	)
 
 	let mat = new PBRMaterial();
-	// mat.diffuse = SceneMaterial.diffuse;
-	mat.diffuse = MainScene.shadowFBO
+	mat.diffuse = SceneMaterial.diffuse;
 	mat.specular = mat.diffuse;
 
 	let e = quadMesh.with_Entity(mat);
@@ -130,6 +107,10 @@ async function setup()
 
 	MainScene.addEntity(e)
 
+	let soundTest = new SoundPlayer();
+	await soundTest.loadAUDIO("AudioTest/test.wav");
+
+	MainScene.addEntity(soundTest.toEntity());
 
 	Loader.Free();
 	requestAnimationFrame(draw);
@@ -137,6 +118,7 @@ async function setup()
 
 function draw()
 {
+
 	cam.freecam(wasd);
 	MainScene.draw(gl);
 	requestAnimationFrame(draw);
