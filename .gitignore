@@ -3,3 +3,4 @@ tsBuild/**
 # Currently local just contains reference files so i can refer to it
 local
 node_modules
+.VSCodeCounter
